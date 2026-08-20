@@ -1,33 +1,19 @@
-# War Drone Clan Mini-Wiki
+# War Drone Mini‑Wiki — PERSIA
 
-**Persian community guide for War Drone** — built for clan **PERSIA** and maintained as a practical, player-focused reference.
+یک مینی‌ویکی فارسی و جامعه‌محور برای بازیکنان **War Drone** با تمرکز بر انتخاب Stage مناسب برای فارم کش، مدال کلن، فرنزی، کیل، توقف 98–99٪، آمادگی سلاح و ویدیوهای آموزشی مرحله‌به‌مرحله.
 
-The wiki organizes stage-by-stage information for:
-- Cash farming and 98–99% farming
-- Clan Medal and Frenzy priorities
-- Kill farming
-- Weapon readiness and progression walls
-- Stage walkthrough videos
-- Community-tested tips and notable difficulty spikes
+این پروژه داده‌های عمومی، تجربه بازیکنان و ویدیوهای آموزشی را به شکل یک راهنمای عملی و قابل جست‌وجو جمع‌بندی می‌کند. اعداد اقتصادی به‌صورت بازه‌های تقریبی نمایش داده می‌شوند، چون خروجی هر Run می‌تواند با Spawn، درصد پایان، سرعت پاکسازی و نسخه بازی تغییر کند.
 
-The site is intentionally written in Persian for the current audience. Data is presented as practical ranges, relative ratings, and confidence levels because rewards and difficulty can vary with run style, spawn behavior, buffs, ads, balance updates, and game version.
-
-Project authority: **Hisystem**
+**Clan:** PERSIA  
+**Project authority:** Hisystem
 
 ---
 
-# مینی‌ویکی کلن War Drone
+# War Drone Mini‑Wiki — PERSIA
 
-**راهنمای فارسی و جامعه‌محور War Drone** برای کلن **PERSIA**؛ با تمرکز بر تصمیم‌های عملی بازیکن، نه صرفاً فهرست مراحل.
+A Persian, community-driven mini-wiki for **War Drone**, focused on stage selection for cash farming, clan medals, Frenzy, kill farming, 98–99% stopping strategies, weapon readiness, and stage-by-stage video guides.
 
-این ویکی اطلاعات مرحله‌به‌مرحله را برای موارد زیر یکپارچه می‌کند:
-- فارم Cash و استراتژی 98–99٪
-- Clan Medal و اولویت‌های Frenzy
-- فارم Kill
-- آمادگی سلاح و نقاط توقف پیشروی
-- ویدیوهای آموزشی هر Stage
-- تجربه‌های Community و مراحل دارای جهش سختی
+The project consolidates public resources, player experience, and tutorial videos into a practical searchable guide. Economy values are presented as approximate ranges because each run can vary depending on spawns, completion percentage, clear speed, and game version.
 
-به‌خاطر تفاوت در نوع Run، Spawn، Buff، تبلیغات و Balance Update، داده‌ها در قالب بازه، رتبه نسبی و سطح اطمینان ارائه می‌شوند تا برای بازیکن کاربردی‌تر باشند.
-
-اعتبار پروژه: **Hisystem**
+**Clan:** PERSIA  
+**Project authority:** Hisystem
