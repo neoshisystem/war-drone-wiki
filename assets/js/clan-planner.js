@@ -6,7 +6,7 @@
     stage=I.clampStage(stage);
     const list=I.recommend('frenzy',stage,3);
     if(box){
-      box.innerHTML=list.length?list.map(x=>`<a class="recommendation" href="stages.html?to=${stage}"><b>${x.index}. Stage ${x.stage} · ${x.name}</b><span>${x.note}</span></a>`).join(''):'<div class="recommendation"><b>هنوز زود است</b><span>چند Stage اول را برای یادگیری مکانیک‌ها جلو برو.</span></div>';
+      box.innerHTML=list.length?list.map(x=>`<a class="recommendation" href="stages.html?to=${stage}&goal=frenzy"><b>${x.index}. Stage ${x.stage} · ${x.name}</b><span>${x.note}</span></a>`).join(''):'<div class="recommendation"><b>هنوز زود است</b><span>چند Stage اول را برای یادگیری مکانیک‌ها جلو برو.</span></div>';
     }
     document.querySelectorAll('[data-planner-stage]').forEach(x=>x.textContent=stage);
   }
