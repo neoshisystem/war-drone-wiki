@@ -1,4 +1,5 @@
 (()=>{
+  if(!document.querySelector('link[href="assets/css/advisor.css"]')){const l=document.createElement('link');l.rel='stylesheet';l.href='assets/css/advisor.css';document.head.appendChild(l);}
   const I=window.WD_STAGE_INTEL; if(!I)return;
   const $=id=>document.getElementById(id);
   const box=$('homeRecommendations');
