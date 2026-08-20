@@ -1,1 +1,0 @@
-Guide screenshots are curated from the in-game images supplied for the PERSIA War Drone mini-wiki. Images are used only to visually explain the corresponding game mechanic.
