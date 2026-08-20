@@ -1,0 +1,1 @@
+document.querySelectorAll('[data-guide-image]').forEach(img=>{const ref=img.getAttribute('data-guide-image');if(!ref)return;fetch(`assets/images/guides/${ref}.b64.txt`).then(r=>r.text()).then(b64=>{img.src=`data:image/jpeg;base64,${b64.trim()}`}).catch(()=>{});});
