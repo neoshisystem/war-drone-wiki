@@ -48,6 +48,56 @@
     58:'از نقاط فارم برتر؛ عدد وابسته به Run/نسخه'
   };
 
+  // Approximate Cash model for a near-complete (98–99%) run.
+  // The advertised reward is calculated as +50% over the estimated base reward.
+  // Values are intentionally rounded ranges because enemy spawns and run style change the result.
+  const CASH_BASE_ANCHORS = {
+    1:700, 5:1500, 10:5000, 15:7000, 20:7200, 28:8500, 39:9300,
+    50:9800, 58:10000, 70:10800, 80:11200, 90:11600, 99:12000, 100:12000
+  };
+  const CASH_BASE_OVERRIDES = {
+    10:5000, 15:7000, 19:6700, 27:7200, 28:8500, 39:9300, 58:10000,
+    69:10400, 78:10800, 88:11200, 98:11800, 99:12000
+  };
+
+  function interpolateCashBase(stage){
+    if (CASH_BASE_OVERRIDES[stage]) return CASH_BASE_OVERRIDES[stage];
+    const keys = Object.keys(CASH_BASE_ANCHORS).map(Number).sort((a,b)=>a-b);
+    if (stage <= keys[0]) return CASH_BASE_ANCHORS[keys[0]];
+    if (stage >= keys[keys.length-1]) return CASH_BASE_ANCHORS[keys[keys.length-1]];
+    let lo=keys[0], hi=keys[keys.length-1];
+    for (let i=0;i<keys.length-1;i++){
+      if (stage>=keys[i] && stage<=keys[i+1]) { lo=keys[i]; hi=keys[i+1]; break; }
+    }
+    const t=(stage-lo)/(hi-lo);
+    let value=CASH_BASE_ANCHORS[lo] + (CASH_BASE_ANCHORS[hi]-CASH_BASE_ANCHORS[lo])*t;
+    if ([7,8,9].includes(stage%10) && stage>=10) value*=1.04;
+    return value;
+  }
+
+  function roundedRange(center, spread=.06){
+    const round100=v=>Math.round(v/100)*100;
+    return [round100(center*(1-spread)), round100(center*(1+spread))];
+  }
+
+  function fmtCash(v){
+    if (v>=1000) {
+      const k=v/1000;
+      return (Math.abs(k-Math.round(k))<0.05 ? String(Math.round(k)) : k.toFixed(1).replace('.0',''))+'K';
+    }
+    return Math.round(v).toLocaleString('en-US');
+  }
+
+  function cashRewardEstimate(stage){
+    const base=interpolateCashBase(stage);
+    const normal=roundedRange(base);
+    const ad=roundedRange(base*1.5);
+    return {
+      normal:`${fmtCash(normal[0])}–${fmtCash(normal[1])}`,
+      ad:`${fmtCash(ad[0])}–${fmtCash(ad[1])}`
+    };
+  }
+
   const WEAPON_NOTES = {
     10:'25mm را برای مهمات و پایداری بالا ببر؛ Hydra برای گروه‌ها، Hellfire را برای زرهی‌ها نگه دار.',
     19:'25mm حدود 390–410، Hydra حدود 90–110 و Hellfire حدود 25–30 در گزارش‌های بازیکنان به‌عنوان آمادگی مناسب مطرح شده است.',
@@ -117,7 +167,8 @@
       name: STAGE_NAMES[i],
       videoId: VIDEO_IDS[i],
       ...scores,
-      cashText: CASH_KNOWN[stage] || 'عدد پایدار کافی نداریم؛ رتبه نسبی برای مقایسه نمایش داده می‌شود',
+      cashText: CASH_KNOWN[stage] || 'برآورد Cash برای اجرای نزدیک 98–99٪',
+      cashReward: cashRewardEstimate(stage),
       weapon: defaultWeapon(stage),
       note: noteFor(stage),
       stop: STOP_STAGES.has(stage),
@@ -198,7 +249,7 @@
         <div class="tags">${s.stop?'<span class="tag hot">نقطه توقف</span>':''}${s.danger?'<span class="tag danger">حساس</span>':''}<span class="tag">${s.confidence}</span></div>
       </div>
       <div class="score-grid">
-        <div class="score"><span>💰 فارم کش</span><b>${stars(s.cash)}</b><small>${s.cashText}</small></div>
+        <div class="score"><span>💰 فارم کش</span><b>${stars(s.cash)}</b><small>بدون ویدیو: ≈ ${s.cashReward.normal}<br>با ویدیو (+50٪): ≈ ${s.cashReward.ad}</small></div>
         <div class="score"><span>🏆 مدال کلن</span><b>${stars(s.clan)}</b><small>ارزش نسبی هر Run</small></div>
         <div class="score"><span>☠️ کیل</span><b>${stars(s.kills)}</b><small>تراکم و بازده نسبی</small></div>
         <div class="score"><span>🔥 فرنزی</span><b>${stars(s.frenzy)}</b><small>برآورد Medal/min</small></div>
