@@ -4,101 +4,32 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#050b14">
-  <meta name="description" content="مینی‌ویکی فارسی War Drone برای فارم کش، مدال کلن، فرنزی، کیل، نقاط توقف و آموزش مراحل.">
+  <meta name="description" content="مینی‌ویکی فارسی War Drone برای فارم کش، مدال کلن، فرنزی، کیل، کارت‌ها و آموزش مراحل.">
   <title>مینی‌ویکی War Drone | PERSIA</title>
   <link rel="stylesheet" href="assets/css/app.css">
 </head>
 <body>
-  <header class="hero">
-    <div class="shell">
-      <div class="topbar">
-        <div class="identity"><span class="shield">◆</span><strong data-clan></strong><span>War Drone Intelligence</span></div>
-        <button id="themeToggle" class="icon-button" type="button" aria-label="تغییر پوسته">☀️</button>
-      </div>
-      <div class="hero-grid">
-        <div>
-          <span class="kicker">راهنمای فارسی بازیکنان</span>
-          <h1>مینی‌ویکی <span>War Drone</span></h1>
-          <p class="hero-text">برای پیدا کردن بهترین مرحله جهت <b>فارم کش، مدال کلن، فرنزی، کیل، توقف 98–99٪</b> و دیدن راهنمای ویدیویی هر مرحله.</p>
-          <div class="hero-actions"><a class="primary" href="#finder">پیدا کردن مرحله مناسب</a><a class="secondary" href="#strategy">راهنمای سریع</a></div>
-        </div>
-        <aside class="hero-panel">
-          <div><span>کلن</span><strong data-clan></strong></div>
-          <div><span>اعتبار پروژه</span><strong data-author></strong></div>
-          <p>داده‌ها جمع‌بندی تجربه بازیکنان، ویدیوهای مرحله‌ای و منابع عمومی است. اعداد اقتصادی به‌صورت بازه تقریبی نمایش داده می‌شوند.</p>
-        </aside>
-      </div>
-    </div>
-  </header>
-
-  <nav class="nav-wrap"><div class="shell nav"><a href="#strategy">راهنمای سریع</a><a href="#finder">جست‌وجوی مراحل</a><a href="#videos">ویدیوها</a><a href="#method">درباره داده‌ها</a></div></nav>
-
-  <main>
-    <section id="strategy" class="section">
-      <div class="shell">
-        <div class="section-title"><span>خلاصه تاکتیکی</span><h2>از کجا شروع کنم؟</h2></div>
-        <div class="strategy-grid">
-          <article class="strategy-card cash"><div class="strategy-icon">💰</div><h3>فارم کش</h3><p>به‌جای رد کردن سریع مرحله، اجرای نزدیک 98–99٪ را تکرار کن. مراحل 15، 28، 39 و 58 در داده‌های فعلی ارزش بررسی بیشتری دارند.</p></article>
-          <article class="strategy-card clan"><div class="strategy-icon">🏆</div><h3>مدال کلن و فرنزی</h3><p>در Frenzy معیار اصلی «مدال در دقیقه» است. مراحل پرتراکم که سریع پاک می‌شوند معمولاً ارزش بیشتری دارند؛ 19، 28، 39 و 58 نقاط شروع خوبی‌اند.</p></article>
-          <article class="strategy-card kills"><div class="strategy-icon">☠️</div><h3>فارم کیل</h3><p>برای کیل بیشتر، قبل از نابودی ترابری‌ها اجازه بده نیروها پیاده شوند. 27، 39، 48 و 58 از کاندیدهای پرتراکم هستند.</p></article>
-          <article class="strategy-card danger"><div class="strategy-icon">⚠️</div><h3>مراحل حساس</h3><p>42، 52 و 66 دیوارهای سختی مهم‌اند. قبل از عبور، مهمات، کارت‌های پشتیبانی و ترکیب Deck را بازبینی کن.</p></article>
-        </div>
-      </div>
-    </section>
-
-    <section id="finder" class="section finder-section">
-      <div class="shell">
-        <div class="finder-panel">
-          <div class="finder-heading"><div><span class="kicker">Stage Finder</span><h2>جست‌وجو و رتبه‌بندی مراحل</h2><p>فیلترهای هدف را انتخاب کن؛ نتایج به‌صورت خودکار از بهترین گزینه به پایین مرتب می‌شوند.</p></div><div id="resultCount" class="result-count"></div></div>
-
-          <div class="goal-filters" aria-label="فیلتر هدف">
-            <button class="goal" data-goal="cash" type="button"><span>💰</span> فارم کش</button>
-            <button class="goal" data-goal="clan" type="button"><span>🏆</span> مدال کلن</button>
-            <button class="goal" data-goal="kills" type="button"><span>☠️</span> فارم کیل</button>
-            <button class="goal" data-goal="frenzy" type="button"><span>🔥</span> فرنزی</button>
-            <button class="goal" data-goal="farm99" type="button"><span>🎯</span> توقف 98–99٪</button>
-          </div>
-
-          <div class="hard-filters">
-            <button class="toggle" data-filter="stop" type="button">🛑 فقط نقاط توقف</button>
-            <button class="toggle" data-filter="danger" type="button">⚠️ فقط مراحل حساس</button>
-            <button class="toggle" data-filter="video" type="button">📺 فقط دارای ویدیو</button>
-          </div>
-
-          <div class="controls-grid">
-            <label class="control"><span>از مرحله</span><input id="fromStage" type="number" min="1" max="100" inputmode="numeric" value="1"></label>
-            <label class="control"><span>تا مرحله</span><input id="toStage" type="number" min="1" max="100" inputmode="numeric" value="100"></label>
-            <label class="control search-control"><span>جست‌وجوی شماره یا نام مرحله</span><input id="query" type="search" autocomplete="off" placeholder="مثلاً 39 یا Steel Blizzard"></label>
-            <label class="control"><span>مرتب‌سازی</span><select id="sortMode"><option value="smart">پیشنهاد هوشمند</option><option value="stageAsc">شماره مرحله: کم به زیاد</option><option value="stageDesc">شماره مرحله: زیاد به کم</option><option value="cash">بیشترین ارزش کش</option><option value="clan">بیشترین ارزش کلن</option><option value="kills">بیشترین کیل</option><option value="frenzy">بیشترین ارزش فرنزی</option><option value="difficulty">سخت‌ترین مراحل</option></select></label>
-          </div>
-
-          <div class="range-note"><span id="rangeLabel">نمایش مراحل 1 تا 100</span><button id="resetFilters" type="button">بازنشانی فیلترها</button></div>
-        </div>
-
-        <div id="stageGrid" class="stage-grid" aria-live="polite"></div>
-        <div id="emptyState" class="empty-state" hidden><strong>نتیجه‌ای پیدا نشد</strong><span>بازه یا فیلترها را کمی بازتر کن.</span></div>
-      </div>
-    </section>
-
-    <section id="videos" class="section">
-      <div class="shell">
-        <div class="section-title"><span>کتابخانه ویدیویی</span><h2>راهنمای مرحله‌به‌مرحله</h2></div>
-        <div class="video-note"><div class="youtube-mark"><span></span></div><p>در کارت هر مرحله، در صورت وجود، دکمه <b>«تماشای ویدیو در یوتیوب»</b> قرار دارد. ویدیوهای ویژه مربوط به سختی، ارتقا و مدیریت Gold نیز به همان مرحله متصل شده‌اند.</p></div>
-      </div>
-    </section>
-
-    <section id="method" class="section method-section">
-      <div class="shell method-grid">
-        <div><span class="kicker">روش خواندن داده</span><h2>تقریبی، اما کاربردی</h2><p>مقدار Cash و بازده هر Run ثابت نیست؛ درصد پایان، تعداد دشمنانی که Spawn می‌شوند، پیاده شدن نیروهای داخل خودرو، سرعت پاکسازی و تبلیغ +50٪ روی خروجی اثر می‌گذارد. به همین دلیل هرجا عدد کافی داریم، بازه گرد شده نمایش می‌دهیم. در بخش آمادگی سلاح نیز «Level»، Damage، Card Level و ظرفیت مهمات را با هم یکی نمی‌کنیم؛ هرجا منبع قابل دفاع برای حداقل Level سه سلاح نداریم، صریحاً داده ناکافی نمایش داده می‌شود.</p></div>
-        <div class="legend-card"><div><b>★★★★★</b><span>انتخاب ممتاز</span></div><div><b>★★★★☆</b><span>خیلی خوب</span></div><div><b>★★★☆☆</b><span>قابل استفاده</span></div><div><b>★★☆☆☆</b><span>اولویت پایین‌تر</span></div></div>
-      </div>
-    </section>
-  </main>
-
-  <footer><div class="shell"><span>مینی‌ویکی War Drone برای <b data-clan></b></span><span>Project authority: <b data-author></b></span></div></footer>
-
-  <script src="assets/js/config.js"></script>
-  <script src="assets/js/app.js"></script>
-  <script src="assets/js/weapon-guide.js"></script>
-</body>
-</html>
+<header class="hero"><div class="shell"><div class="topbar"><div class="identity"><span class="shield">◆</span><strong data-clan></strong><span>War Drone Intelligence</span></div><button id="themeToggle" class="icon-button" type="button" aria-label="تغییر پوسته">☀️</button></div><div class="hero-grid"><div><span class="kicker">راهنمای فارسی بازیکنان</span><h1>مینی‌ویکی <span>War Drone</span></h1><p class="hero-text">راهنمای عملی برای <b>فارم کش، Gold، کارت‌ها، ارتقای سلاح، مأموریت‌های روزانه، Clan Strike، Frenzy</b> و انتخاب بهترین Stage.</p><div class="hero-actions"><a class="primary" href="#finder">پیدا کردن مرحله مناسب</a><a class="secondary" href="#academy">آموزش بازی</a></div></div><aside class="hero-panel"><div><span>کلن</span><strong data-clan></strong></div><div><span>اعتبار پروژه</span><strong data-author></strong></div><p>این راهنما از تجربه عملی بازیکنان، تصاویر داخل بازی، ویدیوهای مرحله‌ای و منابع عمومی ساخته شده است. اعداد متغیر بازی به‌صورت تقریبی ارائه می‌شوند.</p></aside></div></div></header>
+<nav class="nav-wrap"><div class="shell nav"><a href="#strategy">راهنمای سریع</a><a href="#finder">مراحل</a><a href="#academy">آموزش جامع</a><a href="#cards">کارت‌ها</a><a href="#videos">ویدیوها</a><a href="#method">درباره داده‌ها</a></div></nav>
+<main>
+<section id="strategy" class="section"><div class="shell"><div class="section-title"><span>خلاصه تاکتیکی</span><h2>از کجا شروع کنم؟</h2></div><div class="strategy-grid"><article class="strategy-card cash"><div class="strategy-icon">💰</div><h3>فارم کش</h3><p>Stage را به 100٪ نرسان؛ آخرین دشمن را زنده بگذار، Run را بباز و در صورت دسترسی با ویدیوی +50٪ پاداش بیشتری بگیر. Stage 28 و 39 نقاط فارم بسیار مهم‌اند.</p></article><article class="strategy-card clan"><div class="strategy-icon">🏆</div><h3>مدال کلن و Frenzy</h3><p>در Frenzy سرعت کشتن دشمنان طلایی و کارت‌های Clan Medal مهم‌اند. معیار کاربردی، مدال در دقیقه است نه فقط مدال یک Run.</p></article><article class="strategy-card kills"><div class="strategy-icon">☠️</div><h3>فارم کیل</h3><p>برای Kill بیشتر، اجازه بده نیروهای داخل خودروها پیاده شوند. Stageهای پرتراکم و سریع برای کلن ارزش بیشتری دارند.</p></article><article class="strategy-card danger"><div class="strategy-icon">⚠️</div><h3>دیوارهای سختی</h3><p>بازی در مرزهای پیشروی جهش سختی دارد. قبل از عبور از نقاط مهم، Cash فارم کن و 25mm / Hydra-70 / Hellfire را متعادل نگه دار.</p></article></div></div></section>
+<section id="finder" class="section finder-section"><div class="shell"><div class="finder-panel"><div class="finder-heading"><div><span class="kicker">Stage Finder</span><h2>جست‌وجو و رتبه‌بندی مراحل</h2><p>هدف را انتخاب کن؛ نتایج از بهترین گزینه به پایین مرتب می‌شوند.</p></div><div id="resultCount" class="result-count"></div></div><div class="goal-filters"><button class="goal" data-goal="cash" type="button"><span>💰</span> فارم کش</button><button class="goal" data-goal="clan" type="button"><span>🏆</span> مدال کلن</button><button class="goal" data-goal="kills" type="button"><span>☠️</span> فارم کیل</button><button class="goal" data-goal="frenzy" type="button"><span>🔥</span> فرنزی</button><button class="goal" data-goal="farm99" type="button"><span>🎯</span> توقف 98–99٪</button></div><div class="hard-filters"><button class="toggle" data-filter="stop" type="button">🛑 فقط نقاط توقف</button><button class="toggle" data-filter="danger" type="button">⚠️ فقط مراحل حساس</button><button class="toggle" data-filter="video" type="button">📺 فقط دارای ویدیو</button></div><div class="controls-grid"><label class="control"><span>از مرحله</span><input id="fromStage" type="number" min="1" max="100" value="1"></label><label class="control"><span>تا مرحله</span><input id="toStage" type="number" min="1" max="100" value="100"></label><label class="control search-control"><span>جست‌وجوی شماره یا نام مرحله</span><input id="query" type="search" autocomplete="off" placeholder="مثلاً 39 یا Steel Blizzard"></label><label class="control"><span>مرتب‌سازی</span><select id="sortMode"><option value="smart">پیشنهاد هوشمند</option><option value="stageAsc">شماره مرحله: کم به زیاد</option><option value="stageDesc">شماره مرحله: زیاد به کم</option><option value="cash">بیشترین ارزش کش</option><option value="clan">بیشترین ارزش کلن</option><option value="kills">بیشترین کیل</option><option value="frenzy">بیشترین ارزش فرنزی</option><option value="difficulty">سخت‌ترین مراحل</option></select></label></div><div class="range-note"><span id="rangeLabel">نمایش مراحل 1 تا 100</span><button id="resetFilters" type="button">بازنشانی فیلترها</button></div></div><div id="stageGrid" class="stage-grid" aria-live="polite"></div><div id="emptyState" class="empty-state" hidden><strong>نتیجه‌ای پیدا نشد</strong><span>بازه یا فیلترها را کمی بازتر کن.</span></div></div></section>
+<section id="academy" class="section academy-section"><div class="shell"><div class="section-title"><span>راهنمای میدانی PERSIA</span><h2>آموزش جامع؛ از منابع تا کلن</h2></div><div class="academy-grid">
+<article class="lesson"><span class="lesson-no">01</span><h3>منابع بازی</h3><p>دو منبع اصلی داریم: <b>Cash سبز</b> برای ارتقای Weapons و <b>Gold</b> برای Supply Drop / Chestها و فعالیت‌های وابسته به طلا. کارت‌های قدرت از مهم‌ترین خروجی‌های Chestها هستند.</p></article>
+<article class="lesson"><span class="lesson-no">02</span><h3>جمع‌آوری Cash و Gold</h3><p>پاداش ویدیویی دوره‌ای، Pilot Lounge / Daily Reward و اجرای Campaign Missionها مسیرهای اصلی‌اند. در داده‌های فعلی، پاداش دوره‌ای 50 Gold و 1,000 Cash گزارش شده و Daily Reward نیز می‌تواند Gold، Cash و جایزه روز را بدهد.</p><p class="tip">نسخه‌های جدید ممکن است برای Daily Reward از Web App بازی استفاده کنند؛ UI نسخه فعلی را ملاک قرار بده.</p></article>
+<article class="lesson featured"><span class="lesson-no">03</span><h3>ترفند فارم 98–99٪</h3><p>برای فارم، Stage را کامل نکن. آخرین دشمن را زنده بگذار تا Run در نزدیکی پایان شکست بخورد؛ سپس همان Stage را دوباره بازی کن. اگر ویدیوی +50٪ در دسترس باشد، بازده Cash بالاتر می‌رود.</p><div class="mini-stats"><b>Stage 28</b><span>≈ 14K Cash در Runهای مناسب</span><span>≈ 3:50 زمان مفید گزارش‌شده</span></div><p class="tip">Stage 28 معمولاً به‌خاطر زمان کمتر نسبت به 39 انتخاب ممتاز فارم است.</p></article>
+<article class="lesson"><span class="lesson-no">04</span><h3>قبل از جهش سختی فارم کن</h3><p>تجربه بازیکنان نشان می‌دهد در نقاط پیشروی، زره و مقاومت دشمنان ناگهان بالا می‌رود. قبل از عبور از مرزهای مهم، تا وقتی ارتقاها اثر ملموس دارند سلاح‌ها را تقویت کن و بعد Cash را ذخیره کن.</p><p class="tip">Stageهای 28 و 39 برای توقف طولانی و ساخت ذخیره Cash بسیار مناسب گزارش شده‌اند.</p></article>
+<article class="lesson"><span class="lesson-no">05</span><h3>Gold را کجا خرج کنیم؟</h3><p>برای بازیکنی که می‌خواهد Gold را هدفمند خرج کند، Chestهای رده بالاتر ارزش بیشتری دارند. داده‌های تصویری این مجموعه روی Chest بنفش 2,000 Gold و Gold Supply Drop ده‌تایی 6,000 Gold تمرکز دارد.</p><ul><li><b>Gold 6,000:</b> پنجاه کارت و یک Mythic تضمینی در داده ثبت‌شده.</li><li><b>Clan / Purple 2,000:</b> 12 کارت، حداقل یک Legendary، حدود 3,000 Clan Point و 3 Ticket در داده ارسالی.</li></ul></article>
+<article class="lesson"><span class="lesson-no">06</span><h3>Weapons را چطور ارتقا بدهیم؟</h3><p>اولویت اقتصادی با <b>25mm Gun</b> است. Hydra-70 و Hellfire را بی‌هدف جلو نینداز؛ برای Daily Mission و نیاز Stage ارتقا بده و تلاش کن هزینه ارتقای سه سلاح از تعادل خارج نشود. در مراحل سخت، Deck و Buff به‌اندازه عدد Level مهم می‌شوند.</p></article>
+<article class="lesson"><span class="lesson-no">07</span><h3>Daily Mission بدون اتلاف منابع</h3><p>بعد از تمام شدن مأموریت روز، Cash را بی‌دلیل خرج نکن تا برای مأموریت Upgrade روز بعد آماده باشی. Chestهای Honor/Stage را نیز در صورت امکان برای روزی نگه دار که Daily Mission از تو باز کردن Chest می‌خواهد.</p></article>
+<article class="lesson"><span class="lesson-no">08</span><h3>چیدمان Cardها</h3><p>برای Progress و Stage سخت: کارت‌های <b>Damage، Ammo و بقا</b> اولویت دارند. برای Farming Stage راحت: کارت‌های <b>سرعت، پاکسازی سریع‌تر و Score</b> می‌توانند بازده در دقیقه را بهتر کنند.</p></article>
+<article class="lesson featured"><span class="lesson-no">09</span><h3>Frenzy چیست؟</h3><p>Frenzy یک تقویت کلنی زمان‌دار است. طبق داده ارسالی پس از فعال‌سازی حدود <b>45 دقیقه</b> فرصت ایجاد می‌کند و دشمنان دارای علامت طلایی و ارزش امتیازی آنها را به‌شدت افزایش می‌دهد. شارژ آن با مشارکت اعضا انجام می‌شود؛ بازی و Kill و همچنین خرج Gold در Frenzy Charge نقش دارند.</p><p class="tip">نسبت ثبت‌شده در داده بازیکن: 700 Gold ≈ 3,500 Frenzy Charge. برای لیگ‌های آسان، خرج Gold فقط برای Charge لزوماً اقتصادی نیست.</p></article>
+<article class="lesson"><span class="lesson-no">10</span><h3>Clan Strike و Ticket</h3><p>Clan Point فقط از Campaign نمی‌آید؛ Clan Chest و Clan Strike هم مسیر رسمی امتیازگیری کلن هستند. Ticketهای محدود را برای رقابت‌های سخت‌تر ذخیره کن. در داده ارسالی، Chest بنفش علاوه بر Clan Point سه Ticket هم می‌دهد.</p></article>
+</div></div></section>
+<section id="cards" class="section cards-section"><div class="shell"><div class="section-title"><span>Card Intelligence</span><h2>دانشنامه کارت‌ها و Buffها</h2></div><p class="section-lead">این بخش به‌مرور با تصویر و Levelهای بیشتر تکمیل می‌شود. فعلاً کارت‌هایی که کاربردشان از داده‌های تصویری/ویدیویی روشن است، بر اساس نقش عملی دسته‌بندی شده‌اند.</p><div id="cardGrid" class="card-grid"></div></div></section>
+<section id="videos" class="section"><div class="shell"><div class="section-title"><span>کتابخانه ویدیویی</span><h2>راهنمای مرحله‌به‌مرحله</h2></div><div class="video-note"><div class="youtube-mark"><span></span></div><p>در کارت هر Stage، در صورت وجود، دکمه <b>«تماشای ویدیو در یوتیوب»</b> قرار دارد. ویدیوهای ویژه سختی، ارتقا، Gold و Tips نیز به Stage مرتبط متصل شده‌اند.</p></div></div></section>
+<section id="method" class="section method-section"><div class="shell method-grid"><div><span class="kicker">روش خواندن داده</span><h2>تقریبی، اما کاربردی</h2><p>Cash، Clan Medal و بازده Run می‌تواند با Spawn، سرعت پاکسازی، درصد پایان، Cardها و تبلیغ تغییر کند. اختلاف‌های کوچک را به‌عنوان رفتار طبیعی بازی می‌بینیم و به‌جای دقت کاذب، بازه گرد شده ارائه می‌کنیم. ادعاهای Community/Player Experience از اطلاعات رسمی یا HUD جدا نگه داشته می‌شوند.</p></div><div class="legend-card"><div><b>HUD / Video</b><span>شاهد مستقیم داخل بازی</span></div><div><b>Official</b><span>توضیح رسمی سازنده</span></div><div><b>Community</b><span>تجربه بازیکنان</span></div><div><b>Estimate</b><span>برآورد کاربردی</span></div></div></div></section>
+</main>
+<footer><div class="shell"><span>مینی‌ویکی War Drone برای <b data-clan></b></span><span>Project authority: <b data-author></b></span></div></footer>
+<script src="assets/js/config.js"></script><script src="assets/js/app.js"></script><script src="assets/js/weapon-guide.js"></script><script src="assets/js/field-guide.js"></script>
+</body></html>
