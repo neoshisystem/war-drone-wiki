@@ -1,131 +1,103 @@
 <!doctype html>
 <html lang="fa" dir="rtl" data-theme="dark">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#07111f">
-<title>مینی‌ویکی War Drone | PERSIA</title>
-<meta name="description" content="راهنمای فارسی War Drone برای فارم Cash، Clan Medal، Kill، Frenzy، 98–99% و ویدیوهای مرحله‌به‌مرحله.">
-<link rel="stylesheet" href="assets/css/app.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#050b14">
+  <meta name="description" content="مینی‌ویکی فارسی War Drone برای فارم کش، مدال کلن، فرنزی، کیل، نقاط توقف و آموزش مراحل.">
+  <title>مینی‌ویکی War Drone | PERSIA</title>
+  <link rel="stylesheet" href="assets/css/app.css">
 </head>
 <body>
-<header class="hero">
-  <div class="wrap">
-    <div class="topbar">
-      <div class="identity"><span class="crest">🛡️</span><div><b data-clan></b><small>War Drone Clan Wiki</small></div></div>
-      <button id="theme" class="iconbtn" aria-label="تغییر تم">☀️</button>
+  <header class="hero">
+    <div class="shell">
+      <div class="topbar">
+        <div class="identity"><span class="shield">◆</span><strong data-clan></strong><span>War Drone Intelligence</span></div>
+        <button id="themeToggle" class="icon-button" type="button" aria-label="تغییر پوسته">☀️</button>
+      </div>
+      <div class="hero-grid">
+        <div>
+          <span class="kicker">راهنمای فارسی بازیکنان</span>
+          <h1>مینی‌ویکی <span>War Drone</span></h1>
+          <p class="hero-text">برای پیدا کردن بهترین مرحله جهت <b>فارم کش، مدال کلن، فرنزی، کیل، توقف 98–99٪</b> و دیدن راهنمای ویدیویی هر مرحله.</p>
+          <div class="hero-actions"><a class="primary" href="#finder">پیدا کردن مرحله مناسب</a><a class="secondary" href="#strategy">راهنمای سریع</a></div>
+        </div>
+        <aside class="hero-panel">
+          <div><span>کلن</span><strong data-clan></strong></div>
+          <div><span>اعتبار پروژه</span><strong data-author></strong></div>
+          <p>داده‌ها جمع‌بندی تجربه بازیکنان، ویدیوهای مرحله‌ای و منابع عمومی است. اعداد اقتصادی به‌صورت بازه تقریبی نمایش داده می‌شوند.</p>
+        </aside>
+      </div>
     </div>
-    <div class="hero-grid">
-      <div>
-        <span class="eyebrow">راهنمای جامعه بازیکنان</span>
-        <h1>مینی‌ویکی فارسی <span>War Drone</span></h1>
-        <p>مرجع سریع برای انتخاب نقطه توقف، فارم Cash، Clan Medal، Kill، Frenzy، آماده‌سازی سلاح و پیدا کردن ویدیوی مناسب هر مرحله.</p>
-        <div class="hero-actions">
-          <a href="#finder" class="primary">پیدا کردن مرحله مناسب</a>
-          <a href="#routes" class="ghost">دیدن مسیرهای پیشنهادی</a>
+  </header>
+
+  <nav class="nav-wrap"><div class="shell nav"><a href="#strategy">راهنمای سریع</a><a href="#finder">جست‌وجوی مراحل</a><a href="#videos">ویدیوها</a><a href="#method">درباره داده‌ها</a></div></nav>
+
+  <main>
+    <section id="strategy" class="section">
+      <div class="shell">
+        <div class="section-title"><span>خلاصه تاکتیکی</span><h2>از کجا شروع کنم؟</h2></div>
+        <div class="strategy-grid">
+          <article class="strategy-card cash"><div class="strategy-icon">💰</div><h3>فارم کش</h3><p>به‌جای رد کردن سریع مرحله، اجرای نزدیک 98–99٪ را تکرار کن. مراحل 15، 28، 39 و 58 در داده‌های فعلی ارزش بررسی بیشتری دارند.</p></article>
+          <article class="strategy-card clan"><div class="strategy-icon">🏆</div><h3>مدال کلن و فرنزی</h3><p>در Frenzy معیار اصلی «مدال در دقیقه» است. مراحل پرتراکم که سریع پاک می‌شوند معمولاً ارزش بیشتری دارند؛ 19، 28، 39 و 58 نقاط شروع خوبی‌اند.</p></article>
+          <article class="strategy-card kills"><div class="strategy-icon">☠️</div><h3>فارم کیل</h3><p>برای کیل بیشتر، قبل از نابودی ترابری‌ها اجازه بده نیروها پیاده شوند. 27، 39، 48 و 58 از کاندیدهای پرتراکم هستند.</p></article>
+          <article class="strategy-card danger"><div class="strategy-icon">⚠️</div><h3>مراحل حساس</h3><p>42، 52 و 66 دیوارهای سختی مهم‌اند. قبل از عبور، مهمات، کارت‌های پشتیبانی و ترکیب Deck را بازبینی کن.</p></article>
         </div>
       </div>
-      <div class="hero-card">
-        <b>قاعده طلایی</b>
-        <p>اگر یک مرحله را راحت تا حدود 98–99٪ می‌بری، قبل از Complete کردن بررسی کن آیا برای فارم ارزش دارد. بعد از کامل‌کردن بعضی مراحل، Replay می‌تواند درآمد کمتری بدهد.</p>
-        <div class="mini-stats"><span>100 مرحله</span><span>100+ ویدیو</span><span>چندمنبعی</span></div>
+    </section>
+
+    <section id="finder" class="section finder-section">
+      <div class="shell">
+        <div class="finder-panel">
+          <div class="finder-heading"><div><span class="kicker">Stage Finder</span><h2>جست‌وجو و رتبه‌بندی مراحل</h2><p>فیلترهای هدف را انتخاب کن؛ نتایج به‌صورت خودکار از بهترین گزینه به پایین مرتب می‌شوند.</p></div><div id="resultCount" class="result-count"></div></div>
+
+          <div class="goal-filters" aria-label="فیلتر هدف">
+            <button class="goal" data-goal="cash" type="button"><span>💰</span> فارم کش</button>
+            <button class="goal" data-goal="clan" type="button"><span>🏆</span> مدال کلن</button>
+            <button class="goal" data-goal="kills" type="button"><span>☠️</span> فارم کیل</button>
+            <button class="goal" data-goal="frenzy" type="button"><span>🔥</span> فرنزی</button>
+            <button class="goal" data-goal="farm99" type="button"><span>🎯</span> توقف 98–99٪</button>
+          </div>
+
+          <div class="hard-filters">
+            <button class="toggle" data-filter="stop" type="button">🛑 فقط نقاط توقف</button>
+            <button class="toggle" data-filter="danger" type="button">⚠️ فقط مراحل حساس</button>
+            <button class="toggle" data-filter="video" type="button">📺 فقط دارای ویدیو</button>
+          </div>
+
+          <div class="controls-grid">
+            <label class="control"><span>از مرحله</span><input id="fromStage" type="number" min="1" max="100" inputmode="numeric" value="1"></label>
+            <label class="control"><span>تا مرحله</span><input id="toStage" type="number" min="1" max="100" inputmode="numeric" value="100"></label>
+            <label class="control search-control"><span>جست‌وجوی شماره یا نام مرحله</span><input id="query" type="search" autocomplete="off" placeholder="مثلاً 39 یا Steel Blizzard"></label>
+            <label class="control"><span>مرتب‌سازی</span><select id="sortMode"><option value="smart">پیشنهاد هوشمند</option><option value="stageAsc">شماره مرحله: کم به زیاد</option><option value="stageDesc">شماره مرحله: زیاد به کم</option><option value="cash">بیشترین ارزش کش</option><option value="clan">بیشترین ارزش کلن</option><option value="kills">بیشترین کیل</option><option value="frenzy">بیشترین ارزش فرنزی</option><option value="difficulty">سخت‌ترین مراحل</option></select></label>
+          </div>
+
+          <div class="range-note"><span id="rangeLabel">نمایش مراحل 1 تا 100</span><button id="resetFilters" type="button">بازنشانی فیلترها</button></div>
+        </div>
+
+        <div id="stageGrid" class="stage-grid" aria-live="polite"></div>
+        <div id="emptyState" class="empty-state" hidden><strong>نتیجه‌ای پیدا نشد</strong><span>بازه یا فیلترها را کمی بازتر کن.</span></div>
       </div>
-    </div>
-  </div>
-</header>
+    </section>
 
-<nav class="nav"><div class="wrap navin">
-<a href="#routes">مسیرهای پیشنهادی</a><a href="#finder">جستجوی مراحل</a><a href="#weapons">سلاح‌ها</a><a href="#mechanics">مکانیک‌ها</a><a href="#videos">ویدیوها</a><a href="#sources">منابع</a>
-</div></nav>
+    <section id="videos" class="section">
+      <div class="shell">
+        <div class="section-title"><span>کتابخانه ویدیویی</span><h2>راهنمای مرحله‌به‌مرحله</h2></div>
+        <div class="video-note"><div class="youtube-mark"><span></span></div><p>در کارت هر مرحله، در صورت وجود، دکمه <b>«تماشای ویدیو در یوتیوب»</b> قرار دارد. ویدیوهای ویژه مربوط به سختی، ارتقا و مدیریت Gold نیز به همان مرحله متصل شده‌اند.</p></div>
+      </div>
+    </section>
 
-<main>
-<section id="routes"><div class="wrap">
-  <div class="section-head"><div><span class="eyebrow">شروع سریع</span><h2>مسیرهای پیشنهادی</h2></div><p>این‌ها Shortcut هستند؛ برای تصمیم نهایی کارت همان Stage را باز کن.</p></div>
-  <div class="route-grid">
-    <article class="route cash"><span>💰</span><h3>فارم Cash</h3><p>10 → 15 → 28 → 39 → 58</p><small>اگر یک Stage را راحت 98–99٪ می‌بری، قبل از Push بعدی پول جمع کن.</small></article>
-    <article class="route clan"><span>🏆</span><h3>Clan / Frenzy</h3><p>19 · 27 · 28 · 39 · 48 · 58 · 69+</p><small>در Frenzy اولویت با Stageهای سریع و پرKill است. گزارش Community می‌گوید +50% Ad روی Clan Medal هم اعمال می‌شود.</small></article>
-    <article class="route kill"><span>☠️</span><h3>Kill Farming</h3><p>27 · 39 · 48 · 58 · 69 · 78+</p><small>اگر Transport/Cargo نیرو پیاده می‌کند، برای Kill اجازه بده Spawn کامل شود.</small></article>
-    <article class="route danger"><span>⚠️</span><h3>دیوارهای پیشروی</h3><p>10/11 · 19/20 · 23 · 42 · 52 · 66</p><small>قبل از Complete کردن، Cash ذخیره و 25mm/Hydra را بررسی کن.</small></article>
-  </div>
-</div></section>
+    <section id="method" class="section method-section">
+      <div class="shell method-grid">
+        <div><span class="kicker">روش خواندن داده</span><h2>تقریبی، اما کاربردی</h2><p>مقدار Cash و بازده هر Run ثابت نیست؛ درصد پایان، تعداد دشمنانی که Spawn می‌شوند، پیاده شدن نیروهای داخل خودرو، سرعت پاکسازی و تبلیغ +50٪ روی خروجی اثر می‌گذارد. به همین دلیل هرجا عدد کافی داریم، بازه گرد شده نمایش می‌دهیم.</p></div>
+        <div class="legend-card"><div><b>★★★★★</b><span>انتخاب ممتاز</span></div><div><b>★★★★☆</b><span>خیلی خوب</span></div><div><b>★★★☆☆</b><span>قابل استفاده</span></div><div><b>★★☆☆☆</b><span>اولویت پایین‌تر</span></div></div>
+      </div>
+    </section>
+  </main>
 
-<section id="finder"><div class="wrap">
-  <div class="section-head"><div><span class="eyebrow">Stage Intelligence</span><h2>پیدا کردن بهترین مرحله</h2></div><p>چند فیلتر را هم‌زمان روشن کن. بازه پیش‌فرض 1 تا 100 است.</p></div>
+  <footer><div class="shell"><span>مینی‌ویکی War Drone برای <b data-clan></b></span><span>Project authority: <b data-author></b></span></div></footer>
 
-  <div class="control-panel">
-    <div class="searchline">
-      <label class="search"><span>🔎</span><input id="search" placeholder="شماره یا نام مرحله؛ مثلاً 39 یا Steel Blizzard"></label>
-      <select id="sort" aria-label="مرتب‌سازی">
-        <option value="stage">مرتب‌سازی: شماره مرحله</option>
-        <option value="cash">بهترین Cash</option>
-        <option value="clan">بهترین Clan Medal</option>
-        <option value="kill">بیشترین Kill</option>
-        <option value="frenzy">بهترین Frenzy</option>
-        <option value="difficulty">سخت‌ترین مراحل</option>
-      </select>
-    </div>
-
-    <div class="filters">
-      <button class="chip" data-filter="cash">💰 Cash</button>
-      <button class="chip" data-filter="clan">🏆 Clan Medal</button>
-      <button class="chip" data-filter="kill">☠️ Kill</button>
-      <button class="chip" data-filter="frenzy">🔥 Frenzy</button>
-      <button class="chip" data-filter="safe99">🎯 فارم 98–99٪</button>
-      <button class="chip" data-filter="danger">⚠️ مرحله حساس</button>
-      <button class="chip" data-filter="video">▶ ویدیو</button>
-    </div>
-
-    <div class="range-grid">
-      <label><span>از مرحله</span><input id="fromStage" type="number" min="1" max="100" value="1"></label>
-      <label><span>تا مرحله</span><input id="toStage" type="number" min="1" max="100" value="100"></label>
-      <div class="logic"><button class="chip active" data-logic="and">همه معیارها</button><button class="chip" data-logic="or">حداقل یکی</button></div>
-      <button id="reset" class="reset">پاک کردن فیلترها</button>
-    </div>
-    <div class="resultbar"><span id="count"></span><span id="activeSummary">نمایش همه مراحل</span></div>
-  </div>
-
-  <div id="stageCards" class="stage-grid"></div>
-</div></section>
-
-<section id="weapons"><div class="wrap">
-  <div class="section-head"><div><span class="eyebrow">Loadout</span><h2>راهنمای ارتقای سلاح</h2></div><p>اعداد Community راهنما هستند، نه شرط قطعی؛ Buffها و نسخه بازی روی نتیجه اثر دارند.</p></div>
-  <div class="info-grid">
-    <article><h3>25mm Gun</h3><p>اولویت اصلی در بیشتر گزارش‌های بازیکنان. برای عبور از Stage 10 حدود 250–300 و پیش از Stage 20 حدود 390 گزارش شده است.</p><b>نکته:</b><span> Burst Fire برای صرفه‌جویی مهمات.</span></article>
-    <article><h3>Hydra</h3><p>برای Infantry Cluster و چند هدف نزدیک بسیار مهم است. حدود 60–75 برای حوالی Stage 10 و حدود 90 برای Stage 20 در تجربه کاربران دیده شده.</p><b>نکته:</b><span> روی گروه‌ها خرجش کن، نه تک‌هدف ضعیف.</span></article>
-    <article><h3>Hellfire</h3><p>برای Tank و اهداف زرهی/کلیدی نگه دار. حوالی Stage 10 مقدار 10–15 و حوالی Stage 20 حدود 25–30 در گزارش‌ها دیده شده است.</p><b>نکته:</b><span> مهماتش را برای موج‌های حساس ذخیره کن.</span></article>
-    <article><h3>Buff / Support</h3><p>در Stageهای دریایی و هوایی، کارت‌های تخصصی و Support می‌توانند مهم‌تر از یک ارتقای خام باشند. Stage 42 نمونه واضح این موضوع است.</p><b>نکته:</b><span> قبل از Push، هدف مرحله را بخوان و Loadout را تطبیق بده.</span></article>
-  </div>
-</div></section>
-
-<section id="mechanics"><div class="wrap">
-  <div class="section-head"><div><span class="eyebrow">ترفندهای مهم</span><h2>مکانیک‌هایی که روی فارم اثر می‌گذارند</h2></div></div>
-  <div class="mechanics">
-    <article><b>98–99% Farming</b><p>دشمن آخر را زنده بگذار، Cash مرحله را جمع کن و اجازه بده Attempt تمام شود تا Stage Complete نشود. این روش در چند گزارش مستقل Community تکرار شده است.</p></article>
-    <article><b>+50% Advertisement</b><p>تبلیغ پایان Attempt به‌صورت رسمی Reward را بیشتر می‌کند. گزارش کاربران Clan می‌گوید این افزایش روی Clan Medal هم دیده می‌شود؛ در ویکی با برچسب Community نگهداری می‌شود.</p></article>
-    <article><b>Fast Run vs Kill Run</b><p>برای Cash/min حمل‌ونقل دشمن را سریع نابود کن؛ برای Kill/Clan اگر نیرو پیاده می‌کند، صبر کن Spawn کامل شود و بعد پاکسازی کن.</p></article>
-    <article><b>قبل از Push</b><p>اگر یک Stage را «لب مرز» رد می‌کنی، Stage بعد احتمالاً ناکارآمد می‌شود. بهتر است قبل از Complete، پول چند ارتقای آینده را ذخیره کنی.</p></article>
-  </div>
-</div></section>
-
-<section id="videos"><div class="wrap">
-  <div class="section-head"><div><span class="eyebrow">Video Library</span><h2>ویدیوهای آموزشی</h2></div><p>در کارت هر Stage، ویدیوی همان مرحله نمایش داده می‌شود. اینجا ویدیوهای ویژه و عمومی را می‌بینی.</p></div>
-  <div id="specialVideos" class="video-grid"></div>
-</div></section>
-
-<section id="sources"><div class="wrap">
-  <div class="section-head"><div><span class="eyebrow">روش داده</span><h2>داده‌ها چطور خوانده شوند؟</h2></div></div>
-  <div class="sourcebox">
-    <p>این ویکی یک دیتابیس رسمی Miniclip نیست؛ راهنمای عملی Community است. داده‌ها از ویدیوهای Tender Gaming، تجربه بازیکنان Reddit، صفحات پشتیبانی رسمی و گزارش‌های عمومی جمع شده‌اند.</p>
-    <p>برای Rewardها به‌جای یک عدد ظاهراً دقیق، از <b>بازه، رتبه نسبی و Confidence</b> استفاده می‌کنیم؛ چون Spawn، سرعت Run، 98/99٪، تبلیغ، Buff و Balance Update می‌توانند خروجی را تغییر دهند.</p>
-    <div class="source-links">
-      <a href="https://support.wardrone.miniclip.com/" target="_blank" rel="noopener">پشتیبانی رسمی War Drone</a>
-      <a href="https://www.reddit.com/r/wardrone_mobile/" target="_blank" rel="noopener">Community در Reddit</a>
-      <a href="https://www.youtube.com/@tendergaming" target="_blank" rel="noopener">Tender Gaming در YouTube</a>
-    </div>
-  </div>
-</div></section>
-</main>
-
-<footer><div class="wrap footerin"><div><b data-clan></b> · War Drone Mini‑Wiki</div><div>تهیه و گردآوری: <b data-author></b> · طراحی و پیاده‌سازی با ChatGPT</div></div></footer>
-<script src="assets/js/config.js"></script><script src="assets/js/app.js"></script>
-</body></html>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
