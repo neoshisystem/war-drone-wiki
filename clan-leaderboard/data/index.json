@@ -1,0 +1,26 @@
+{
+  "clan": "PERSIA",
+  "game": "War Drone",
+  "reports": [
+    {
+      "id": "2026-09-12-2330",
+      "period": 2,
+      "date_persian": "21 شهریور ۱۴۰۵",
+      "time": "23:30",
+      "type": "delta-report",
+      "members": 46,
+      "capacity": "46/50",
+      "page": "../clan-leaderboard.html"
+    },
+    {
+      "id": "2026-09-12-1900",
+      "period": 1,
+      "date_persian": "21 شهریور ۱۴۰۵",
+      "time": "19:00",
+      "type": "baseline",
+      "members": 47,
+      "capacity": "47/50",
+      "page": "../reports/2026-09-12-1900.html"
+    }
+  ]
+}
