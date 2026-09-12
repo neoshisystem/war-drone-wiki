@@ -12,7 +12,7 @@
     title:'جدول جامع عملکرد و تغییرات اعضا', date:'۲۱ شهریور ۱۴۰۵', time:'۲۳:۳۰', period:'دوره ۰۲', sourceLabel:'Latest / Delta Report',
     prev:'reports/2026-09-12-1900-view.html?source=2026-09-12-1900.html&mode=graphic', next:null, archive:'archive.html'
   };
-  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const esc = s => String(s ?? '').replace(/[&<>\"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]));
   const text = el => el ? el.textContent.trim() : '';
   const nav = `<nav class="nav"><a class="btn" href="${config.prev || '#'}" ${config.prev?'':'aria-disabled="true"'}>← دوره قبل</a><a class="btn" href="${config.archive}">آرشیو</a><a class="btn" href="${config.next || '#'}" ${config.next?'':'aria-disabled="true"'}>دوره بعد →</a></nav>`;
   fetch(source).then(r => { if(!r.ok) throw new Error('source'); return r.text(); }).then(html => {
@@ -54,9 +54,18 @@
     const cardView = m => `<article class="member"><header><div><span class="rank">${esc(m.rank)}</span><div><h3>${esc(m.name)}</h3><small>${esc(m.role)}</small></div></div><b>${esc(m.movement||'')}</b></header><div class="stats">${keys.map(k=>`<div class="stat"><span>${esc(k)}</span><strong>${esc(m.stats[k]||'—')}</strong></div>`).join('')}</div></article>`;
     let sortIndex = null;
     let sortDirection = 1;
-    const sortButton = (label, index, sortable) => sortable ? `<button type="button" class="sort-button" data-sort-index="${index}" aria-label="مرتب‌سازی بر اساس ${esc(label)}">${esc(label)}<span class="sort-indicator" aria-hidden="true">↕</span></button>` : esc(label);
+    const sortButton = (label, index, sortable) => sortable ? `<button type="button" class="sort-button" data-sort-index="${index}" aria-label="مرتب‌سازی بر اساس ${esc(label)}"><span class="sort-label">${esc(label)}<span class="sort-indicator" aria-hidden="true">↕</span></span></button>` : esc(label);
     const table = list => `<div class="table-wrap"><table><thead><tr><th>${sortButton('رتبه',0,true)}</th><th>${sortButton('نام کاربری',1,true)}</th><th>${sortButton('سمت',2,true)}</th>${keys.map((k,i)=>`<th>${sortButton(k,i+3,sortableStats.has(k))}</th>`).join('')}</tr></thead><tbody>${list.map(m=>`<tr><td>${esc(m.rank)}</td><td>${esc(m.name)}</td><td>${esc(m.role)}</td>${keys.map(k=>`<td>${esc(m.stats[k]||'—')}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
-    root.innerHTML = `<section class="hero"><span class="badge">PERSIA · ${esc(config.period)}</span><h1>${esc(config.title)}</h1><p>${esc(config.date)} · ساعت ${esc(config.time)} · ${esc(config.sourceLabel)}</p><div class="meta"><span>${members.length} عضو</span><span>داده از یک منبع واحد</span><span>نمایش ساده و گرافیکی از همان داده</span></div></section><section class="toolbar"><input id="search" class="search" type="search" placeholder="جست‌وجوی نام کاربری، سمت یا مقدار..."><div class="switch"><button data-mode="simple">نمایش ساده</button><button data-mode="graphic">نمایش گرافیکی</button></div></section><div id="results"></div>${nav}`;
+    root.innerHTML = `<style>
+      #viewer .table-wrap th .sort-button{appearance:none;-webkit-appearance:none;border:0!important;background:transparent!important;color:var(--cyan)!important;font:inherit;font-weight:900;display:flex;align-items:center;justify-content:flex-start;gap:6px;width:100%;min-height:34px;padding:4px 0!important;margin:0;cursor:pointer;text-align:right;box-shadow:none!important;border-radius:6px;}
+      #viewer .table-wrap th .sort-button:hover{color:#fff!important;background:rgba(49,216,255,.06)!important;}
+      #viewer .table-wrap th .sort-button:focus-visible{outline:2px solid var(--cyan);outline-offset:-2px;}
+      #viewer .table-wrap th .sort-label{display:inline-flex;align-items:center;gap:6px;line-height:1.25;}
+      #viewer .table-wrap th .sort-indicator{display:inline-grid;place-items:center;flex:0 0 16px;width:16px;height:16px;border:1px solid transparent;border-radius:4px;color:var(--muted);font-size:.72rem;line-height:1;opacity:.8;}
+      #viewer .table-wrap th .sort-button:hover .sort-indicator{border-color:var(--line);color:var(--cyan);}
+      #viewer .table-wrap th .sort-button[data-sort-active="true"] .sort-indicator{border-color:rgba(49,216,255,.45);background:rgba(49,216,255,.08);color:var(--cyan);opacity:1;}
+      @media(max-width:620px){#viewer .table-wrap th .sort-button{gap:4px;min-height:32px;}#viewer .table-wrap th .sort-indicator{flex-basis:14px;width:14px;}}
+    </style><section class="hero"><span class="badge">PERSIA · ${esc(config.period)}</span><h1>${esc(config.title)}</h1><p>${esc(config.date)} · ساعت ${esc(config.time)} · ${esc(config.sourceLabel)}</p><div class="meta"><span>${members.length} عضو</span><span>داده از یک منبع واحد</span><span>نمایش ساده و گرافیکی از همان داده</span></div></section><section class="toolbar"><input id="search" class="search" type="search" placeholder="جست‌وجوی نام کاربری، سمت یا مقدار..."><div class="switch"><button data-mode="simple">نمایش ساده</button><button data-mode="graphic">نمایش گرافیکی</button></div></section><div id="results"></div>${nav}`;
     const results=root.querySelector('#results'), input=root.querySelector('#search'), sb=root.querySelector('[data-mode="simple"]'), gb=root.querySelector('[data-mode="graphic"]');
     let current=mode;
     const render=()=>{
@@ -80,8 +89,8 @@
         render();
       }));
       if (sortIndex !== null) {
-        const active=root.querySelector(`[data-sort-index="${sortIndex}"] .sort-indicator`);
-        if(active) active.textContent=sortDirection===1?'↑':'↓';
+        const active=root.querySelector(`[data-sort-index="${sortIndex}"]`);
+        if(active){active.dataset.sortActive='true';const indicator=active.querySelector('.sort-indicator');if(indicator)indicator.textContent=sortDirection===1?'↑':'↓';}
       }
     };
     input.addEventListener('input',render); sb.addEventListener('click',()=>{current='simple';render()}); gb.addEventListener('click',()=>{current='graphic';render()}); render();
