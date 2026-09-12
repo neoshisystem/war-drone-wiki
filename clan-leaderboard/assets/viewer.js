@@ -1,9 +1,9 @@
 (() => {
   const qs = new URLSearchParams(location.search);
-  const source = qs.get('source');
+  const source = qs.get('source') || '../clan-leaderboard.html';
   const mode = qs.get('mode') || 'graphic';
   const root = document.querySelector('#viewer');
-  if (!source || !root) return;
+  if (!root) return;
   const isBaseline = source.includes('2026-09-12-1900');
   const config = isBaseline ? {
     title:'ثبت اولیه ۴۷ عضو', date:'۲۱ شهریور ۱۴۰۵', time:'۱۹:۰۰', period:'دوره ۰۱', sourceLabel:'Baseline',
