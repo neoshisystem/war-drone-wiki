@@ -1,16 +1,16 @@
 (() => {
   const qs = new URLSearchParams(location.search);
   const source = qs.get('source') || '../clan-leaderboard.html';
-  const mode = qs.get('mode') || 'graphic';
+  const mode = qs.get('mode') || 'simple';
   const root = document.querySelector('#viewer');
   if (!root) return;
   const isBaseline = source.includes('2026-09-12-1900');
   const config = isBaseline ? {
     title:'ثبت اولیه ۴۷ عضو', date:'۲۱ شهریور ۱۴۰۵', time:'۱۹:۰۰', period:'دوره ۰۱', sourceLabel:'Baseline',
-    prev:null, next:'../index.html?source=../clan-leaderboard.html&mode=graphic', archive:'../archive.html'
+    prev:null, next:'../index.html?source=../clan-leaderboard.html&mode=simple', archive:'../archive.html'
   } : {
-    title:'جدول جامع عملکرد و تغییرات اعضا', date:'۲۱ شهریور ۱۴۰۵', time:'۲۳:۳۰', period:'دوره ۰۲', sourceLabel:'Latest / Delta Report',
-    prev:'reports/2026-09-12-1900-view.html?source=2026-09-12-1900.html&mode=graphic', next:null, archive:'archive.html'
+    title:'جدول جامع عملکرد و تغییرات اعضای کلن', date:'۲۱ شهریور ۱۴۰۵', time:'۲۳:۳۰', period:'دوره ۰۲', sourceLabel:'Latest / Delta Report',
+    prev:'reports/2026-09-12-1900-view.html?source=2026-09-12-1900.html&mode=simple', next:null, archive:'archive.html'
   };
   const esc = s => String(s ?? '').replace(/[&<>\"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]));
   const text = el => el ? el.textContent.trim() : '';
@@ -69,6 +69,8 @@
     const results=root.querySelector('#results'), input=root.querySelector('#search'), sb=root.querySelector('[data-mode="simple"]'), gb=root.querySelector('[data-mode="graphic"]');
     let current=mode;
     const render=()=>{
+      const previousTableWrap=results.querySelector('.table-wrap');
+      const previousScrollLeft=previousTableWrap ? previousTableWrap.scrollLeft : 0;
       const q=input.value.trim().toLowerCase();
       let list=members.filter(m=>([m.rank,m.name,m.role,m.movement,...Object.values(m.stats)].join(' ').toLowerCase()).includes(q));
       if (sortIndex !== null) {
@@ -83,6 +85,8 @@
       }
       results.innerHTML=`<div class="count">${list.length} نتیجه</div>`+(current==='simple'?table(list):`<div class="members">${list.map(cardView).join('')}</div>`);
       sb.classList.toggle('active',current==='simple');gb.classList.toggle('active',current==='graphic');
+      const newTableWrap=results.querySelector('.table-wrap');
+      if(newTableWrap) requestAnimationFrame(()=>{newTableWrap.scrollLeft=previousScrollLeft;});
       root.querySelectorAll('[data-sort-index]').forEach(btn=>btn.addEventListener('click',()=>{
         const index=Number(btn.dataset.sortIndex);
         if(sortIndex===index) sortDirection*=-1; else {sortIndex=index;sortDirection=1;}
