@@ -13,6 +13,7 @@ const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'war-drone-publish-'));
 const tempTools = path.join(tempRoot, 'tools');
 const tempData = path.join(tempRoot, 'data');
 const tempReports = path.join(tempRoot, 'reports');
+const tempArchive = path.join(tempRoot, 'archive.html');
 const fixture = path.join(tempRoot, 'S05.json');
 
 function copy(source, target) { fs.mkdirSync(path.dirname(target), { recursive: true }); fs.copyFileSync(source, target); }
@@ -27,8 +28,9 @@ try {
   fs.mkdirSync(tempData, { recursive: true });
   fs.mkdirSync(tempReports, { recursive: true });
   for (const file of ['players.json', 'snapshots.json', 'player-observations.json', 'player-observations-history.json', 'memberships.json', 'index.json']) copy(path.join(DATA, file), path.join(tempData, file));
-  for (const file of ['ingest-snapshot-v4.js', 'generate-report.js', 'ingest-and-publish.js']) copy(path.join(TOOLS, file), path.join(tempTools, file));
-
+  for (const file of ['ingest-snapshot-v4.js', 'generate-report.js', 'ingest-and-publish.js', 'generate-archive.js']) copy(path.join(TOOLS, file), path.join(tempTools, file));
+  copy(path.join(ROOT, 'archive.html'), tempArchive);
+  
   const input = {
     snapshot: { captured_at_utc: '2026-09-14T04:00:00Z', date_persian: '23 شهریور 1405', time_iran: '07:30', type: 'delta-report', members: 1, capacity: 50 },
     players: [{ player_id: 'PERSIA-P-0001', display_name: 'Commander Publish E2E', role: 'Member', rank: 1, rank_movement: null, stage: 58, league_medals: 301000, league_medals_delta: null, clan_medals: 1201000, honor_medals: { gold: 1, silver: 3, bronze: 3 }, total_kills: 220100, kills_delta: null, weapons: { '25mm': 910, hydra: 249, hellfire: 66, upgrade_deltas: {} }, last_online_display: '1m ago' }]
@@ -50,7 +52,12 @@ try {
   const published = snapshots.snapshots.find((item) => item.snapshot_id === 'S05');
   if (!published || published.source_report !== '/clan-leaderboard/reports/2026-09-14-0730.html') throw new Error('PUBLISH E2E: source_report not persisted');
 
-  console.log('INGEST + PUBLISH TEST PASS: JSON -> canonical -> report -> index.');
+  fs.copyFileSync(path.join(tempRoot, 'archive.html'), tempArchive);
+  const archive = fs.readFileSync(tempArchive, 'utf8');
+  if (!archive.includes('reports/2026-09-14-0730.html')) throw new Error('PUBLISH E2E: archive was not updated');
+  if (parsed.archive !== 'updated') throw new Error('PUBLISH E2E: publication result did not report archive update');
+
+  console.log('INGEST + PUBLISH TEST PASS: JSON -> canonical -> report -> index -> archive.');
 } finally {
   fs.rmSync(tempRoot, { recursive: true, force: true });
 }
