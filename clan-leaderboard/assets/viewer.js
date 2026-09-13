@@ -8,7 +8,7 @@ const navUrl=(path,query='')=>new URL(path,lbDir).pathname+query;
 const config=baseline?{title:'ثبت اولیه ۴۷ عضو',date:'۲۱ شهریور ۱۴۰۵',time:'۱۹:۰۰',period:'دوره ۰۱',prev:null,next:navUrl('index.html','?source=../clan-leaderboard.html&mode=simple'),archive:navUrl('archive.html')}:current?{title:'جدول جامع عملکرد و تغییرات اعضای کلن',date:'۲۲ شهریور ۱۴۰۵',time:'۱۱:۳۰',period:'دوره ۰۳',prev:navUrl('index.html','?source=../clan-leaderboard.html&mode=simple'),next:null,archive:navUrl('archive.html')}:{title:'جدول جامع عملکرد و تغییرات اعضای کلن',date:'۲۱ شهریور ۱۴۰۵',time:'۲۳:۳۰',period:'دوره ۰۲',prev:navUrl('reports/2026-09-12-1900-view.html','?source=2026-09-12-1900.html&mode=simple'),next:navUrl('index.html','?source=reports/2026-09-13-1130.html&mode=simple'),archive:navUrl('archive.html')};
 const esc=s=>String(s??'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]));
 const text=e=>e?e.textContent.trim():'';
-const nav=`<nav class="nav"><a class="btn" href="${config.prev||'#'}" ${config.prev?'':'aria-disabled="true"'}>← دوره قبل</a><a class="btn" href="${config.archive}">آرشیو</a><a class="btn" href="${config.next||'#'}" ${config.next?'':'aria-disabled="true"'}>دوره بعد →</a></nav>`;
+const nav=`<nav class="viewer-nav"><a class="btn" href="${config.prev||'#'}" ${config.prev?'':'aria-disabled="true"'}>← دوره قبل</a><a class="btn" href="${config.archive}">آرشیو</a><a class="btn" href="${config.next||'#'}" ${config.next?'':'aria-disabled="true"'}>دوره بعد →</a></nav>`;
 Promise.all([
   fetch(new URL(source,location.href)).then(r=>{if(!r.ok)throw new Error('source');return r.text()}),
   fetch(new URL('data/player-observations.json',lbDir)).then(r=>{if(!r.ok)throw new Error('current-data');return r.json()}),
