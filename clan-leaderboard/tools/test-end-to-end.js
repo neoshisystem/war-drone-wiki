@@ -91,8 +91,8 @@ try {
   fs.writeFileSync(fixture, `${JSON.stringify(input, null, 2)}\n`, 'utf8');
 
   const ingestOutput = runNode(path.join(tempTools, 'ingest-snapshot-v4.js'), [fixture, '--write']);
-  const jsonLine = ingestOutput.trim().split('\n').filter((line) => line.trim().startsWith('{')).at(-1);
-  const ingest = JSON.parse(jsonLine);
+  const jsonPart = ingestOutput.replace(/\nWRITE COMPLETE:\s*S05\s*$/u, '').trim();
+  const ingest = JSON.parse(jsonPart);
   if (!ingest.ok || ingest.snapshot_id !== 'S05') throw new Error('E2E: S05 ingestion failed');
 
   const reportPath = path.join(tempReports, '2026-09-14-0700.html');
