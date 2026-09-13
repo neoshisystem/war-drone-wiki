@@ -1,4 +1,9 @@
 {
-  "content": "{\n  \"clan\": \"PERSIA\",\n  \"game\": \"War Drone\",\n  \"reports\": [\n    {\n      \"id\": \"2026-09-13-1130\",\n      \"period\": 3,\n      \"date_persian\": \"22 شهریور ۱۴۰۵\",\n      \"time\": \"11:30\",\n      \"type\": \"delta-report\",\n      \"members\": 47,\n      \"capacity\": \"47/50\",\n      \"page\": \"../reports/2026-09-13-1130.html\"\n    },\n    {\n      \"id\": \"2026-09-12-2330\",\n      \"period\": 2,\n      \"date_persian\": \"21 شهریور ۱۴۰۵\",\n      \"time\": \"23:30\",\n      \"type\": \"delta-report\",\n      \"members\": 46,\n      \"capacity\": \"46/50\",\n      \"page\": \"../clan-leaderboard.html\"\n    },\n    {\n      \"id\": \"2026-09-12-1900\",\n      \"period\": 1,\n      \"date_persian\": \"21 شهریور ۱۴۰۵\",\n      \"time\": \"19:00\",\n      \"type\": \"baseline\",\n      \"members\": 47,\n      \"capacity\": \"47/50\",\n      \"page\": \"../reports/2026-09-12-1900.html\"\n    }\n  ]\n}\n",
-  "encoding": "utf-8"
+  "clan": "PERSIA",
+  "game": "War Drone",
+  "reports": [
+    {"id":"2026-09-13-1130","period":3,"date_persian":"22 \u0634\u0647\u0631\u06cc\u0648\u0631 1405","time":"11:30","type":"delta-report","members":47,"capacity":"47/50","page":"../reports/2026-09-13-1130.html"},
+    {"id":"2026-09-12-2330","period":2,"date_persian":"21 \u0634\u0647\u0631\u06cc\u0648\u0631 1405","time":"23:30","type":"delta-report","members":46,"capacity":"46/50","page":"../clan-leaderboard.html"},
+    {"id":"2026-09-12-1900","period":1,"date_persian":"21 \u0634\u0647\u0631\u06cc\u0648\u0631 1405","time":"19:00","type":"baseline","members":47,"capacity":"47/50","page":"../reports/2026-09-12-1900.html"}
+  ]
 }
