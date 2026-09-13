@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "reset": {"weekday":"Thursday","time_iran":"03:30","time_utc":"00:00"},
+  "leagues": [
+    {"league_week":"2026-08-13","league":"Silver III","rank":1,"member_count":48,"score_display":"3.3M","result":"promoted","source":"in-game screenshot"},
+    {"league_week":"2026-08-20","league":"Silver II","rank":1,"member_count":50,"score_display":"5.4M","result":"promoted","source":"in-game screenshot"},
+    {"league_week":"2026-08-27","league":"Silver I","rank":1,"member_count":47,"score_display":"6.3M","result":"promoted","source":"in-game screenshot"},
+    {"league_week":"2026-09-03","league":"Gold III","rank":1,"member_count":41,"score_display":"5.9M","result":"promoted","source":"in-game screenshot"},
+    {"league_week":"2026-09-10","league":"Gold II","rank":1,"member_count":47,"score_display":"2.9M","result":"in_progress","source":"in-game screenshot"}
+  ],
+  "notes": [
+    "Only the observed display value is stored; hidden precision is not inferred.",
+    "Promotion is recorded from the observed one-tier-per-week PERSIA sequence, not as a generic game rule implementation."
+  ]
+}
