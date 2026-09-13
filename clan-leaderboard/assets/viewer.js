@@ -12,11 +12,15 @@ const nav=`<nav class="viewer-nav"><a class="btn" href="${config.prev||'#'}" ${c
 Promise.all([
   fetch(new URL(source,location.href)).then(r=>{if(!r.ok)throw new Error('source');return r.text()}),
   fetch(new URL('data/player-observations.json',lbDir)).then(r=>{if(!r.ok)throw new Error('current-data');return r.json()}),
-  fetch(new URL('data/player-observations-history.json',lbDir)).then(r=>{if(!r.ok)throw new Error('history-data');return r.json()})
-]).then(([html,currentData,historyData])=>{
+  fetch(new URL('data/player-observations-history.json',lbDir)).then(r=>{if(!r.ok)throw new Error('history-data');return r.json()}),
+  fetch(new URL('data/players.json',lbDir)).then(r=>{if(!r.ok)throw new Error('players-data');return r.json()})
+]).then(([html,currentData,historyData,playersData])=>{
 const doc=new DOMParser().parseFromString(html,'text/html'),members=[];
 const canonicalSnapshots={...(historyData.snapshots||{}),...(currentData.snapshots||{})};
-const playerByName=new Map((canonicalSnapshots[snapshotKey]||[]).map(o=>[String(o.display_name),o.player_id]));
+const playerById=new Map((playersData.players||[]).map(p=>[p.player_id,p]));
+const playerByName=new Map((playersData.players||[]).map(p=>[String(p.display_name),p.player_id]));
+const snapshotPlayers=canonicalSnapshots[snapshotKey]||[];
+snapshotPlayers.forEach(o=>{const p=playerById.get(o.player_id);if(p&&p.display_name)playerByName.set(String(p.display_name),o.player_id)});
 const cards=[...doc.querySelectorAll('.member')];
 if(cards.length)cards.forEach(card=>{const stats={};card.querySelectorAll('.stat').forEach(s=>stats[text(s.querySelector('span'))]=text(s.querySelector('strong')));members.push({rank:(text(card.querySelector('.rank')).match(/^\d+/)||[''])[0],name:text(card.querySelector('h3')),role:text(card.querySelector('.role')),movement:text(card.querySelector('.movement')),stats});});
 else doc.querySelectorAll('tbody tr').forEach(tr=>{const c=[...tr.children].map(text);if(c.length>=12)members.push({rank:c[0],name:c[1],role:c[2],movement:c[0],stats:{'استیج':c[3],'مدال لیگ جاری':c[4],'تغییر مدال لیگ':c[5],'مدال کل کلن':c[6],'مدال افتخار (طلا / نقره / برنز)':c[7],'مجموع کیل 💀':c[8],'افزایش کیل 💀':c[9],'لول سلاح‌ها (توپ / هیدرا / هل‌فایر)':c[10],'آخرین آنلاین':c[11]}});else if(c.length>=10)members.push({rank:c[0],name:c[1],role:c[2],movement:c[0],stats:{'استیج':c[3],'مدال لیگ جاری':c[4],'مدال کل کلن':c[5],'مجموع کیل 💀':c[6],'لول سلاح‌ها (توپ / هیدرا / هل‌فایر)':c[7],'مدال‌های افتخار (طلا / نقره / برنز)':c[8],'آخرین آنلاین':c[9]}});else if(c.length>=11)members.push({rank:c[0],name:c[1],role:c[2],movement:c[0],stats:{'استیج':c[3],'مدال لیگ جاری':c[4],'تغییرات مدال لیگ':c[5],'مدال کل کلن':c[6],'مجموع کیل 💀':c[7],'افزایش کیل 💀':c[8],'لول سلاح‌ها (توپ / هیدرا / هل‌فایر)':c[9],'آخرین آنلاین':c[10]}});});
