@@ -25,7 +25,7 @@ try {
     if (!html.includes(`reports/${id}.html`)) throw new Error(`missing archive link for ${id}`);
   }
   if (!html.includes('clan-leaderboard.html')) throw new Error('missing S02 archive link');
-  if (!html.includes('دوره ۰۴')) throw new Error('missing newest period label');
+  if (!html.includes('دوره 4')) throw new Error('missing newest period label');
   console.log('ARCHIVE GENERATOR TEST PASS: index.json -> deterministic archive with all current reports.');
 } finally {
   fs.rmSync(temp, { force: true });
