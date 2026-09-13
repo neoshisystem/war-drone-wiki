@@ -12,6 +12,13 @@
   if(nav&&topbar&&!topbar.querySelector('.mobile-nav-toggle')){const toggle=document.createElement('button');toggle.type='button';toggle.className='mobile-nav-toggle';toggle.setAttribute('aria-expanded','false');toggle.setAttribute('aria-label','باز کردن منوی سایت');toggle.innerHTML='<span>☰</span><b>منو</b>';const theme=topbar.querySelector('.theme-toggle');topbar.insertBefore(toggle,theme||nav);toggle.addEventListener('click',()=>{const open=document.body.classList.toggle('nav-open');toggle.setAttribute('aria-expanded',open?'true':'false');toggle.querySelector('span').textContent=open?'×':'☰';});nav.addEventListener('click',e=>{if(e.target.closest('a')){document.body.classList.remove('nav-open');toggle.setAttribute('aria-expanded','false');toggle.querySelector('span').textContent='☰';}});}
   const raw=localStorage.getItem('wd-current-stage');const hasStage=raw!==null&&raw!==''&&Number(raw)>=1;const savedStage=hasStage?Math.max(1,Math.min(100,Number(raw))):null;const syncText=v=>document.querySelectorAll('[data-current-stage-text]').forEach(x=>x.textContent=v??'ثبت نشده');
   document.querySelectorAll('[data-current-stage]').forEach(inp=>{inp.value=savedStage??'';inp.placeholder=inp.placeholder||'مثلاً 20';const update=()=>{if(inp.value===''){localStorage.removeItem('wd-current-stage');syncText(null);document.dispatchEvent(new CustomEvent('wd-stage-clear'));return;}const v=Math.max(1,Math.min(100,Number(inp.value)||1));inp.value=v;localStorage.setItem('wd-current-stage',v);syncText(v);document.dispatchEvent(new CustomEvent('wd-stage-change',{detail:v}));};inp.addEventListener('input',update);inp.addEventListener('change',update);});syncText(savedStage);
+
+  const page=location.pathname.split('/').pop()||'index.html';
+  if(['advisor.html','clan.html','arsenal.html'].includes(page)){
+    if(!document.querySelector('link[data-player-context-css]')){const l=document.createElement('link');l.rel='stylesheet';l.href='assets/css/player-context.css';l.dataset.playerContextCss='1';document.head.appendChild(l);}
+    if(!document.querySelector('script[data-player-context-js]')){const s=document.createElement('script');s.src='assets/js/player-context.js';s.defer=true;s.dataset.playerContextJs='1';document.head.appendChild(s);}
+  }
+
   const replacements=[
     [/Weapon & Progression Advisor/g,'راهنمای پیشروی و سلاح'],[/Weapon Readiness/g,'آمادگی سلاح‌ها'],[/Frenzy Planner/g,'راهنمای فرنزی'],
     [/Benchmark/g,'معیار مقایسه تجربی'],[/Requirement/g,'شرط رسمی'],[/Build/g,'وضعیت سلاح‌ها'],[/Late-game/g,'مراحل پایانی'],[/Early-game/g,'مراحل ابتدایی'],
