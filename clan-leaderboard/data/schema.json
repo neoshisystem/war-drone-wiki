@@ -10,6 +10,7 @@
   "identity": {
     "player_id": "Stable internal identifier owned by this site; not a War Drone account ID.",
     "display_name": "Current in-game display name; may change over time.",
+    "role": "Current clan role metadata; snapshot tables use this same confirmed role unless a historical role field is explicitly recorded.",
     "rank": "Snapshot-local position only; never an identity key."
   },
   "time": {
