@@ -23,8 +23,7 @@
       ...(history.snapshots || {}),
       ...(current.snapshots || {})
     };
-    // Newest Snapshot first; oldest Snapshot last.
-    const order = Object.keys(snapshotSets).sort().reverse();
+    const order = Object.keys(snapshotSets).sort();
     const snapshotMeta = {
       S01: { period: 'دوره ۰۱', date: '۲۱ شهریور ۱۴۰۵', time: '۱۹:۰۰' },
       S02: { period: 'دوره ۰۲', date: '۲۱ شهریور ۱۴۰۵', time: '۲۳:۳۰' },
@@ -36,7 +35,7 @@
       obs: (snapshotSets[key] || []).find(x => x.player_id === id) || null
     }));
 
-    const activeRow = rows.find(x => x.obs) || rows[0] || { obs: null };
+    const activeRow = [...rows].reverse().find(x => x.obs) || rows[rows.length - 1] || { obs: null };
     const fmt = n => n == null ? '—' : Number(n).toLocaleString('en-US');
     const esc = s => String(s ?? '').replace(/[&<>\"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;', "'": '&#39;' }[c]));
     const signed = n => n == null ? '—' : Number(n) > 0 ? `+${fmt(n)}` : fmt(n);
@@ -101,12 +100,10 @@
     const renderObservation = (key, o) => {
       if (!o) {
         return `<tr class="snapshot-missing">
-          <td class="snapshot-cell" colspan="1">${snapshotLabel(key)}</td>
-          <td colspan="12">این بازیکن در Snapshot ${esc(key)} حضور نداشته است.</td>
+          <td colspan="13">این بازیکن در Snapshot ${esc(key)} حضور نداشته است.</td>
         </tr>`;
       }
       return `<tr>
-        <td class="snapshot-cell">${snapshotLabel(key)}</td>
         <td class="rank-cell">${esc(rankDisplay(o))}</td>
         <td><a class="player-name-link" href="player.html?id=${encodeURIComponent(player.player_id)}">${esc(player.display_name)}</a></td>
         <td>${esc(player.role || 'Member')}</td>
@@ -119,6 +116,7 @@
         <td>${esc(deltaDisplay(o, 'kills_delta'))}</td>
         <td>${esc(weaponDisplay(o))}</td>
         <td>${esc(o.last_online_display || '—')}</td>
+        <td class="snapshot-cell">${snapshotLabel(key)}</td>
       </tr>`;
     };
 
@@ -157,13 +155,13 @@
           <div>
             <span class="badge">HISTORY</span>
             <h2>تاریخچه عملکرد کاربر</h2>
-            <p class="muted">هر سطر یک Snapshot است و ترتیب و عنوان ستون‌ها با جدول اصلی Leaderboard یکسان نگه داشته شده است. جدیدترین Snapshot در بالا قرار دارد و مشخصات Snapshot در ابتدای جدول از سمت راست ثابت می‌ماند.</p>
+            <p class="muted">هر سطر یک Snapshot است و ترتیب و عنوان ستون‌ها با جدول اصلی Leaderboard یکسان نگه داشته شده است. مشخصات Snapshot در ستون انتهایی هر سطر قرار دارد.</p>
           </div>
         </div>
         <div class="table-wrap profile-history-wrap">
           <table class="profile-history-table">
             <thead>
-              <tr><th class="snapshot-cell">Snapshot</th>${leaderboardColumns.map(c => `<th>${c}</th>`).join('')}</tr>
+              <tr>${leaderboardColumns.map(c => `<th>${c}</th>`).join('')}<th>Snapshot</th></tr>
             </thead>
             <tbody>${tableRows}</tbody>
           </table>
