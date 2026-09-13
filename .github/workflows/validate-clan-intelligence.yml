@@ -1,0 +1,24 @@
+name: Validate Clan Intelligence
+
+on:
+  pull_request:
+    paths:
+      - 'clan-leaderboard/**'
+      - '.github/workflows/validate-clan-intelligence.yml'
+
+jobs:
+  canonical:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Node syntax checks
+        run: |
+          node --check clan-leaderboard/tools/ingest-snapshot.js
+          node --check clan-leaderboard/tools/ingest-snapshot-v4.js
+          node --check clan-leaderboard/tools/validate-canonical.js
+          node --check clan-leaderboard/tools/validate-ingestion.js
+      - name: Canonical validation
+        run: node clan-leaderboard/tools/validate-ingestion.js
