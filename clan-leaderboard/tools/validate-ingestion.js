@@ -1,143 +1,16 @@
 #!/usr/bin/env node
 'use strict';
-
-const fs = require('fs');
-const path = require('path');
-
-const ROOT = path.resolve(__dirname, '..');
-const DATA = path.join(ROOT, 'data');
-const REPORTS = path.join(ROOT, 'reports');
-
-function readJson(name) {
-  return JSON.parse(fs.readFileSync(path.join(DATA, name), 'utf8'));
-}
-
-const playersFile = readJson('players.json');
-const snapshotsFile = readJson('snapshots.json');
-const historyFile = readJson('player-observations-history.json');
-const currentFile = readJson('player-observations.json');
-const membershipsFile = readJson('memberships.json');
-
-const errors = [];
-const players = Array.isArray(playersFile.players) ? playersFile.players : [];
-const snapshots = Array.isArray(snapshotsFile.snapshots) ? snapshotsFile.snapshots : [];
-const memberships = Array.isArray(membershipsFile.memberships) ? membershipsFile.memberships : [];
-const playerIds = new Set();
-
-function error(message) {
-  errors.push(message);
-}
-
-function integer(value) {
-  return Number.isInteger(value);
-}
-
-function sameJson(a, b) {
-  return JSON.stringify(a) === JSON.stringify(b);
-}
-
-for (const player of players) {
-  if (!player.player_id) error('player without player_id');
-  if (playerIds.has(player.player_id)) error(`duplicate player_id: ${player.player_id}`);
-  playerIds.add(player.player_id);
-  if (!player.first_seen_snapshot) error(`${player.player_id}: missing first_seen_snapshot`);
-  if (!player.last_seen_snapshot) error(`${player.player_id}: missing last_seen_snapshot`);
-}
-
-const byId = new Map(players.map((player) => [player.player_id, player]));
-const ordered = [...snapshots].sort((a, b) => String(a.captured_at_utc).localeCompare(String(b.captured_at_utc)));
-const seenSnapshotIds = new Set();
-const seenTimes = new Set();
-
-for (const snapshot of ordered) {
-  if (!snapshot.snapshot_id) error('snapshot without snapshot_id');
-  if (seenSnapshotIds.has(snapshot.snapshot_id)) error(`duplicate snapshot_id: ${snapshot.snapshot_id}`);
-  seenSnapshotIds.add(snapshot.snapshot_id);
-  if (seenTimes.has(snapshot.captured_at_utc)) error(`duplicate snapshot timestamp: ${snapshot.captured_at_utc}`);
-  seenTimes.add(snapshot.captured_at_utc);
-
-  const rows = historyFile.snapshots?.[snapshot.snapshot_id];
-  if (!Array.isArray(rows)) {
-    error(`${snapshot.snapshot_id}: history observations missing`);
-    continue;
-  }
-
-  if (rows.length !== snapshot.members) error(`${snapshot.snapshot_id}: row count ${rows.length} != members ${snapshot.members}`);
-
-  const ranks = new Set();
-  const rowIds = new Set();
-  for (const row of rows) {
-    if (!byId.has(row.player_id)) error(`${snapshot.snapshot_id}: unknown player ${row.player_id}`);
-    if (rowIds.has(row.player_id)) error(`${snapshot.snapshot_id}: duplicate player ${row.player_id}`);
-    rowIds.add(row.player_id);
-    if (!integer(row.rank) || row.rank < 1 || row.rank > snapshot.members) {
-      error(`${snapshot.snapshot_id}: invalid rank ${row.rank}`);
-    } else if (ranks.has(row.rank)) {
-      error(`${snapshot.snapshot_id}: duplicate rank ${row.rank}`);
-    } else {
-      ranks.add(row.rank);
-    }
-  }
-
-  if (ranks.size !== snapshot.members) {
-    error(`${snapshot.snapshot_id}: rank coverage is ${ranks.size}/${snapshot.members}`);
-  } else {
-    for (let rank = 1; rank <= snapshot.members; rank += 1) {
-      if (!ranks.has(rank)) error(`${snapshot.snapshot_id}: missing rank ${rank}`);
-    }
-  }
-
-  const source = snapshot.source_report;
-  if (source) {
-    const relative = source.replace(/^\/clan-leaderboard\//, '');
-    const absolute = path.join(ROOT, relative.replace(/^clan-leaderboard\//, ''));
-    if (!fs.existsSync(absolute)) error(`${snapshot.snapshot_id}: source report missing: ${source}`);
-  }
-}
-
-const currentId = snapshotsFile.current_snapshot_id;
-if (!currentId || !seenSnapshotIds.has(currentId)) {
-  error(`current_snapshot_id is not present in snapshots: ${currentId}`);
-} else {
-  const latest = ordered[ordered.length - 1];
-  if (latest.snapshot_id !== currentId) error(`current snapshot ${currentId} is not chronologically latest (${latest.snapshot_id})`);
-  const expected = historyFile.snapshots?.[currentId] || [];
-  const actual = currentFile.snapshots?.[currentId] || [];
-  if (!sameJson(expected, actual)) error(`${currentId}: current observations do not exactly match history`);
-  if (actual.length !== latest.members) error(`${currentId}: current observation count mismatch`);
-}
-
-const activeMemberships = new Map();
-for (const membership of memberships) {
-  if (!byId.has(membership.player_id)) error(`membership references unknown player: ${membership.player_id}`);
-  if (membership.status === 'active') {
-    if (activeMemberships.has(membership.player_id)) error(`multiple active memberships: ${membership.player_id}`);
-    activeMemberships.set(membership.player_id, membership);
-  }
-  if (!membership.from_snapshot) error(`${membership.player_id}: membership missing from_snapshot`);
-  if (!membership.through_snapshot) error(`${membership.player_id}: membership missing through_snapshot`);
-}
-
-if (currentId && Array.isArray(currentFile.snapshots?.[currentId])) {
-  const latestIds = new Set(currentFile.snapshots[currentId].map((row) => row.player_id));
-  for (const id of latestIds) {
-    if (!activeMemberships.has(id)) error(`${id}: latest player has no active membership`);
-  }
-  for (const [id] of activeMemberships) {
-    if (!latestIds.has(id)) error(`${id}: active membership absent from latest snapshot`);
-  }
-}
-
-for (const player of players) {
-  if (player.status === 'former' && activeMemberships.has(player.player_id)) {
-    error(`${player.player_id}: former player still has active membership`);
-  }
-}
-
-if (errors.length) {
-  console.error(`INGESTION VALIDATION FAILED (${errors.length} errors)`);
-  for (const message of errors) console.error(`- ${message}`);
-  process.exit(1);
-}
-
-console.log(`INGESTION VALIDATION PASS: ${ordered.length} snapshots, ${players.length} identities, current=${currentId}`);
+const fs=require('fs');const path=require('path');
+const DATA=path.resolve(__dirname,'../data');
+const read=n=>JSON.parse(fs.readFileSync(path.join(DATA,n),'utf8'));
+const errors=[];const fail=m=>errors.push(m);const integer=v=>Number.isInteger(v);
+const players=read('players.json'),snapshots=read('snapshots.json'),history=read('player-observations-history.json'),current=read('player-observations.json'),memberships=read('memberships.json');
+const byId=new Map();for(const p of players.players||[]){if(!p.player_id||byId.has(p.player_id))fail(`duplicate/missing player_id: ${p.player_id}`);else byId.set(p.player_id,p);if(!p.first_seen_snapshot||!p.last_seen_snapshot)fail(`${p.player_id}: missing first/last seen snapshot`)}
+const ordered=[...(snapshots.snapshots||[])].sort((a,b)=>String(a.captured_at_utc).localeCompare(String(b.captured_at_utc)));const ids=new Set();const times=[];
+for(let i=0;i<ordered.length;i++){const s=ordered[i];if(!s.snapshot_id||ids.has(s.snapshot_id))fail(`duplicate/missing snapshot_id: ${s.snapshot_id}`);ids.add(s.snapshot_id);if(i&&ordered[i-1].captured_at_utc>=s.captured_at_utc)fail('snapshot timestamps are not strictly increasing');times.push(s.captured_at_utc);const rows=history.snapshots?.[s.snapshot_id];if(!Array.isArray(rows)){fail(`${s.snapshot_id}: history missing`);continue}if(rows.length!==s.members)fail(`${s.snapshot_id}: rows=${rows.length}, members=${s.members}`);const ranks=new Set(),rowIds=new Set();for(const r of rows){if(!byId.has(r.player_id))fail(`${s.snapshot_id}: unknown player ${r.player_id}`);if(rowIds.has(r.player_id))fail(`${s.snapshot_id}: duplicate player ${r.player_id}`);rowIds.add(r.player_id);if(!integer(r.rank)||r.rank<1||r.rank>s.members)fail(`${s.snapshot_id}: invalid rank ${r.rank}`);else if(ranks.has(r.rank))fail(`${s.snapshot_id}: duplicate rank ${r.rank}`);else ranks.add(r.rank)}for(let rank=1;rank<=s.members;rank++)if(!ranks.has(rank))fail(`${s.snapshot_id}: missing rank ${rank}`)}
+const currentId=snapshots.current_snapshot_id;const latest=ordered.at(-1);if(!latest||currentId!==latest.snapshot_id)fail(`current snapshot ${currentId} is not latest ${latest?.snapshot_id}`);const currentRows=current.snapshots?.[currentId]||[];const historyRows=history.snapshots?.[currentId]||[];if(JSON.stringify(currentRows)!==JSON.stringify(historyRows))fail(`${currentId}: current observations differ from history`);if(latest&&currentRows.length!==latest.members)fail(`${currentId}: current row count mismatch`);
+const active=new Map();for(const m of memberships.memberships||[]){if(!byId.has(m.player_id))fail(`membership references unknown player ${m.player_id}`);if(!m.from_snapshot||!m.through_snapshot)fail(`${m.player_id}: incomplete membership interval`);if(m.status==='active'){if(active.has(m.player_id))fail(`multiple active memberships: ${m.player_id}`);active.set(m.player_id,m)}}
+const latestIds=new Set(currentRows.map(r=>r.player_id));for(const id of latestIds)if(!active.has(id))fail(`${id}: latest player lacks active membership`);for(const id of active.keys())if(!latestIds.has(id))fail(`${id}: active membership absent from latest snapshot`);
+for(const p of players.players||[]){const fi=ordered.findIndex(s=>s.snapshot_id===p.first_seen_snapshot),li=ordered.findIndex(s=>s.snapshot_id===p.last_seen_snapshot);if(fi<0||li<0)fail(`${p.player_id}: invalid first/last seen snapshot`);else if(fi>li)fail(`${p.player_id}: first_seen after last_seen`);if(p.status==='active'&&!active.has(p.player_id))fail(`${p.player_id}: active without active membership`);if(p.status==='former'&&active.has(p.player_id))fail(`${p.player_id}: former with active membership`)}
+for(const m of memberships.memberships||[]){const f=ordered.findIndex(s=>s.snapshot_id===m.from_snapshot),t=ordered.findIndex(s=>s.snapshot_id===m.through_snapshot);if(f<0||t<0)fail(`${m.player_id}: invalid membership snapshots`);else if(f>t)fail(`${m.player_id}: inverted membership interval`);else if(m.status==='active'&&t!==ordered.length-1)fail(`${m.player_id}: active membership does not reach latest snapshot`)}
+if(errors.length){console.error(`INGESTION VALIDATION FAILED (${errors.length} errors)`);for(const e of errors)console.error(`- ${e}`);process.exit(1)}console.log(`INGESTION VALIDATION PASS: ${ordered.length} snapshots, ${players.players.length} identities, current=${currentId}, active=${active.size}`);
