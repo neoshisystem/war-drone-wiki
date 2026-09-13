@@ -32,6 +32,7 @@ jobs:
           node --check clan-leaderboard/tools/test-ingest-snapshot.js
           node --check clan-leaderboard/tools/generate-report.js
           node --check clan-leaderboard/tools/test-report-generator.js
+          node --check clan-leaderboard/tools/test-end-to-end.js
       - name: Canonical reconciliation
         run: node clan-leaderboard/tools/reconcile-canonical.js
       - name: Canonical validation
@@ -40,6 +41,8 @@ jobs:
         run: node clan-leaderboard/tools/test-ingest-snapshot.js
       - name: Deterministic report generation test
         run: node clan-leaderboard/tools/test-report-generator.js
+      - name: End-to-end staged pipeline test
+        run: node clan-leaderboard/tools/test-end-to-end.js
       - name: Persist reconciliation on branch push
         if: github.event_name == 'push'
         run: |
