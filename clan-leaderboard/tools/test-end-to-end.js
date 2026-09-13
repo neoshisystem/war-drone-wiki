@@ -99,7 +99,7 @@ try {
   runNode(path.join(tempTools, 'generate-report.js'), ['S05', reportPath]);
   const html = fs.readFileSync(reportPath, 'utf8');
   if (!html.includes('Commander E2E')) throw new Error('E2E: generated report missing renamed player');
-  if ((html.match(/<tr>/g) || []).length !== 1) throw new Error('E2E: generated report row count mismatch');
+  if ((html.match(/<tbody>\s*<tr>/gu) || []).length !== 1) throw new Error('E2E: generated report data row count mismatch');
 
   runNode(path.join(tempTools, 'validate-ingestion.js'), []);
   for (const file of productionFiles) {
