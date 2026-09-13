@@ -10,6 +10,7 @@ const DATA = path.join(ROOT, 'data');
 const REPORTS = path.join(ROOT, 'reports');
 const INGEST = path.join(__dirname, 'ingest-snapshot-v4.js');
 const GENERATE = path.join(__dirname, 'generate-report.js');
+const ARCHIVE = path.join(__dirname, 'generate-archive.js');
 
 const args = process.argv.slice(2);
 const inputArg = args.find((arg) => !arg.startsWith('--'));
@@ -71,4 +72,11 @@ const nextIndex = readJson(path.join(DATA, 'index.json'));
 const entry = { id: futureReportId, period: Number(snapshotId.replace(/^S/, '')), date_persian: target.date_persian, time: target.time_iran, type: target.type, members: target.members, capacity: `${target.members}/${target.capacity}`, page: `../reports/${futureReportId}.html` };
 nextIndex.reports = [entry, ...(nextIndex.reports || [])];
 save(path.join(DATA, 'index.json'), nextIndex);
-console.log(JSON.stringify({ ok: true, mode: 'write', snapshot_id: snapshotId, report: `clan-leaderboard/reports/${futureReportId}.html`, index_entry: entry, members: target.members, publication: 'complete' }, null, 2));
+
+runNode(ARCHIVE, []);
+const archivePath = path.join(ROOT, 'archive.html');
+if (!fs.existsSync(archivePath)) fail('archive generator returned successfully but archive.html is missing');
+const archive = fs.readFileSync(archivePath, 'utf8');
+if (!archive.includes(`reports/${futureReportId}.html`)) fail('archive does not contain the newly published report');
+
+console.log(JSON.stringify({ ok: true, mode: 'write', snapshot_id: snapshotId, report: `clan-leaderboard/reports/${futureReportId}.html`, index_entry: entry, archive: 'updated', members: target.members, publication: 'complete' }, null, 2));
