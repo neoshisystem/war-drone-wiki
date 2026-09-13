@@ -2,9 +2,9 @@
   "version": 1,
   "current_snapshot_id": "S03",
   "snapshots": [
-    {"snapshot_id":"S01","captured_at_utc":"2026-09-12T15:30:00Z","date_persian":"21 شهریور 1405","time_iran":"19:00","type":"baseline","members":47,"capacity":50,"source_report":"/clan-leaderboard/reports/2026-09-12-1900.html","normalized_observations":false},
-    {"snapshot_id":"S02","captured_at_utc":"2026-09-12T20:00:00Z","date_persian":"21 شهریور 1405","time_iran":"23:30","type":"delta-report","members":46,"capacity":50,"source_report":"/clan-leaderboard.html","normalized_observations":false},
-    {"snapshot_id":"S03","captured_at_utc":"2026-09-13T08:00:00Z","date_persian":"22 شهریور 1405","time_iran":"11:30","type":"delta-report","members":47,"capacity":50,"source_report":"/clan-leaderboard/reports/2026-09-13-1130.html","normalized_observations":false}
+    {"snapshot_id":"S01","captured_at_utc":"2026-09-12T15:30:00Z","date_persian":"21 شهریور 1405","time_iran":"19:00","type":"baseline","members":47,"capacity":50,"source_report":"/clan-leaderboard/reports/2026-09-12-1900.html","normalized_observations":true,"observation_source":"player-observations-history.json"},
+    {"snapshot_id":"S02","captured_at_utc":"2026-09-12T20:00:00Z","date_persian":"21 شهریور 1405","time_iran":"23:30","type":"delta-report","members":46,"capacity":50,"source_report":"/clan-leaderboard.html","normalized_observations":true,"observation_source":"player-observations-history.json"},
+    {"snapshot_id":"S03","captured_at_utc":"2026-09-13T08:00:00Z","date_persian":"22 شهریور 1405","time_iran":"11:30","type":"delta-report","members":47,"capacity":50,"source_report":"/clan-leaderboard/reports/2026-09-13-1130.html","normalized_observations":true,"observation_source":"player-observations.json"}
   ],
   "observation_policy": {
     "raw_report_is_evidence": true,
