@@ -8,6 +8,8 @@
     "snapshots": "snapshots.json",
     "memberships": "memberships.json",
     "leagues": "leagues.json",
+    "player_observations_current": "player-observations.json",
+    "player_observations_history": "player-observations-history.json",
     "legacy_report_index": "index.json"
   },
   "rules": {
