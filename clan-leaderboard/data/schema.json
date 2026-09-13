@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "description": "Canonical static data model for PERSIA clan intelligence.",
+  "entities": {
+    "players": "Stable internal player identities and current display metadata.",
+    "snapshots": "Timestamped observations of clan membership and player state.",
+    "leagues": "Weekly league seasons and PERSIA results.",
+    "memberships": "Historical membership intervals keyed by player_id."
+  },
+  "identity": {
+    "player_id": "Stable internal identifier owned by this site; not a War Drone account ID.",
+    "display_name": "Current in-game display name; may change over time.",
+    "rank": "Snapshot-local position only; never an identity key."
+  },
+  "time": {
+    "canonical": "UTC",
+    "iran_display_offset": "+03:30",
+    "daily_reset_iran": "03:30",
+    "league_week_start_iran": "Thursday 03:30",
+    "league_week_start_utc": "Thursday 00:00"
+  },
+  "immutability": {
+    "raw_reports": "Historical evidence; do not rewrite.",
+    "canonical_data": "May be extended/corrected by new confirmed observations without rewriting raw reports."
+  }
+}
