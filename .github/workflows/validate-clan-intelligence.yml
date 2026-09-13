@@ -29,10 +29,13 @@ jobs:
           node --check clan-leaderboard/tools/reconcile-canonical.js
           node --check clan-leaderboard/tools/validate-canonical.js
           node --check clan-leaderboard/tools/validate-ingestion.js
+          node --check clan-leaderboard/tools/test-ingest-snapshot.js
       - name: Canonical reconciliation
         run: node clan-leaderboard/tools/reconcile-canonical.js
       - name: Canonical validation
         run: node clan-leaderboard/tools/validate-ingestion.js
+      - name: Deterministic ingestion test
+        run: node clan-leaderboard/tools/test-ingest-snapshot.js
       - name: Persist reconciliation on branch push
         if: github.event_name == 'push'
         run: |
