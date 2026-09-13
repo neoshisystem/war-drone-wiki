@@ -1,0 +1,20 @@
+{
+  "version": 1,
+  "dataset": "persia-clan-intelligence",
+  "status": "seeded",
+  "files": {
+    "schema": "schema.json",
+    "players": "players.json",
+    "snapshots": "snapshots.json",
+    "memberships": "memberships.json",
+    "leagues": "leagues.json",
+    "legacy_report_index": "index.json"
+  },
+  "rules": {
+    "player_id_is_stable_internal_key": true,
+    "display_name_is_mutable": true,
+    "rank_is_snapshot_local": true,
+    "raw_reports_are_immutable_evidence": true,
+    "legacy_report_index_is_preserved": true
+  }
+}
