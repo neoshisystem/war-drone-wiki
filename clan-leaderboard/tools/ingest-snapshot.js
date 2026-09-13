@@ -1,2 +1,2 @@
 #!/usr/bin/env node
-require('./ingest-snapshot-v2.js');
+require('./ingest-snapshot-v3.js');
