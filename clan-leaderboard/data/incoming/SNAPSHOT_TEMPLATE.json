@@ -1,0 +1,30 @@
+{
+  "snapshot": {
+    "captured_at_utc": "YYYY-MM-DDTHH:MM:SSZ",
+    "date_persian": "DD ماه YYYY",
+    "time_iran": "HH:MM",
+    "type": "delta-report",
+    "members": 47,
+    "capacity": 50,
+    "report_filename": "YYYY-MM-DD-HHMM.html",
+    "season_label": "CLAN"
+  },
+  "players": [
+    {
+      "player_id": "PERSIA-P-0001",
+      "display_name": "Commander",
+      "role": "Member",
+      "rank": 1,
+      "rank_movement": 0,
+      "stage": 58,
+      "league_medals": 0,
+      "league_medals_delta": 0,
+      "clan_medals": 0,
+      "honor_medals": {"gold": 0, "silver": 0, "bronze": 0},
+      "total_kills": 0,
+      "kills_delta": 0,
+      "weapons": {"25mm": 0, "hydra": 0, "hellfire": 0, "upgrade_deltas": {}},
+      "last_online_display": "<1m ago"
+    }
+  ]
+}

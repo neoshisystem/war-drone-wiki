@@ -1,0 +1,65 @@
+name: Validate Clan Intelligence
+
+on:
+  push:
+    branches:
+      - snapshot-ingestion-v1
+  pull_request:
+    paths:
+      - 'clan-leaderboard/**'
+      - '.github/workflows/validate-clan-intelligence.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  canonical:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Node syntax checks
+        run: |
+          node --check clan-leaderboard/tools/ingest-snapshot.js
+          node --check clan-leaderboard/tools/ingest-snapshot-v4.js
+          node --check clan-leaderboard/tools/reconcile-canonical.js
+          node --check clan-leaderboard/tools/validate-canonical.js
+          node --check clan-leaderboard/tools/validate-ingestion.js
+          node --check clan-leaderboard/tools/test-ingest-snapshot.js
+          node --check clan-leaderboard/tools/generate-report.js
+          node --check clan-leaderboard/tools/test-report-generator.js
+          node --check clan-leaderboard/tools/test-end-to-end.js
+          node --check clan-leaderboard/tools/ingest-and-publish.js
+          node --check clan-leaderboard/tools/generate-archive.js
+          node --check clan-leaderboard/tools/test-ingest-publish.js
+          node --check clan-leaderboard/tools/test-archive-generator.js
+      - name: Canonical reconciliation
+        run: node clan-leaderboard/tools/reconcile-canonical.js
+      - name: Canonical validation
+        run: node clan-leaderboard/tools/validate-ingestion.js
+      - name: Deterministic ingestion test
+        run: node clan-leaderboard/tools/test-ingest-snapshot.js
+      - name: Deterministic report generation test
+        run: node clan-leaderboard/tools/test-report-generator.js
+      - name: Deterministic archive generation test
+        run: node clan-leaderboard/tools/test-archive-generator.js
+      - name: End-to-end staged pipeline test
+        run: node clan-leaderboard/tools/test-end-to-end.js
+      - name: Ingest and publication pipeline test
+        run: node clan-leaderboard/tools/test-ingest-publish.js
+      - name: Persist reconciliation on branch push
+        if: github.event_name == 'push'
+        run: |
+          if git diff --quiet; then
+            echo 'No reconciliation changes required.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add clan-leaderboard/data/player-observations-history.json clan-leaderboard/data/players.json
+          git commit -m 'Reconcile canonical player history through S04'
+          git push origin HEAD:${GITHUB_REF_NAME}
