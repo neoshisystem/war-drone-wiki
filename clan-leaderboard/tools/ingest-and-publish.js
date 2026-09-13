@@ -14,7 +14,6 @@ const GENERATE = path.join(__dirname, 'generate-report.js');
 const args = process.argv.slice(2);
 const inputArg = args.find((arg) => !arg.startsWith('--'));
 const write = args.includes('--write');
-const dryRun = args.includes('--dry-run') || !write;
 
 function fail(message) {
   console.error(`PUBLICATION FAILED: ${message}`);
@@ -27,12 +26,8 @@ function readJson(file) {
 function save(file, value) {
   fs.writeFileSync(file, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
 }
-function reportId(snapshot) {
-  if (snapshot.source_report) return path.basename(snapshot.source_report, '.html');
-  return `${snapshot.captured_at_utc.slice(0, 10)}-${snapshot.time_iran.replace(':', '')}`;
-}
-function runNode(script, args) {
-  const result = spawnSync(process.execPath, [script, ...args], { cwd: ROOT, encoding: 'utf8' });
+function runNode(script, runArgs) {
+  const result = spawnSync(process.execPath, [script, ...runArgs], { cwd: ROOT, encoding: 'utf8' });
   if (result.status !== 0) {
     process.stderr.write(result.stderr || result.stdout || `${path.basename(script)} failed\n`);
     process.exit(result.status || 1);
@@ -47,30 +42,19 @@ if (!fs.existsSync(inputPath)) fail(`input does not exist: ${inputArg}`);
 const input = readJson(inputPath);
 if (!input.snapshot || !Array.isArray(input.players)) fail('input must contain snapshot and players[]');
 
-const snapshotsFile = readJson(path.join(DATA, 'snapshots.json'));
 const indexFile = readJson(path.join(DATA, 'index.json'));
 const snapshot = input.snapshot;
 const futureReportId = snapshot.source_report
   ? path.basename(snapshot.source_report, '.html')
   : `${snapshot.captured_at_utc.slice(0, 10)}-${snapshot.time_iran.replace(':', '')}`;
 const futureReportPath = path.join(REPORTS, `${futureReportId}.html`);
-const futureIndexId = futureReportId;
 
 if (fs.existsSync(futureReportPath)) fail(`report already exists: ${path.relative(ROOT, futureReportPath)}`);
-if ((indexFile.reports || []).some((item) => item.id === futureIndexId)) fail(`index already contains report ${futureIndexId}`);
+if ((indexFile.reports || []).some((item) => item.id === futureReportId)) fail(`index already contains report ${futureReportId}`);
 
 if (!write) {
-  const ingest = runNode(INGEST, [inputPath, '--dry-run']);
-  const json = ingest.trim();
-  const parsed = JSON.parse(json);
-  console.log(JSON.stringify({
-    ok: true,
-    mode: 'dry-run',
-    snapshot_id: parsed.snapshot_id,
-    report_id: futureReportId,
-    report_path: path.relative(ROOT, futureReportPath),
-    publication: 'not written'
-  }, null, 2));
+  const parsed = JSON.parse(runNode(INGEST, [inputPath, '--dry-run']).trim());
+  console.log(JSON.stringify({ ok: true, mode: 'dry-run', snapshot_id: parsed.snapshot_id, report_id: futureReportId, report_path: path.relative(ROOT, futureReportPath), publication: 'not written' }, null, 2));
   process.exit(0);
 }
 
@@ -88,7 +72,7 @@ if (fs.existsSync(futureReportPath)) fail(`report unexpectedly exists after inge
 runNode(GENERATE, [snapshotId, futureReportPath]);
 if (!fs.existsSync(futureReportPath)) fail('report generator returned successfully but report file is missing');
 const html = fs.readFileSync(futureReportPath, 'utf8');
-if (!html.includes(`${target.date_persian}`) || !html.includes(`Snapshot ${snapshotId}`)) fail('generated report failed publication sanity checks');
+if (!html.includes(`${target.date_persian}`) || !html.includes(`DORE ${String(snapshotId).replace(/^S/, '')}`)) fail('generated report failed publication sanity checks');
 
 const nextSnapshots = readJson(path.join(DATA, 'snapshots.json'));
 const snapshotRecord = nextSnapshots.snapshots.find((item) => item.snapshot_id === snapshotId);
@@ -99,7 +83,7 @@ save(path.join(DATA, 'snapshots.json'), nextSnapshots);
 
 const nextIndex = readJson(path.join(DATA, 'index.json'));
 const entry = {
-  id: futureIndexId,
+  id: futureReportId,
   period: Number(snapshotId.replace(/^S/, '')),
   date_persian: target.date_persian,
   time: target.time_iran,
@@ -108,15 +92,7 @@ const entry = {
   capacity: `${target.members}/${target.capacity}`,
   page: `../reports/${futureReportId}.html`
 };
-nextIndex.reports = [entry, ...(nextIndex.reports || [])].filter((item, index, list) => index === 0 || item.id !== list[0].id);
+nextIndex.reports = [entry, ...(nextIndex.reports || [])];
 save(path.join(DATA, 'index.json'), nextIndex);
 
-console.log(JSON.stringify({
-  ok: true,
-  mode: 'write',
-  snapshot_id: snapshotId,
-  report: `clan-leaderboard/reports/${futureReportId}.html`,
-  index_entry: entry,
-  members: target.members,
-  publication: 'complete'
-}, null, 2));
+console.log(JSON.stringify({ ok: true, mode: 'write', snapshot_id: snapshotId, report: `clan-leaderboard/reports/${futureReportId}.html`, index_entry: entry, members: target.members, publication: 'complete' }, null, 2));
