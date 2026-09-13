@@ -4,7 +4,6 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const crypto = require('crypto');
 const { spawnSync } = require('child_process');
 
 const ROOT = path.resolve(__dirname, '..');
@@ -16,7 +15,7 @@ const tempData = path.join(tempRoot, 'data');
 const tempReports = path.join(tempRoot, 'reports');
 const fixture = path.join(tempRoot, 'S05.json');
 
-function copy(from, to) {
+function copy(name, from, to) {
   fs.mkdirSync(path.dirname(to), { recursive: true });
   fs.copyFileSync(from, to);
 }
@@ -31,7 +30,7 @@ function runNode(script, args) {
 }
 
 function sha256(file) {
-  return crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
+  return require('crypto').createHash('sha256').update(fs.readFileSync(file)).digest('hex');
 }
 
 try {
@@ -44,19 +43,21 @@ try {
     'snapshots.json',
     'player-observations.json',
     'player-observations-history.json',
-    'memberships.json'
-  ]) copy(path.join(repoData, file), path.join(tempData, file));
+    'memberships.json',
+    'index.json'
+  ]) copy(file, path.join(repoData, file), path.join(tempData, file));
 
-  copy(path.join(repoTools, 'ingest-snapshot-v4.js'), path.join(tempTools, 'ingest-snapshot-v4.js'));
-  copy(path.join(repoTools, 'generate-report.js'), path.join(tempTools, 'generate-report.js'));
-  copy(path.join(repoTools, 'validate-ingestion.js'), path.join(tempTools, 'validate-ingestion.js'));
+  copy('ingest-snapshot-v4.js', path.join(repoTools, 'ingest-snapshot-v4.js'), path.join(tempTools, 'ingest-snapshot-v4.js'));
+  copy('generate-report.js', path.join(repoTools, 'generate-report.js'), path.join(tempTools, 'generate-report.js'));
+  copy('validate-ingestion.js', path.join(repoTools, 'validate-ingestion.js'), path.join(tempTools, 'validate-ingestion.js'));
 
   const productionFiles = [
     path.join(repoData, 'players.json'),
     path.join(repoData, 'snapshots.json'),
     path.join(repoData, 'player-observations.json'),
     path.join(repoData, 'player-observations-history.json'),
-    path.join(repoData, 'memberships.json')
+    path.join(repoData, 'memberships.json'),
+    path.join(repoData, 'index.json')
   ];
   const before = new Map(productionFiles.map((file) => [file, sha256(file)]));
 
@@ -90,8 +91,8 @@ try {
   fs.writeFileSync(fixture, `${JSON.stringify(input, null, 2)}\n`, 'utf8');
 
   const ingestOutput = runNode(path.join(tempTools, 'ingest-snapshot-v4.js'), [fixture, '--write']);
-  const jsonPart = ingestOutput.replace(/\nWRITE COMPLETE:\s*S05\s*$/u, '').trim();
-  const ingest = JSON.parse(jsonPart);
+  const jsonLine = ingestOutput.trim().split('\n').filter((line) => line.trim().startsWith('{')).at(-1);
+  const ingest = JSON.parse(jsonLine);
   if (!ingest.ok || ingest.snapshot_id !== 'S05') throw new Error('E2E: S05 ingestion failed');
 
   const reportPath = path.join(tempReports, '2026-09-14-0700.html');
