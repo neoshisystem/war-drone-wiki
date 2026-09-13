@@ -8,9 +8,7 @@
   const STORAGE={mode:'wd-player-context-mode',player:'wd-player-context-player'};
   const DATA={players:null,snapshots:null,observations:null};
 
-  function loadJson(path){
-    return fetch(new URL(path,document.baseURI).href,{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();});
-  }
+  function loadJson(path){return fetch(new URL(path,document.baseURI).href,{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();});}
   function esc(value){return String(value??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[c]));}
   function normalize(value){return String(value??'').trim().toLocaleLowerCase('fa').replace(/\s+/g,' ');}
   function stageInput(){return document.querySelector(SELECTORS.stage);}
@@ -21,18 +19,21 @@
   function currentPlayer(playerId){return (DATA.players?.players||[]).find(p=>p.player_id===playerId)||null;}
   function activePlayers(){return (DATA.players?.players||[]).filter(p=>p.status==='active');}
 
-  function contextMount(input){
+  function contextHost(input){
     if(!input)return null;
-    const existing=input.closest?.('[data-wd-player-context]');
-    if(existing)return existing;
     const form=input.closest('.advisor-form');
     const planner=input.closest('.planner');
-    const host=planner||form?.parentElement||input.parentElement;
-    if(!host)return null;
+    return planner||form?.parentElement||input.parentElement||null;
+  }
+
+  function contextMount(input){
+    const host=contextHost(input);if(!host)return null;
+    const existing=host.querySelector(':scope > [data-wd-player-context]');
+    if(existing)return existing;
     const mount=document.createElement('div');
     mount.className='wd-player-context';
     mount.dataset.wdPlayerContext='1';
-    host.insertBefore(mount,form||host.firstChild);
+    host.insertBefore(mount,document.querySelector('.planner')===host?host.firstChild:(input.closest('.advisor-form')||host.firstChild));
     return mount;
   }
 
@@ -58,9 +59,7 @@
       <div class="wd-player-context__manual"><p class="wd-player-context__note">در حالت دستی، مقادیر همین فرم را خودت وارد کن و سایت از Player خاصی اطلاعات نمی‌گیرد.</p></div>
       <p class="wd-player-context__status" aria-live="polite"></p>
       <p class="wd-player-context__note">تایپ نام به‌تنهایی انتخاب محسوب نمی‌شود؛ باید یک بازیکن مشخص را از نتایج انتخاب کنی.</p>`;
-    const ui={
-      root:mount,modes:[...mount.querySelectorAll('[data-wd-mode]')],search:mount.querySelector('.wd-player-context__search'),input:mount.querySelector('.wd-player-context__search-input'),results:mount.querySelector('.wd-player-context__results'),selected:mount.querySelector('.wd-player-context__selected'),selectedName:mount.querySelector('.wd-player-context__selected-name'),selectedMeta:mount.querySelector('.wd-player-context__selected-meta'),change:mount.querySelector('.wd-player-context__change'),status:mount.querySelector('.wd-player-context__status'),activeIndex:-1
-    };
+    const ui={root:mount,modes:[...mount.querySelectorAll('[data-wd-mode]')],search:mount.querySelector('.wd-player-context__search'),input:mount.querySelector('.wd-player-context__search-input'),results:mount.querySelector('.wd-player-context__results'),selected:mount.querySelector('.wd-player-context__selected'),selectedName:mount.querySelector('.wd-player-context__selected-name'),selectedMeta:mount.querySelector('.wd-player-context__selected-meta'),change:mount.querySelector('.wd-player-context__change'),status:mount.querySelector('.wd-player-context__status'),activeIndex:-1};
     mount.__wdPlayerContext=ui;
     return ui;
   }
@@ -68,8 +67,7 @@
   function setStatus(ui,text,type=''){ui.status.textContent=text||'';ui.status.className='wd-player-context__status'+(type?` is-${type}`:'');}
   function closeResults(ui){ui.results.classList.remove('is-open');ui.results.innerHTML='';ui.activeIndex=-1;}
   function renderResults(ui){
-    const q=normalize(ui.input.value);
-    if(!q){closeResults(ui);return;}
+    const q=normalize(ui.input.value);if(!q){closeResults(ui);return;}
     const rows=activePlayers().filter(p=>normalize(p.display_name).includes(q)).slice(0,8);
     ui.results.innerHTML=rows.length?rows.map((p,i)=>`<li role="option"><button type="button" class="wd-player-context__option" data-player-id="${esc(p.player_id)}" data-index="${i}"><span class="wd-player-context__option-name">${esc(p.display_name)}</span><span class="wd-player-context__option-meta">${esc(p.role||'Member')}</span></button></li>`).join(''):`<li class="wd-player-context__empty">بازیکنی با این نام پیدا نشد.</li>`;
     ui.results.classList.toggle('is-open',rows.length>0);ui.activeIndex=-1;
