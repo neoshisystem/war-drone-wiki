@@ -2,8 +2,9 @@
   "clan": "PERSIA",
   "game": "War Drone",
   "reports": [
-    {"id":"2026-09-13-1130","period":3,"date_persian":"22 \u0634\u0647\u0631\u06cc\u0648\u0631 1405","time":"11:30","type":"delta-report","members":47,"capacity":"47/50","page":"../reports/2026-09-13-1130.html"},
-    {"id":"2026-09-12-2330","period":2,"date_persian":"21 \u0634\u0647\u0631\u06cc\u0648\u0631 1405","time":"23:30","type":"delta-report","members":46,"capacity":"46/50","page":"../clan-leaderboard.html"},
-    {"id":"2026-09-12-1900","period":1,"date_persian":"21 \u0634\u0647\u0631\u06cc\u0648\u0631 1405","time":"19:00","type":"baseline","members":47,"capacity":"47/50","page":"../reports/2026-09-12-1900.html"}
+    {"id":"2026-09-13-2300","period":4,"date_persian":"22 شهریور 1405","time":"23:00","type":"delta-report","members":47,"capacity":"47/50","page":"../reports/2026-09-13-2300.html"},
+    {"id":"2026-09-13-1130","period":3,"date_persian":"22 شهریور 1405","time":"11:30","type":"delta-report","members":47,"capacity":"47/50","page":"../reports/2026-09-13-1130.html"},
+    {"id":"2026-09-12-2330","period":2,"date_persian":"21 شهریور 1405","time":"23:30","type":"delta-report","members":46,"capacity":"46/50","page":"../clan-leaderboard.html"},
+    {"id":"2026-09-12-1900","period":1,"date_persian":"21 شهریور 1405","time":"19:00","type":"baseline","members":47,"capacity":"47/50","page":"../reports/2026-09-12-1900.html"}
   ]
 }
