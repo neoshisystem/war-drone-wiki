@@ -1,16 +1,16 @@
-name: Validate Clan Intelligence
+name: Validate PERSIA Clan Intelligence
 
 on:
   push:
     branches:
-      - snapshot-ingestion-v1
+      - main
   pull_request:
     paths:
       - 'clan-leaderboard/**'
       - '.github/workflows/validate-clan-intelligence.yml'
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   canonical:
@@ -24,10 +24,8 @@ jobs:
           node-version: 20
       - name: Node syntax checks
         run: |
-          node --check clan-leaderboard/tools/ingest-snapshot.js
           node --check clan-leaderboard/tools/ingest-snapshot-v4.js
           node --check clan-leaderboard/tools/reconcile-canonical.js
-          node --check clan-leaderboard/tools/validate-canonical.js
           node --check clan-leaderboard/tools/validate-ingestion.js
           node --check clan-leaderboard/tools/test-ingest-snapshot.js
           node --check clan-leaderboard/tools/generate-report.js
@@ -51,15 +49,3 @@ jobs:
         run: node clan-leaderboard/tools/test-end-to-end.js
       - name: Ingest and publication pipeline test
         run: node clan-leaderboard/tools/test-ingest-publish.js
-      - name: Persist reconciliation on branch push
-        if: github.event_name == 'push'
-        run: |
-          if git diff --quiet; then
-            echo 'No reconciliation changes required.'
-            exit 0
-          fi
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add clan-leaderboard/data/player-observations-history.json clan-leaderboard/data/players.json
-          git commit -m 'Reconcile canonical player history through S04'
-          git push origin HEAD:${GITHUB_REF_NAME}
