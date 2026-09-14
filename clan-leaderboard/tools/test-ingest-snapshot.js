@@ -6,7 +6,7 @@ const { spawnSync } = require('child_process');
 
 const ROOT = path.resolve(__dirname, '..');
 const fixture = path.join(ROOT, 'data', 'incoming', 'SNAPSHOT_INGESTION_TEST.json');
-const runner = path.join(ROOT, 'tools', 'ingest-snapshot.js');
+const runner = path.join(ROOT, 'tools', 'ingest-snapshot-v4.js');
 
 const input = {
   snapshot: {
