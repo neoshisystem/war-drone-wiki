@@ -20,11 +20,7 @@
       return;
     }
 
-    const snapshotSets = {
-      ...(history.snapshots || {}),
-      ...(historyS05.snapshots || {}),
-      ...(current.snapshots || {})
-    };
+    const snapshotSets = { ...(history.snapshots || {}), ...(historyS05.snapshots || {}), ...(current.snapshots || {}) };
     const order = Object.keys(snapshotSets).sort().reverse();
     const snapshotMeta = {
       S01: { period: 'دوره ۰۱', date: '۲۱ شهریور ۱۴۰۵', time: '۱۹:۰۰' },
