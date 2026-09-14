@@ -33,7 +33,7 @@ try {
     'تمام 47 عضو بررسی و ثبت شده‌اند.',
     'مدال کل کلن بر اساس مجموع رکورد اعضا: 23,742,781',
     '<td>1 (-)</td><td>Commander</td>',
-    '<td>47</td><td>n8</td>'
+    '<td>47 (-)</td><td>n8</td>'
   ]) if (!s05.includes(needle)) throw new Error(`S05 missing generated content: ${needle}`);
   const s05Rows = (s05.match(/<tbody>[\s\S]*?<\/tbody>/)?.[0].match(/<tr>/g) || []).length;
   if (s05Rows !== 47) throw new Error(`S05 expected 47 rows, got ${s05Rows}`);
