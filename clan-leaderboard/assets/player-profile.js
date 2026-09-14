@@ -11,15 +11,20 @@
   Promise.all([
     fetch('data/players.json').then(r => r.json()),
     fetch('data/player-observations.json').then(r => r.json()),
-    fetch('data/player-observations-history.json').then(r => r.json())
-  ]).then(([players, current, history]) => {
+    fetch('data/player-observations-history.json').then(r => r.json()),
+    fetch('data/player-observations-history-s05.json').then(r => r.json()).catch(() => ({ snapshots: {} }))
+  ]).then(([players, current, history, historyS05]) => {
     const player = players.players.find(p => p.player_id === id);
     if (!player) {
       root.innerHTML = '<div class="shell profile-shell"><div class="panel empty">بازیکن پیدا نشد.</div></div>';
       return;
     }
 
-    const snapshotSets = { ...(history.snapshots || {}), ...(current.snapshots || {}) };
+    const snapshotSets = {
+      ...(history.snapshots || {}),
+      ...(historyS05.snapshots || {}),
+      ...(current.snapshots || {})
+    };
     const order = Object.keys(snapshotSets).sort().reverse();
     const snapshotMeta = {
       S01: { period: 'دوره ۰۱', date: '۲۱ شهریور ۱۴۰۵', time: '۱۹:۰۰' },
