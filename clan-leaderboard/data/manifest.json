@@ -10,6 +10,7 @@
     "leagues": "leagues.json",
     "player_observations_current": "player-observations.json",
     "player_observations_history": "player-observations-history.json",
+    "player_observations_history_s05": "player-observations-history-s05.json",
     "legacy_report_index": "index.json"
   },
   "rules": {
@@ -17,6 +18,7 @@
     "display_name_is_mutable": true,
     "rank_is_snapshot_local": true,
     "raw_reports_are_immutable_evidence": true,
-    "legacy_report_index_is_preserved": true
+    "legacy_report_index_is_preserved": true,
+    "s05_history_is_sharded_from_current_observations": true
   }
 }
