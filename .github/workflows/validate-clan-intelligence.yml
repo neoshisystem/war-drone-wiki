@@ -25,7 +25,7 @@ jobs:
       - name: Node syntax checks
         run: |
           node --check clan-leaderboard/tools/ingest-snapshot-v4.js
-          node --check clan-leaderboard/tools/reconcile-canonical.js
+          node --check clan-leaderboard/tools/reconcile-current.js
           node --check clan-leaderboard/tools/validate-ingestion.js
           node --check clan-leaderboard/tools/test-ingest-snapshot.js
           node --check clan-leaderboard/tools/generate-report.js
@@ -36,7 +36,7 @@ jobs:
           node --check clan-leaderboard/tools/test-ingest-publish.js
           node --check clan-leaderboard/tools/test-archive-generator.js
       - name: Canonical reconciliation
-        run: node clan-leaderboard/tools/reconcile-canonical.js
+        run: node clan-leaderboard/tools/reconcile-current.js
       - name: Canonical validation
         run: node clan-leaderboard/tools/validate-ingestion.js
       - name: Deterministic ingestion test
