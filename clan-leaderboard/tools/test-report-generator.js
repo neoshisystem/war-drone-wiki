@@ -3,6 +3,7 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
+const { spawnSync } = require('child_process');
 const ROOT = path.resolve(__dirname, '..');
 const tmpS04 = path.join(os.tmpdir(), `war-drone-report-s04-${process.pid}.html`);
 const tmpS05 = path.join(os.tmpdir(), `war-drone-report-s05-${process.pid}.html`);
