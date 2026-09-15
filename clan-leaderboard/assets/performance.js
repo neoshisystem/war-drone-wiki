@@ -53,6 +53,7 @@
     const results = {};
     const weeklyState = new Map();
     const cumulativeState = {};
+    const cumulativePrevious = new Map();
     let previousSnapshot = null;
 
     for (const snapshot of snapshots) {
@@ -64,12 +65,13 @@
       }
 
       const currentRows = getRows(snapshot.snapshot_id, observationSets);
+      const currentIds = new Set(currentRows.map(row => row.player_id));
+      for (const playerId of cumulativePrevious.keys()) if (!currentIds.has(playerId)) cumulativePrevious.delete(playerId);
+
       const previousRows = previousSnapshot && leagueWeekId(previousSnapshot.captured_at_utc, reset) === weekId
         ? getRows(previousSnapshot.snapshot_id, observationSets)
         : [];
-      const previousAllRows = previousSnapshot ? getRows(previousSnapshot.snapshot_id, observationSets) : [];
       const previousById = new Map(previousRows.map(row => [row.player_id, row]));
-      const previousAllById = new Map(previousAllRows.map(row => [row.player_id, row]));
       let periodClan = 0;
       let periodKills = 0;
       const periodPlayers = {};
@@ -78,7 +80,7 @@
         const previous = previousById.get(row.player_id);
         if (!previous) {
           state.players[row.player_id] = { clan_medals: 0, kills: 0 };
-          periodPlayers[row.player_id] = { clan_medals: 0, kills: 0, baseline: !previousSnapshot || !previousRows.length };
+          periodPlayers[row.player_id] = { clan_medals: 0, kills: 0, baseline: true };
         } else {
           const clanDelta = Number(row.clan_medals || 0) - Number(previous.clan_medals || 0);
           const killDelta = Number(row.total_kills || 0) - Number(previous.total_kills || 0);
@@ -91,12 +93,13 @@
           periodPlayers[row.player_id] = { clan_medals: clanDelta, kills: killDelta, baseline: false };
         }
 
-        const previousAll = previousAllById.get(row.player_id);
+        const previousCumulative = cumulativePrevious.get(row.player_id);
         if (!cumulativeState[row.player_id]) cumulativeState[row.player_id] = { clan_medals: 0, kills: 0 };
-        if (previousAll) {
-          cumulativeState[row.player_id].clan_medals += Number(row.clan_medals || 0) - Number(previousAll.clan_medals || 0);
-          cumulativeState[row.player_id].kills += Number(row.total_kills || 0) - Number(previousAll.total_kills || 0);
+        if (previousCumulative) {
+          cumulativeState[row.player_id].clan_medals += Number(row.clan_medals || 0) - Number(previousCumulative.clan_medals || 0);
+          cumulativeState[row.player_id].kills += Number(row.total_kills || 0) - Number(previousCumulative.total_kills || 0);
         }
+        cumulativePrevious.set(row.player_id, row);
       }
 
       const sameWeek = previousRows.length > 0;
