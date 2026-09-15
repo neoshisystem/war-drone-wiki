@@ -33,9 +33,25 @@
 
     const canonicalSnapshots = { ...(historyData.snapshots || {}), ...(historyS05.snapshots || {}), ...(currentData.snapshots || {}) };
     const playerById = new Map((playersData.players || []).map(player => [player.player_id, player]));
-    const playerByName = new Map((playersData.players || []).map(player => [String(player.display_name), player.player_id]));
-    (canonicalSnapshots[snapshotKey] || []).forEach(row => { const player = playerById.get(row.player_id); if (player?.display_name) playerByName.set(String(player.display_name), row.player_id); });
-    const metrics = performance.computeAll(snapshotsData, [historyData, historyS05, currentData], leaguesData)[snapshotKey] || { league_week: performance.leagueWeekId(target.captured_at_utc, leaguesData.reset), weekly_clan_medals_earned: 0, weekly_kills_earned: 0 };
+    const playerNameMatches = new Map();
+    (canonicalSnapshots[snapshotKey] || []).forEach(row => {
+      const name = String(row.display_name || playerById.get(row.player_id)?.display_name || '');
+      if (!name) return;
+      const matches = playerNameMatches.get(name) || [];
+      matches.push(row.player_id);
+      playerNameMatches.set(name, matches);
+    });
+    const playerIdForName = name => {
+      const matches = playerNameMatches.get(String(name));
+      return matches?.length === 1 ? matches[0] : null;
+    };
+    const metrics = performance.computeAll(snapshotsData, [historyData, historyS05, currentData], leaguesData)[snapshotKey] || {
+      league_week: performance.leagueWeekId(target.captured_at_utc, leaguesData.reset),
+      baseline_snapshot_id: snapshotKey,
+      period_players: {},
+      weekly_clan_medals_earned: 0,
+      weekly_kills_earned: 0
+    };
 
     const doc = new DOMParser().parseFromString(sourceHtml, 'text/html');
     const members = [];
@@ -55,8 +71,24 @@
       });
     }
 
+    members.forEach(member => {
+      const playerId = playerIdForName(member.name);
+      member.player_id = playerId;
+      const period = playerId ? metrics.period_players?.[playerId] : null;
+      if (metrics.baseline_snapshot_id === snapshotKey) {
+        member.stats['تغییر مدال کلن'] = '— / baseline';
+        member.stats['افزایش کیل'] = '— / baseline';
+      } else if (period) {
+        member.stats['تغییر مدال کلن'] = signed(period.clan_medals);
+        member.stats['افزایش کیل'] = signed(period.kills);
+      } else {
+        member.stats['تغییر مدال کلن'] = '—';
+        member.stats['افزایش کیل'] = '—';
+      }
+    });
+
     const keys = ['استیج','مدال لیگ جاری','تغییر مدال کلن','مدال کل کلن','مدال افتخار (طلا / نقره / برنز)','مجموع کیل 💀','افزایش کیل 💀','لول سلاح‌ها (توپ / هیدرا / هل‌فایر)','آخرین آنلاین'];
-    const playerName = name => { const id = playerByName.get(name); return id ? `<a class="player-name-link" href="${navUrl('player.html', `?id=${encodeURIComponent(id)}`)}">${esc(name)}</a>` : esc(name); };
+    const playerName = name => { const id = playerIdForName(name); return id ? `<a class="player-name-link" href="${navUrl('player.html', `?id=${encodeURIComponent(id)}`)}">${esc(name)}</a>` : esc(name); };
     const index = snapshots.findIndex(snapshot => snapshot.snapshot_id === target.snapshot_id);
     const previous = index > 0 ? snapshots[index - 1] : null;
     const next = index >= 0 && index < snapshots.length - 1 ? snapshots[index + 1] : null;
@@ -68,8 +100,10 @@
     const viewerHref = snapshot => navUrl('index.html', `?source=${encodeURIComponent(sourceForSnapshot(snapshot))}&mode=${encodeURIComponent(requestedMode)}`);
     const nav = `<nav class="viewer-nav"><a class="btn" href="${previous ? viewerHref(previous) : '#'}" ${previous ? '' : 'aria-disabled="true"'}>← دوره قبل</a><a class="btn" href="${navUrl('archive.html')}">آرشیو</a><a class="btn" href="${next ? viewerHref(next) : '#'}" ${next ? '' : 'aria-disabled="true"'}>دوره بعد →</a></nav>`;
     const title = target.type === 'baseline' ? `ثبت اولیه ${target.members} عضو` : 'جدول جامع عملکرد و تغییرات اعضای کلن';
+    const weeklyLabel = metrics.baseline_snapshot_id === snapshotKey ? '— / baseline' : signed(metrics.weekly_clan_medals_earned);
+    const weeklyKills = metrics.baseline_snapshot_id === snapshotKey ? '— / baseline' : signed(metrics.weekly_kills_earned);
 
-    root.innerHTML = `<section class="hero"><span class="badge">PERSIA · دوره ${esc(String(target.snapshot_id).replace(/^S/, ''))}</span><h1>${esc(title)}</h1><p>${esc(target.date_persian)} · ساعت ${esc(target.time_iran)}</p><div class="meta"><span>${target.members} عضو</span><span>هفته لیگ: ${esc(metrics.league_week)}</span></div></section><section class="performance-card"><div class="performance-card__head"><div><span class="badge">عملکرد</span><h2>عملکرد این هفته</h2><p>تجمیعی از اولین ثبت این هفته؛ در شروع هفته لیگ دوباره از صفر محاسبه می‌شود.</p></div></div><div class="performance-grid"><div class="performance-stat"><span>تغییر مدال کلن</span><strong>${signed(metrics.weekly_clan_medals_earned)}</strong></div><div class="performance-stat"><span>افزایش کیل</span><strong>${signed(metrics.weekly_kills_earned)}</strong></div></div></section><section class="toolbar"><input id="search" class="search" type="search" placeholder="جست‌وجوی نام کاربری، سمت یا مقدار..."><div class="switch"><button data-mode="simple">نمایش ساده</button><button data-mode="graphic">نمایش گرافیکی</button></div></section><div id="results"></div>${nav}`;
+    root.innerHTML = `<section class="hero"><span class="badge">PERSIA · دوره ${esc(String(target.snapshot_id).replace(/^S/, ''))}</span><h1>${esc(title)}</h1><p>${esc(target.date_persian)} · ساعت ${esc(target.time_iran)}</p><div class="meta"><span>${target.members} عضو</span><span>هفته لیگ: ${esc(metrics.league_week)}</span></div></section><section class="performance-card"><div class="performance-card__head"><div><span class="badge">عملکرد</span><h2>عملکرد این هفته</h2><p>تجمیعی از اولین ثبت این هفته؛ در شروع هفته لیگ دوباره از صفر محاسبه می‌شود.</p></div></div><div class="performance-grid"><div class="performance-stat"><span>تغییر مدال کلن</span><strong>${weeklyLabel}</strong></div><div class="performance-stat"><span>افزایش کیل</span><strong>${weeklyKills}</strong></div></div></section><section class="toolbar"><input id="search" class="search" type="search" placeholder="جست‌وجوی نام کاربری، سمت یا مقدار..."><div class="switch"><button data-mode="simple">نمایش ساده</button><button data-mode="graphic">نمایش گرافیکی</button></div></section><div id="results"></div>${nav}`;
 
     const results = root.querySelector('#results');
     const input = root.querySelector('#search');
