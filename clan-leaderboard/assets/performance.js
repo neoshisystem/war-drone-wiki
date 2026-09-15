@@ -32,11 +32,27 @@
     return Object.fromEntries(Object.entries(players).map(([id, value]) => [id, { clan_medals: value.clan_medals, kills: value.kills }]));
   }
 
+  function clonePeriodPlayers(players) {
+    return Object.fromEntries(Object.entries(players).map(([id, value]) => [id, {
+      clan_medals: value.clan_medals,
+      kills: value.kills,
+      baseline: Boolean(value.baseline)
+    }]));
+  }
+
+  function cloneCumulativePlayers(players) {
+    return Object.fromEntries(Object.entries(players).map(([id, value]) => [id, {
+      clan_medals: value.clan_medals,
+      kills: value.kills
+    }]));
+  }
+
   function computeAll(snapshotsFile, observationSets, leaguesFile) {
     const snapshots = [...(snapshotsFile?.snapshots || [])].sort((a, b) => a.captured_at_utc.localeCompare(b.captured_at_utc));
     const reset = leaguesFile?.reset || { weekday: 'Thursday', time_utc: '00:00' };
     const results = {};
     const weeklyState = new Map();
+    const cumulativeState = {};
     let previousSnapshot = null;
 
     for (const snapshot of snapshots) {
@@ -51,24 +67,36 @@
       const previousRows = previousSnapshot && leagueWeekId(previousSnapshot.captured_at_utc, reset) === weekId
         ? getRows(previousSnapshot.snapshot_id, observationSets)
         : [];
+      const previousAllRows = previousSnapshot ? getRows(previousSnapshot.snapshot_id, observationSets) : [];
       const previousById = new Map(previousRows.map(row => [row.player_id, row]));
+      const previousAllById = new Map(previousAllRows.map(row => [row.player_id, row]));
       let periodClan = 0;
       let periodKills = 0;
+      const periodPlayers = {};
 
       for (const row of currentRows) {
         const previous = previousById.get(row.player_id);
         if (!previous) {
           state.players[row.player_id] = { clan_medals: 0, kills: 0 };
-          continue;
+          periodPlayers[row.player_id] = { clan_medals: 0, kills: 0, baseline: !previousSnapshot || !previousRows.length };
+        } else {
+          const clanDelta = Number(row.clan_medals || 0) - Number(previous.clan_medals || 0);
+          const killDelta = Number(row.total_kills || 0) - Number(previous.total_kills || 0);
+          periodClan += clanDelta;
+          periodKills += killDelta;
+          const currentPlayer = state.players[row.player_id] || { clan_medals: 0, kills: 0 };
+          currentPlayer.clan_medals += clanDelta;
+          currentPlayer.kills += killDelta;
+          state.players[row.player_id] = currentPlayer;
+          periodPlayers[row.player_id] = { clan_medals: clanDelta, kills: killDelta, baseline: false };
         }
-        const clanDelta = Number(row.clan_medals || 0) - Number(previous.clan_medals || 0);
-        const killDelta = Number(row.total_kills || 0) - Number(previous.total_kills || 0);
-        periodClan += clanDelta;
-        periodKills += killDelta;
-        const currentPlayer = state.players[row.player_id] || { clan_medals: 0, kills: 0 };
-        currentPlayer.clan_medals += clanDelta;
-        currentPlayer.kills += killDelta;
-        state.players[row.player_id] = currentPlayer;
+
+        const previousAll = previousAllById.get(row.player_id);
+        if (!cumulativeState[row.player_id]) cumulativeState[row.player_id] = { clan_medals: 0, kills: 0 };
+        if (previousAll) {
+          cumulativeState[row.player_id].clan_medals += Number(row.clan_medals || 0) - Number(previousAll.clan_medals || 0);
+          cumulativeState[row.player_id].kills += Number(row.total_kills || 0) - Number(previousAll.total_kills || 0);
+        }
       }
 
       const sameWeek = previousRows.length > 0;
@@ -80,7 +108,9 @@
         period_kills_change: sameWeek ? periodKills : 0,
         weekly_clan_medals_earned: state.clan_medals += (sameWeek ? periodClan : 0),
         weekly_kills_earned: state.kills += (sameWeek ? periodKills : 0),
-        players: clonePlayerTotals(state.players)
+        period_players: clonePeriodPlayers(periodPlayers),
+        players: clonePlayerTotals(state.players),
+        cumulative_players: cloneCumulativePlayers(cumulativeState)
       };
       previousSnapshot = snapshot;
     }
