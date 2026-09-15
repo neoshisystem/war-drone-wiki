@@ -35,12 +35,16 @@ jobs:
           node --check clan-leaderboard/tools/generate-archive.js
           node --check clan-leaderboard/tools/test-ingest-publish.js
           node --check clan-leaderboard/tools/test-archive-generator.js
+          node --check clan-leaderboard/assets/performance.js
+          node --check clan-leaderboard/tools/test-performance.js
       - name: Canonical reconciliation
         run: node clan-leaderboard/tools/reconcile-current.js
       - name: Canonical validation
         run: node clan-leaderboard/tools/validate-ingestion.js
       - name: Deterministic ingestion test
         run: node clan-leaderboard/tools/test-ingest-snapshot.js
+      - name: Weekly performance test
+        run: node clan-leaderboard/tools/test-performance.js
       - name: Deterministic report generation test
         run: node clan-leaderboard/tools/test-report-generator.js
       - name: Deterministic archive generation test
