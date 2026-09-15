@@ -1,15 +1,101 @@
 (() => {
-const qs=new URLSearchParams(location.search),source=qs.get('source')||'reports/2026-09-14-2300.html',mode=qs.get('mode')||'simple',root=document.querySelector('#viewer');if(!root)return;
-const baseline=source.includes('2026-09-12-1900'),mid=source.includes('clan-leaderboard.html'),s03=source.includes('2026-09-13-1130'),s04=source.includes('2026-09-13-2300'),s05=source.includes('2026-09-14-2300'),current=s05,snapshotKey=baseline?'S01':mid?'S02':s03?'S03':s04?'S04':'S05';
-const lbMarker='/clan-leaderboard/';const lbPos=location.pathname.indexOf(lbMarker);const lbDir=lbPos>=0?new URL(location.pathname.slice(0,lbPos+lbMarker.length),location.origin).href:new URL('./',location.href).href;const navUrl=(path,query='')=>new URL(path,lbDir).pathname+query;
-const config=baseline?{title:'ثبت اولیه ۴۷ عضو',date:'۲۱ شهریور ۱۴۰۵',time:'۱۹:۰۰',period:'دوره ۰۱',prev:null,next:navUrl('index.html','?source=../clan-leaderboard.html&mode=simple'),archive:navUrl('archive.html')}:mid?{title:'جدول جامع عملکرد و تغییرات اعضای کلن',date:'۲۱ شهریور ۱۴۰۵',time:'۲۳:۳۰',period:'دوره ۰۲',prev:navUrl('reports/2026-09-12-1900-view.html','?source=2026-09-12-1900.html&mode=simple'),next:navUrl('index.html','?source=reports/2026-09-13-1130.html&mode=simple'),archive:navUrl('archive.html')}:s03?{title:'جدول جامع عملکرد و تغییرات اعضای کلن',date:'۲۲ شهریور ۱۴۰۵',time:'۱۱:۳۰',period:'دوره ۰۳',prev:navUrl('index.html','?source=../clan-leaderboard.html&mode=simple'),next:navUrl('index.html','?source=reports/2026-09-13-2300.html&mode=simple'),archive:navUrl('archive.html')}:s04?{title:'جدول جامع عملکرد و تغییرات اعضای کلن',date:'۲۲ شهریور ۱۴۰۵',time:'۲۳:۰۰',period:'دوره ۰۴',prev:navUrl('index.html','?source=reports/2026-09-13-1130.html&mode=simple'),next:navUrl('index.html','?source=reports/2026-09-14-2300.html&mode=simple'),archive:navUrl('archive.html')}:{title:'جدول جامع عملکرد و تغییرات اعضای کلن',date:'۲۳ شهریور ۱۴۰۵',time:'۲۳:00',period:'دوره ۰۵',prev:navUrl('index.html','?source=reports/2026-09-13-2300.html&mode=simple'),next:null,archive:navUrl('archive.html')};
-const esc=s=>String(s??'').replace(/[&<>\"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[c]));const text=e=>e?e.textContent.trim():'';
-const nav=`<nav class="viewer-nav"><a class="btn" href="${config.prev||'#'}" ${config.prev?'':'aria-disabled="true"'}>← دوره قبل</a><a class="btn" href="${config.archive}">آرشیو</a><a class="btn" href="${config.next||'#'}" ${config.next?'':'aria-disabled="true"'}>دوره بعد →</a></nav>`;
-Promise.all([fetch(new URL(source,location.href)).then(r=>{if(!r.ok)throw new Error('source');return r.text()}),fetch(new URL('data/player-observations.json',lbDir)).then(r=>{if(!r.ok)throw new Error('current-data');return r.json()}),fetch(new URL('data/player-observations-history.json',lbDir)).then(r=>{if(!r.ok)throw new Error('history-data');return r.json()}),fetch(new URL('data/players.json',lbDir)).then(r=>{if(!r.ok)throw new Error('players-data');return r.json()})]).then(([html,currentData,historyData,playersData])=>{
-const doc=new DOMParser().parseFromString(html,'text/html'),members=[];const canonicalSnapshots={...(historyData.snapshots||{}),...(currentData.snapshots||{})};const playerById=new Map((playersData.players||[]).map(p=>[p.player_id,p]));const playerByName=new Map((playersData.players||[]).map(p=>[String(p.display_name),p.player_id]));(canonicalSnapshots[snapshotKey]||[]).forEach(o=>{const p=playerById.get(o.player_id);if(p&&p.display_name)playerByName.set(String(p.display_name),o.player_id)});
-const cards=[...doc.querySelectorAll('.member')];if(cards.length)cards.forEach(card=>{const stats={};card.querySelectorAll('.stat').forEach(s=>stats[text(s.querySelector('span'))]=text(s.querySelector('strong')));members.push({rank:(text(card.querySelector('.rank')).match(/^\d+/)||[''])[0],name:text(card.querySelector('h3')),role:text(card.querySelector('.role')),movement:text(card.querySelector('.movement')),stats});});else doc.querySelectorAll('tbody tr').forEach(tr=>{const c=[...tr.children].map(text);if(c.length>=12)members.push({rank:c[0],name:c[1],role:c[2],movement:c[0],stats:{'استیج':c[3],'مدال لیگ جاری':c[4],'تغییر مدال لیگ':c[5],'مدال کل کلن':c[6],'مدال افتخار (طلا / نقره / برنز)':c[7],'مجموع کیل 💀':c[8],'افزایش کیل 💀':c[9],'لول سلاح‌ها (توپ / هیدرا / هل‌فایر)':c[10],'آخرین آنلاین':c[11]}});else if(c.length>=11)members.push({rank:c[0],name:c[1],role:c[2],movement:c[0],stats:{'استیج':c[3],'مدال لیگ جاری':c[4],'تغییرات مدال لیگ':c[5],'مدال کل کلن':c[6],'مجموع کیل 💀':c[7],'افزایش کیل 💀':c[8],'لول سلاح‌ها (توپ / هیدرا / هل‌فایر)':c[9],'آخرین آنلاین':c[10]}});else if(c.length>=10)members.push({rank:c[0],name:c[1],role:c[2],movement:c[0],stats:{'استیج':c[3],'مدال لیگ جاری':c[4],'مدال کل کلن':c[5],'مجموع کیل 💀':c[6],'لول سلاح‌ها (توپ / هیدرا / هل‌فایر)':c[7],'مدال‌های افتخار (طلا / نقره / برنز)':c[8],'آخرین آنلاین':c[9]}});});
-const keys=['استیج','مدال لیگ جاری','تغییر مدال لیگ','مدال کل کلن','مدال افتخار (طلا / نقره / برنز)','مجموع کیل 💀','افزایش کیل 💀','لول سلاح‌ها (توپ / هیدرا / هل‌فایر)','آخرین آنلاین'];const profileUrl=id=>navUrl('player.html',`?id=${encodeURIComponent(id)}`),playerName=name=>{const id=playerByName.get(name);return id?`<a class="player-name-link" href="${profileUrl(id)}">${esc(name)}</a>`:esc(name)};
-root.innerHTML=`<section class="hero"><span class="badge">PERSIA · ${config.period}</span><h1>${esc(config.title)}</h1><p>${config.date} · ساعت ${config.time}</p><div class="meta"><span>${members.length} عضو</span><span>داده از یک منبع واحد</span></div></section><section class="toolbar"><input id="search" class="search" type="search" placeholder="جست‌وجوی نام کاربری، سمت یا مقدار..."><div class="switch"><button data-mode="simple">نمایش ساده</button><button data-mode="graphic">نمایش گرافیکی</button></div></section><div id="results"></div>${nav}`;const results=root.querySelector('#results'),input=root.querySelector('#search'),sb=root.querySelector('[data-mode="simple"]'),gb=root.querySelector('[data-mode="graphic"]');let currentMode=mode,sortIndex=null,sortDir=1;const num=v=>{const m=String(v??'').replace(/[٬,]/g,'').match(/-?\d+(?:\.\d+)?/);return m?Number(m[0]):null},sortVal=(m,i)=>i===0?num(m.rank):i===1?m.name.toLocaleLowerCase('fa'):i===2?m.role.toLocaleLowerCase('fa'):num(m.stats[keys[i-3]]);
-const table=list=>`<div class="table-wrap"><table><thead><tr>${['رتبه','نام کاربری','سمت',...keys].map((k,i)=>`<th><button type="button" data-sort="${i}">${k} ↕</button></th>`).join('')}</tr></thead><tbody>${list.map(m=>`<tr><td>${esc(m.rank)}</td><td>${playerName(m.name)}</td><td>${esc(m.role)}</td>${keys.map(k=>`<td>${esc(m.stats[k]||'—')}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;const graphic=list=>`<div class="members">${list.map(m=>`<article class="member"><header><div><span class="rank">${esc(m.rank)}</span><h3>${playerName(m.name)}</h3><small>${esc(m.role)}</small></div><b>${esc(m.movement||'')}</b></header><div class="stats">${keys.map(k=>`<div class="stat"><span>${esc(k)}</span><strong>${esc(m.stats[k]||'—')}</strong></div>`).join('')}</div></article>`).join('')}</div>`;
-function render(){const old=results.querySelector('.table-wrap'),scroll=old?old.scrollLeft:0,q=input.value.trim().toLowerCase();let list=members.filter(m=>([m.rank,m.name,m.role,m.movement,...Object.values(m.stats)].join(' ').toLowerCase()).includes(q));if(sortIndex!==null)list=[...list].sort((a,b)=>{const x=sortVal(a,sortIndex),y=sortVal(b,sortIndex);if(x===y)return 0;if(x===null)return 1;if(y===null)return-1;return(x<y?-1:1)*sortDir});results.innerHTML=`<div class="count">${list.length} نتیجه</div>`+(currentMode==='simple'?table(list):graphic(list));const nw=results.querySelector('.table-wrap');if(nw)requestAnimationFrame(()=>nw.scrollLeft=scroll);results.querySelectorAll('[data-sort]').forEach(b=>b.onclick=()=>{const i=Number(b.dataset.sort);if(sortIndex===i)sortDir*=-1;else{sortIndex=i;sortDir=1}render()});sb.classList.toggle('active',currentMode==='simple');gb.classList.toggle('active',currentMode==='graphic')}input.oninput=render;sb.onclick=()=>{currentMode='simple';render()};gb.onclick=()=>{currentMode='graphic';render()};render();}).catch(()=>root.innerHTML='<p class="error">منبع داده قابل بارگذاری نیست.</p>'+nav);
+  const qs = new URLSearchParams(location.search);
+  const requestedSource = qs.get('source');
+  const requestedMode = qs.get('mode') || 'simple';
+  const root = document.querySelector('#viewer');
+  const performance = window.WDPerformance;
+  if (!root || !performance) return;
+
+  const lbMarker = '/clan-leaderboard/';
+  const lbPos = location.pathname.indexOf(lbMarker);
+  const lbDir = lbPos >= 0 ? new URL(location.pathname.slice(0, lbPos + lbMarker.length), location.origin).href : new URL('./', location.href).href;
+  const navUrl = (path, query = '') => new URL(path, lbDir).pathname + query;
+  const esc = value => String(value ?? '').replace(/[&<>\"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '\"':'&quot;', "'":'&#39;' }[c]));
+  const text = element => element ? element.textContent.trim() : '';
+  const signed = value => value == null ? '—' : Number(value) === 0 ? '0' : Number(value) > 0 ? `+${Number(value).toLocaleString('en-US')}` : `-${Math.abs(Number(value)).toLocaleString('en-US')}`;
+  const fetchJson = path => fetch(new URL(path, lbDir)).then(response => { if (!response.ok) throw new Error(path); return response.json(); });
+
+  Promise.all([
+    fetch(new URL(requestedSource || 'reports/2026-09-14-2300.html', location.href)).then(response => { if (!response.ok) throw new Error('source'); return response.text(); }),
+    fetchJson('data/player-observations.json'),
+    fetchJson('data/player-observations-history.json'),
+    fetchJson('data/player-observations-history-s05.json').catch(() => ({ snapshots: {} })),
+    fetchJson('data/players.json'),
+    fetchJson('data/snapshots.json'),
+    fetchJson('data/leagues.json')
+  ]).then(([sourceHtml, currentData, historyData, historyS05, playersData, snapshotsData, leaguesData]) => {
+    const snapshots = [...(snapshotsData.snapshots || [])].sort((a, b) => a.captured_at_utc.localeCompare(b.captured_at_utc));
+    const basename = value => String(value || '').split('/').pop();
+    const sourceMatch = requestedSource ? snapshots.find(snapshot => snapshot.source_report && basename(snapshot.source_report) === basename(requestedSource)) : null;
+    const snapshotKey = sourceMatch?.snapshot_id || snapshotsData.current_snapshot_id;
+    const target = snapshots.find(snapshot => snapshot.snapshot_id === snapshotKey) || snapshots[snapshots.length - 1];
+    if (!target) throw new Error('snapshot');
+
+    const canonicalSnapshots = { ...(historyData.snapshots || {}), ...(historyS05.snapshots || {}), ...(currentData.snapshots || {}) };
+    const playerById = new Map((playersData.players || []).map(player => [player.player_id, player]));
+    const playerByName = new Map((playersData.players || []).map(player => [String(player.display_name), player.player_id]));
+    (canonicalSnapshots[snapshotKey] || []).forEach(row => { const player = playerById.get(row.player_id); if (player?.display_name) playerByName.set(String(player.display_name), row.player_id); });
+    const metrics = performance.computeAll(snapshotsData, [historyData, historyS05, currentData], leaguesData)[snapshotKey] || { league_week: performance.leagueWeekId(target.captured_at_utc, leaguesData.reset), weekly_clan_medals_earned: 0, weekly_kills_earned: 0 };
+
+    const doc = new DOMParser().parseFromString(sourceHtml, 'text/html');
+    const members = [];
+    const normalizeKey = key => (key === 'تغییر مدال لیگ' || key === 'تغییرات مدال لیگ') ? 'تغییر مدال کلن' : key;
+    const cards = [...doc.querySelectorAll('.member')];
+    if (cards.length) {
+      cards.forEach(card => {
+        const stats = {};
+        card.querySelectorAll('.stat').forEach(stat => { stats[normalizeKey(text(stat.querySelector('span')))] = text(stat.querySelector('strong')); });
+        members.push({ rank: (text(card.querySelector('.rank')).match(/^\d+/) || [''])[0], name: text(card.querySelector('h3')), role: text(card.querySelector('small')), movement: text(card.querySelector('b')), stats });
+      });
+    } else {
+      doc.querySelectorAll('tbody tr').forEach(row => {
+        const c = [...row.children].map(text);
+        if (c.length >= 12) members.push({ rank:c[0], name:c[1], role:c[2], movement:c[0], stats:{'استیج':c[3],'مدال لیگ جاری':c[4],'تغییر مدال کلن':c[5],'مدال کل کلن':c[6],'مدال افتخار (طلا / نقره / برنز)':c[7],'مجموع کیل 💀':c[8],'افزایش کیل 💀':c[9],'لول سلاح‌ها (توپ / هیدرا / هل‌فایر)':c[10],'آخرین آنلاین':c[11]}});
+        else if (c.length >= 11) members.push({ rank:c[0], name:c[1], role:c[2], movement:c[0], stats:{'استیج':c[3],'مدال لیگ جاری':c[4],'تغییر مدال کلن':c[5],'مدال کل کلن':c[6],'مجموع کیل 💀':c[7],'افزایش کیل 💀':c[8],'لول سلاح‌ها (توپ / هیدرا / هل‌فایر)':c[9],'آخرین آنلاین':c[10]}});
+      });
+    }
+
+    const keys = ['استیج','مدال لیگ جاری','تغییر مدال کلن','مدال کل کلن','مدال افتخار (طلا / نقره / برنز)','مجموع کیل 💀','افزایش کیل 💀','لول سلاح‌ها (توپ / هیدرا / هل‌فایر)','آخرین آنلاین'];
+    const playerName = name => { const id = playerByName.get(name); return id ? `<a class="player-name-link" href="${navUrl('player.html', `?id=${encodeURIComponent(id)}`)}">${esc(name)}</a>` : esc(name); };
+    const index = snapshots.findIndex(snapshot => snapshot.snapshot_id === target.snapshot_id);
+    const previous = index > 0 ? snapshots[index - 1] : null;
+    const next = index >= 0 && index < snapshots.length - 1 ? snapshots[index + 1] : null;
+    const sourceForSnapshot = snapshot => {
+      if (snapshot.source_report === '/clan-leaderboard.html') return '../clan-leaderboard.html';
+      if (String(snapshot.source_report || '').startsWith('/clan-leaderboard/')) return snapshot.source_report.slice('/clan-leaderboard/'.length);
+      return String(snapshot.source_report || '').replace(/^\//, '');
+    };
+    const viewerHref = snapshot => navUrl('index.html', `?source=${encodeURIComponent(sourceForSnapshot(snapshot))}&mode=${encodeURIComponent(requestedMode)}`);
+    const nav = `<nav class="viewer-nav"><a class="btn" href="${previous ? viewerHref(previous) : '#'}" ${previous ? '' : 'aria-disabled="true"'}>← دوره قبل</a><a class="btn" href="${navUrl('archive.html')}">آرشیو</a><a class="btn" href="${next ? viewerHref(next) : '#'}" ${next ? '' : 'aria-disabled="true"'}>دوره بعد →</a></nav>`;
+    const title = target.type === 'baseline' ? `ثبت اولیه ${target.members} عضو` : 'جدول جامع عملکرد و تغییرات اعضای کلن';
+
+    root.innerHTML = `<section class="hero"><span class="badge">PERSIA · دوره ${esc(String(target.snapshot_id).replace(/^S/, ''))}</span><h1>${esc(title)}</h1><p>${esc(target.date_persian)} · ساعت ${esc(target.time_iran)}</p><div class="meta"><span>${target.members} عضو</span><span>هفته لیگ: ${esc(metrics.league_week)}</span></div></section><section class="performance-card"><div class="performance-card__head"><div><span class="badge">عملکرد</span><h2>عملکرد این هفته</h2><p>تجمیعی از اولین ثبت این هفته؛ در شروع هفته لیگ دوباره از صفر محاسبه می‌شود.</p></div></div><div class="performance-grid"><div class="performance-stat"><span>تغییر مدال کلن</span><strong>${signed(metrics.weekly_clan_medals_earned)}</strong></div><div class="performance-stat"><span>افزایش کیل</span><strong>${signed(metrics.weekly_kills_earned)}</strong></div></div></section><section class="toolbar"><input id="search" class="search" type="search" placeholder="جست‌وجوی نام کاربری، سمت یا مقدار..."><div class="switch"><button data-mode="simple">نمایش ساده</button><button data-mode="graphic">نمایش گرافیکی</button></div></section><div id="results"></div>${nav}`;
+
+    const results = root.querySelector('#results');
+    const input = root.querySelector('#search');
+    const simpleButton = root.querySelector('[data-mode="simple"]');
+    const graphicButton = root.querySelector('[data-mode="graphic"]');
+    let currentMode = requestedMode;
+    let sortIndex = null;
+    let sortDirection = 1;
+    const num = value => { const match = String(value ?? '').replace(/[٬,]/g, '').match(/-?\d+(?:\.\d+)?/); return match ? Number(match[0]) : null; };
+    const sortValue = (member, index) => index === 0 ? num(member.rank) : index === 1 ? member.name.toLocaleLowerCase('fa') : index === 2 ? member.role.toLocaleLowerCase('fa') : num(member.stats[keys[index - 3]]);
+    const table = list => `<div class="table-wrap"><table><thead><tr>${['رتبه','نام کاربری','سمت',...keys].map((key, i) => `<th><button type="button" data-sort="${i}">${key} ↕</button></th>`).join('')}</tr></thead><tbody>${list.map(member => `<tr><td>${esc(member.rank)}</td><td>${playerName(member.name)}</td><td>${esc(member.role)}</td>${keys.map(key => `<td>${esc(member.stats[key] || '—')}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+    const graphic = list => `<div class="members">${list.map(member => `<article class="member"><header><div><span class="rank">${esc(member.rank)}</span><h3>${playerName(member.name)}</h3><small>${esc(member.role)}</small></div><b>${esc(member.movement || '')}</b></header><div class="stats">${keys.map(key => `<div class="stat"><span>${esc(key)}</span><strong>${esc(member.stats[key] || '—')}</strong></div>`).join('')}</div></article>`).join('')}</div>`;
+    function render() {
+      const oldTable = results.querySelector('.table-wrap'); const scroll = oldTable ? oldTable.scrollLeft : 0;
+      const query = input.value.trim().toLocaleLowerCase('fa');
+      let list = members.filter(member => [member.rank, member.name, member.role, member.movement, ...Object.values(member.stats)].join(' ').toLocaleLowerCase('fa').includes(query));
+      if (sortIndex !== null) list = [...list].sort((a, b) => { const x = sortValue(a, sortIndex); const y = sortValue(b, sortIndex); if (x === y) return 0; if (x === null) return 1; if (y === null) return -1; return (x < y ? -1 : 1) * sortDirection; });
+      results.innerHTML = `<div class="count">${list.length} نتیجه</div>${currentMode === 'simple' ? table(list) : graphic(list)}`;
+      const newTable = results.querySelector('.table-wrap'); if (newTable) requestAnimationFrame(() => { newTable.scrollLeft = scroll; });
+      results.querySelectorAll('[data-sort]').forEach(button => button.onclick = () => { const sort = Number(button.dataset.sort); if (sortIndex === sort) sortDirection *= -1; else { sortIndex = sort; sortDirection = 1; } render(); });
+      simpleButton.classList.toggle('active', currentMode === 'simple');
+      graphicButton.classList.toggle('active', currentMode === 'graphic');
+    }
+    input.oninput = render;
+    simpleButton.onclick = () => { currentMode = 'simple'; render(); };
+    graphicButton.onclick = () => { currentMode = 'graphic'; render(); };
+    render();
+  }).catch(error => { console.error(error); root.innerHTML = '<p class="error">منبع داده قابل بارگذاری نیست.</p>'; });
 })();
