@@ -48,6 +48,8 @@
     const metrics = performance.computeAll(snapshotsData, [historyData, historyS05, currentData], leaguesData)[snapshotKey] || {
       league_week: performance.leagueWeekId(target.captured_at_utc, leaguesData.reset),
       baseline_snapshot_id: snapshotKey,
+      period_clan_medals_change: 0,
+      period_kills_change: 0,
       period_players: {},
       weekly_clan_medals_earned: 0,
       weekly_kills_earned: 0
@@ -102,8 +104,10 @@
     const title = target.type === 'baseline' ? `ثبت اولیه ${target.members} عضو` : 'جدول جامع عملکرد و تغییرات اعضای کلن';
     const weeklyLabel = metrics.baseline_snapshot_id === snapshotKey ? '— / baseline' : signed(metrics.weekly_clan_medals_earned);
     const weeklyKills = metrics.baseline_snapshot_id === snapshotKey ? '— / baseline' : signed(metrics.weekly_kills_earned);
+    const periodLabel = metrics.baseline_snapshot_id === snapshotKey ? '— / baseline' : signed(metrics.period_clan_medals_change);
+    const periodKills = metrics.baseline_snapshot_id === snapshotKey ? '— / baseline' : signed(metrics.period_kills_change);
 
-    root.innerHTML = `<section class="hero"><span class="badge">PERSIA · دوره ${esc(String(target.snapshot_id).replace(/^S/, ''))}</span><h1>${esc(title)}</h1><p>${esc(target.date_persian)} · ساعت ${esc(target.time_iran)}</p><div class="meta"><span>${target.members} عضو</span><span>هفته لیگ: ${esc(metrics.league_week)}</span></div></section><section class="performance-card"><div class="performance-card__head"><div><span class="badge">عملکرد</span><h2>عملکرد این هفته</h2><p>تجمیعی از اولین ثبت این هفته؛ در شروع هفته لیگ دوباره از صفر محاسبه می‌شود.</p></div></div><div class="performance-grid"><div class="performance-stat"><span>تغییر مدال کلن</span><strong>${weeklyLabel}</strong></div><div class="performance-stat"><span>افزایش کیل</span><strong>${weeklyKills}</strong></div></div></section><section class="toolbar"><input id="search" class="search" type="search" placeholder="جست‌وجوی نام کاربری، سمت یا مقدار..."><div class="switch"><button data-mode="simple">نمایش ساده</button><button data-mode="graphic">نمایش گرافیکی</button></div></section><div id="results"></div>${nav}`;
+    root.innerHTML = `<section class="hero"><span class="badge">PERSIA · دوره ${esc(String(target.snapshot_id).replace(/^S/, ''))}</span><h1>${esc(title)}</h1><p>${esc(target.date_persian)} · ساعت ${esc(target.time_iran)}</p><div class="meta"><span>${target.members} عضو</span><span>هفته لیگ: ${esc(metrics.league_week)}</span></div></section><section class="performance-card"><div class="performance-card__head"><div><span class="badge">عملکرد</span><h2>عملکرد این هفته</h2><p>تجمیعی از اولین ثبت این هفته؛ در شروع هفته لیگ دوباره از صفر محاسبه می‌شود.</p></div></div><div class="performance-grid"><div class="performance-stat"><span>تغییر مدال کلن</span><strong>${weeklyLabel}</strong></div><div class="performance-stat"><span>افزایش کیل</span><strong>${weeklyKills}</strong></div></div></section><section class="performance-card performance-card--period"><div class="performance-card__head"><div><span class="badge">این دوره</span><h2>جمع تغییرات این دوره</h2><p>جمع تغییرات ثبت‌شده برای تمام اعضای حاضر در همین Snapshot؛ مستقل از تجمیع هفتگی.</p></div></div><div class="performance-grid"><div class="performance-stat"><span>جمع تغییر مدال کلن</span><strong>${periodLabel}</strong></div><div class="performance-stat"><span>جمع افزایش کیل</span><strong>${periodKills}</strong></div></div></section><section class="toolbar"><input id="search" class="search" type="search" placeholder="جست‌وجوی نام کاربری، سمت یا مقدار..."><div class="switch"><button data-mode="simple">نمایش ساده</button><button data-mode="graphic">نمایش گرافیکی</button></div></section><div id="results"></div>${nav}`;
 
     const results = root.querySelector('#results');
     const input = root.querySelector('#search');
