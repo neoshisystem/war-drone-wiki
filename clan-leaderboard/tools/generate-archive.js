@@ -10,7 +10,7 @@ function faNumber(value) { return Number(value).toLocaleString('en-US'); }
 function viewerHref(page) {
   const raw = String(page || '');
   const source = raw === '../clan-leaderboard.html' ? raw : raw.replace(/^\.\.\//, '');
-  return `index.html?source=${encodeURIComponent(source)}&mode=simple`;
+  return `index.html?source=${source}&mode=simple`;
 }
 const index = readJson('index.json');
 const reports = [...(index.reports || [])];
