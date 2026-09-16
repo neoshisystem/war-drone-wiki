@@ -13,7 +13,7 @@ try{
  if(!html.includes('تغییر مدال کلن: +'))throw new Error('missing aggregated clan-medal delta');
  if(!html.includes('افزایش کیل: +'))throw new Error('missing aggregated kill delta');
  const aggregates=[...html.matchAll(/دوره ([0-9۰-۹]+).*?<div class="aggregate-item"><span>تغییر مدال کلن<\/span><b>([^<]+)<\/b><\/div><div class="aggregate-item"><span>افزایش کیل<\/span><b>([^<]+)<\/b>/gs)].map(match=>({period:match[1],clan_medals:match[2],kills:match[3]}));
- if(aggregates.length!==5)throw new Error(`expected 5 non-baseline aggregate values, found ${aggregates.length}`);
+ if(aggregates.length!==6)throw new Error(`expected 6 aggregate values, found ${aggregates.length}`);
  console.log(`ARCHIVE AGGREGATES: ${JSON.stringify(aggregates)}`);
  console.log('ARCHIVE GENERATOR TEST PASS: index.json -> deterministic archive with per-session aggregate clan medals and kills.');
 }finally{fs.rmSync(temp,{force:true});}
