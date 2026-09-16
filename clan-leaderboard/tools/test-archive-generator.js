@@ -10,10 +10,9 @@ try{
  if(!html.includes('clan-leaderboard.html'))throw new Error('missing S02 archive link');if(!html.includes('دوره 6'))throw new Error('missing newest period label');
  const aggregateCount=(html.match(/class="report-aggregate"/g)||[]).length;if(aggregateCount!==6)throw new Error(`expected session aggregate card on all 6 archive entries, found ${aggregateCount}`);
  if(!html.includes('— / baseline'))throw new Error('missing S01 baseline presentation');
- if(!html.includes('تغییر مدال کلن: +'))throw new Error('missing aggregated clan-medal delta');
- if(!html.includes('افزایش کیل: +'))throw new Error('missing aggregated kill delta');
  const aggregates=[...html.matchAll(/دوره ([0-9۰-۹]+).*?<div class="aggregate-item"><span>تغییر مدال کلن<\/span><b>([^<]+)<\/b><\/div><div class="aggregate-item"><span>افزایش کیل<\/span><b>([^<]+)<\/b>/gs)].map(match=>({period:match[1],clan_medals:match[2],kills:match[3]}));
  if(aggregates.length!==6)throw new Error(`expected 6 aggregate values, found ${aggregates.length}`);
+ if(!aggregates.slice(1).every(item=>item.clan_medals.startsWith('+')&&item.kills.startsWith('+')))throw new Error('non-baseline aggregate values must be signed positive/negative values');
  console.log(`ARCHIVE AGGREGATES: ${JSON.stringify(aggregates)}`);
  console.log('ARCHIVE GENERATOR TEST PASS: index.json -> deterministic archive with per-session aggregate clan medals and kills.');
 }finally{fs.rmSync(temp,{force:true});}
