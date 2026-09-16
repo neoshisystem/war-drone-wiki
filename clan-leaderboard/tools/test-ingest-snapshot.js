@@ -2,6 +2,7 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
+const { spawnSync } = require('child_process');
 const ROOT = path.resolve(__dirname, '..');
 const fixture = path.join(ROOT, 'data', 'incoming', 'SNAPSHOT_INGESTION_TEST.json');
 const runner = path.join(ROOT, 'tools', 'ingest-snapshot-v4.js');
