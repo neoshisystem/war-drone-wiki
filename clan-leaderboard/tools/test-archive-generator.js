@@ -4,7 +4,7 @@ const fs=require('fs');const os=require('os');const path=require('path');const R
 try{
  const result=require('child_process').spawnSync(process.execPath,[path.join(__dirname,'generate-archive.js'),temp],{cwd:ROOT,encoding:'utf8'});
  if(result.status!==0){process.stderr.write(result.stderr||result.stdout||'archive generator failed\n');process.exit(result.status||1);}
- const html=fs.readFileSync(temp,'utf8');const cards=(html.match(/class="report/g)||[]).length;
+ const html=fs.readFileSync(temp,'utf8');const cards=(html.match(/<a class="report /g)||[]).length;
  if(cards!==6)throw new Error(`expected 6 archive entries, found ${cards}`);
  for(const id of ['2026-09-15-2400','2026-09-14-2300','2026-09-13-2300','2026-09-13-1130','2026-09-12-1900'])if(!html.includes(`reports/${id}.html`))throw new Error(`missing archive link for ${id}`);
  if(!html.includes('clan-leaderboard.html'))throw new Error('missing S02 archive link');if(!html.includes('دوره 6'))throw new Error('missing newest period label');
