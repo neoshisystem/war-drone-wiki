@@ -1,0 +1,46 @@
+#!/usr/bin/env node
+'use strict';
+const fs = require('fs');
+const path = require('path');
+const assert = require('assert');
+const ROOT = path.resolve(__dirname, '..');
+const DATA = path.join(ROOT, 'data');
+const viewerData = require(path.join(ROOT, 'assets', 'viewer-data.js'));
+const read = name => JSON.parse(fs.readFileSync(path.join(DATA, name), 'utf8'));
+const snapshots = read('snapshots.json');
+const current = read('player-observations.json');
+const history = read('player-observations-history.json');
+const historyS05 = (() => { try { return read('player-observations-history-s05.json'); } catch { return { snapshots: {} }; } })();
+const players = read('players.json');
+const observationSets = [history, historyS05, current];
+
+const viewerSource = fs.readFileSync(path.join(ROOT, 'assets', 'viewer.js'), 'utf8');
+const indexSource = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+assert(!viewerSource.includes("reports/2026-09-14-2300.html"), 'Viewer must not hard-code S05 as its default source');
+assert(viewerSource.includes("snapshotsData.current_snapshot_id"), 'Viewer must resolve the direct entry from current_snapshot_id');
+assert(viewerSource.includes("'../clan-leaderboard.html'"), 'Viewer fallback source must remain available');
+assert(indexSource.indexOf('assets/viewer-data.js') < indexSource.indexOf('assets/viewer.js'), 'viewer-data.js must load before viewer.js');
+
+for (const snapshot of snapshots.snapshots) {
+  const rows = viewerData.getRows(snapshot.snapshot_id, observationSets);
+  assert.strictEqual(rows.length, snapshot.members, `${snapshot.snapshot_id}: canonical row count mismatch`);
+  const ids = new Set(rows.map(row => row.player_id));
+  const ranks = new Set(rows.map(row => row.rank));
+  assert.strictEqual(ids.size, rows.length, `${snapshot.snapshot_id}: duplicate player_id`);
+  assert.strictEqual(ranks.size, rows.length, `${snapshot.snapshot_id}: duplicate rank`);
+  const min = Math.min(...ranks);
+  const max = Math.max(...ranks);
+  assert.strictEqual(min, 1, `${snapshot.snapshot_id}: rank range must start at 1`);
+  assert.strictEqual(max, snapshot.members, `${snapshot.snapshot_id}: rank range must cover all members`);
+}
+
+const s06Rows = viewerData.getRows('S06', observationSets);
+const s06 = viewerData.buildMembers('S06', observationSets, players, { baseline_snapshot_id: 'S05', period_players: {} }).members;
+assert.strictEqual(s06Rows.length, 45, 'S06 must contain 45 canonical observations');
+assert.strictEqual(s06.length, 45, 'Viewer model must contain 45 S06 members');
+assert.strictEqual(s06[19].player_id, 'PERSIA-P-0013', 'S06 rank 20 must resolve to the stable Uk/Vk identity');
+assert.strictEqual(s06[33].player_id, 'PERSIA-P-0037', 'S06 nouk identity must remain stable');
+assert.strictEqual(s06[37].player_id, 'PERSIA-P-0040', 'S06 جهانبانی identity must remain stable');
+assert.strictEqual(s06[19].stats['تغییر مدال کلن'], '—', 'Members without period metrics must not fabricate a delta');
+
+console.log(`VIEWER DATA TEST PASS: ${snapshots.snapshots.length} snapshots, current=${snapshots.current_snapshot_id}, S06=${s06.length} members, fallback path preserved, S05 hard-code removed.`);
