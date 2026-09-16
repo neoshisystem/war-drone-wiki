@@ -39,12 +39,6 @@
     return members;
   };
 
-  const sourcePathForSnapshot = snapshot => {
-    if (snapshot?.source_report === '/clan-leaderboard.html') return '../clan-leaderboard.html';
-    if (String(snapshot?.source_report || '').startsWith('/clan-leaderboard/')) return snapshot.source_report.slice('/clan-leaderboard/'.length);
-    return String(snapshot?.source_report || '').replace(/^\//, '');
-  };
-
   Promise.all([
     fetchJson('data/player-observations.json'),
     fetchJson('data/player-observations-history.json'),
@@ -61,9 +55,9 @@
     if (!target) throw new Error('snapshot');
 
     const observationSets = [historyData, historyS05, currentData];
-    const metrics = performance.computeAll(snapshotsData, observationSets, leaguesData)[snapshotKey] || {
+    const metrics = performance.computeAll(snapshotsData, observationSets, leaguesData)[target.snapshot_id] || {
       league_week: performance.leagueWeekId(target.captured_at_utc, leaguesData.reset),
-      baseline_snapshot_id: snapshotKey,
+      baseline_snapshot_id: target.snapshot_id,
       period_clan_medals_change: 0,
       period_kills_change: 0,
       period_players: {},
@@ -72,21 +66,17 @@
     };
 
     const expectedMembers = Number(target.members || 0);
-    const canonicalResult = viewerData.buildMembers(snapshotKey, observationSets, playersData, metrics);
-    let members = canonicalResult.members;
-    let dataMode = 'canonical';
-
-    if (members.length !== expectedMembers) {
-      dataMode = 'fallback';
-      return fetchText(fallbackSource).then(sourceHtml => {
-        const fallbackMembers = parseSourceMembers(sourceHtml);
-        if (!fallbackMembers.length) throw new Error(`${snapshotKey}: canonical rows ${members.length}/${expectedMembers}; fallback source has no grid`);
-        members = fallbackMembers;
-        render(target, metrics, members, requestedMode, dataMode, sourceMatch);
-      });
+    const canonical = viewerData.buildMembers(target.snapshot_id, observationSets, playersData, metrics);
+    if (canonical.members.length === expectedMembers) {
+      render(target, metrics, canonical.members, requestedMode, 'canonical', snapshots);
+      return;
     }
 
-    render(target, metrics, members, requestedMode, dataMode, sourceMatch);
+    fetchText(fallbackSource).then(sourceHtml => {
+      const fallbackMembers = parseSourceMembers(sourceHtml);
+      if (!fallbackMembers.length) throw new Error(`${target.snapshot_id}: canonical rows ${canonical.members.length}/${expectedMembers}; fallback source has no grid`);
+      render(target, metrics, fallbackMembers, requestedMode, 'fallback', snapshots);
+    }).catch(error => { throw error; });
   }).catch(error => {
     console.error(error);
     fetchText(fallbackSource).then(sourceHtml => {
@@ -97,59 +87,58 @@
   });
 
   function fallbackTable(members) {
-    const keys = ['استیج','مدال لیگ جاری','تغییر مدال کلن','مدال کل کلن','مدال افتخار (طلا / نقره / برنز)','مجموع کیل 💀','افزایش کیل 💀','لول سلاح‌ها (توپ / هیدرا / هل‌فایر)','آخرین آنلاین'];
+    const keys = viewerData.KEYS;
     return `<div class="table-wrap"><table><thead><tr>${['رتبه','نام کاربری','سمت',...keys].map(key => `<th>${key}</th>`).join('')}</tr></thead><tbody>${members.map(member => `<tr><td>${esc(member.rank)}</td><td>${esc(member.name)}</td><td>${esc(member.role)}</td>${keys.map(key => `<td>${esc(member.stats[key] || '—')}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
   }
 
-  function render(target, metrics, members, requestedModeValue, dataMode, sourceMatch) {
+  function render(target, metrics, members, mode, dataMode, snapshots) {
     const keys = viewerData.KEYS.slice();
     const playerById = new Map(members.filter(member => member.player_id).map(member => [member.name, member.player_id]));
     const playerName = name => { const id = playerById.get(name); return id ? `<a class="player-name-link" href="${navUrl('player.html', `?id=${encodeURIComponent(id)}`)}">${esc(name)}</a>` : esc(name); };
-    const snapshots = [...arguments[0].__snapshots || []];
-    const allSnapshotsPromise = fetchJson('data/snapshots.json');
-    allSnapshotsPromise.then(snapshotsData => {
-      const ordered = [...(snapshotsData.snapshots || [])].sort((a, b) => a.captured_at_utc.localeCompare(b.captured_at_utc));
-      const index = ordered.findIndex(snapshot => snapshot.snapshot_id === target.snapshot_id);
-      const previous = index > 0 ? ordered[index - 1] : null;
-      const next = index >= 0 && index < ordered.length - 1 ? ordered[index + 1] : null;
-      const sourceForSnapshot = snapshot => sourcePathForSnapshot(snapshot);
-      const viewerHref = snapshot => navUrl('index.html', `?source=${encodeURIComponent(sourceForSnapshot(snapshot))}&mode=${encodeURIComponent(requestedModeValue)}`);
-      const nav = `<nav class="viewer-nav"><a class="btn" href="${previous ? viewerHref(previous) : '#'}" ${previous ? '' : 'aria-disabled="true"'}>← دوره قبل</a><a class="btn" href="${navUrl('archive.html')}">آرشیو</a><a class="btn" href="${next ? viewerHref(next) : '#'}" ${next ? '' : 'aria-disabled="true"'}>دوره بعد →</a></nav>`;
-      const title = target.type === 'baseline' ? `ثبت اولیه ${target.members} عضو` : 'جدول جامع عملکرد و تغییرات اعضای کلن';
-      const weeklyLabel = metrics.baseline_snapshot_id === target.snapshot_id ? '— / baseline' : signed(metrics.weekly_clan_medals_earned);
-      const weeklyKills = metrics.baseline_snapshot_id === target.snapshot_id ? '— / baseline' : signed(metrics.weekly_kills_earned);
-      const periodLabel = metrics.baseline_snapshot_id === target.snapshot_id ? '— / baseline' : signed(metrics.period_clan_medals_change);
-      const periodKills = metrics.baseline_snapshot_id === target.snapshot_id ? '— / baseline' : signed(metrics.period_kills_change);
-      const modeNote = dataMode === 'canonical' ? 'Grid از دادهٔ canonical Snapshot ساخته شده است.' : 'Grid از فایل fallback بارگذاری شده است.';
+    const index = snapshots.findIndex(snapshot => snapshot.snapshot_id === target.snapshot_id);
+    const previous = index > 0 ? snapshots[index - 1] : null;
+    const next = index >= 0 && index < snapshots.length - 1 ? snapshots[index + 1] : null;
+    const sourceForSnapshot = snapshot => {
+      if (snapshot.source_report === '/clan-leaderboard.html') return '../clan-leaderboard.html';
+      if (String(snapshot.source_report || '').startsWith('/clan-leaderboard/')) return snapshot.source_report.slice('/clan-leaderboard/'.length);
+      return String(snapshot.source_report || '').replace(/^\//, '');
+    };
+    const viewerHref = snapshot => navUrl('index.html', `?source=${encodeURIComponent(sourceForSnapshot(snapshot))}&mode=${encodeURIComponent(mode)}`);
+    const nav = `<nav class="viewer-nav"><a class="btn" href="${previous ? viewerHref(previous) : '#'}" ${previous ? '' : 'aria-disabled="true"'}>← دوره قبل</a><a class="btn" href="${navUrl('archive.html')}">آرشیو</a><a class="btn" href="${next ? viewerHref(next) : '#'}" ${next ? '' : 'aria-disabled="true"'}>دوره بعد →</a></nav>`;
+    const title = target.type === 'baseline' ? `ثبت اولیه ${target.members} عضو` : 'جدول جامع عملکرد و تغییرات اعضای کلن';
+    const weeklyLabel = metrics.baseline_snapshot_id === target.snapshot_id ? '— / baseline' : signed(metrics.weekly_clan_medals_earned);
+    const weeklyKills = metrics.baseline_snapshot_id === target.snapshot_id ? '— / baseline' : signed(metrics.weekly_kills_earned);
+    const periodLabel = metrics.baseline_snapshot_id === target.snapshot_id ? '— / baseline' : signed(metrics.period_clan_medals_change);
+    const periodKills = metrics.baseline_snapshot_id === target.snapshot_id ? '— / baseline' : signed(metrics.period_kills_change);
+    const modeNote = dataMode === 'canonical' ? 'Grid از دادهٔ canonical Snapshot ساخته شده است.' : 'Grid از مسیر fallback بارگذاری شده است.';
 
-      root.innerHTML = `<section class="hero"><span class="badge">PERSIA · دوره ${esc(String(target.snapshot_id).replace(/^S/, ''))}</span><h1>${esc(title)}</h1><p>${esc(target.date_persian)} · ساعت ${esc(target.time_iran)}</p><div class="meta"><span>${target.members} عضو</span><span>هفته لیگ: ${esc(metrics.league_week)}</span></div><p class="data-note">${esc(modeNote)}</p></section><section class="performance-card"><div class="performance-card__head"><div><span class="badge">عملکرد</span><h2>عملکرد این هفته</h2><p>تجمیعی از اولین ثبت این هفته؛ در شروع هفته لیگ دوباره از صفر محاسبه می‌شود.</p></div></div><div class="performance-grid"><div class="performance-stat"><span>تغییر مدال کلن</span><strong>${weeklyLabel}</strong></div><div class="performance-stat"><span>افزایش کیل</span><strong>${weeklyKills}</strong></div></div></section><section class="performance-card performance-card--period"><div class="performance-card__head"><div><span class="badge">این دوره</span><h2>جمع تغییرات این دوره</h2><p>جمع تغییرات ثبت‌شده برای تمام اعضای حاضر در همین Snapshot؛ مستقل از تجمیع هفتگی.</p></div></div><div class="performance-grid"><div class="performance-stat"><span>جمع تغییر مدال کلن</span><strong>${periodLabel}</strong></div><div class="performance-stat"><span>جمع افزایش کیل</span><strong>${periodKills}</strong></div></div></section><section class="toolbar"><input id="search" class="search" type="search" placeholder="جست‌وجوی نام کاربری، سمت یا مقدار..."><div class="switch"><button data-mode="simple">نمایش ساده</button><button data-mode="graphic">نمایش گرافیکی</button></div></section><div id="results"></div>${nav}`;
+    root.innerHTML = `<section class="hero"><span class="badge">PERSIA · دوره ${esc(String(target.snapshot_id).replace(/^S/, ''))}</span><h1>${esc(title)}</h1><p>${esc(target.date_persian)} · ساعت ${esc(target.time_iran)}</p><div class="meta"><span>${target.members} عضو</span><span>هفته لیگ: ${esc(metrics.league_week)}</span></div><p class="data-note">${esc(modeNote)}</p></section><section class="performance-card"><div class="performance-card__head"><div><span class="badge">عملکرد</span><h2>عملکرد این هفته</h2><p>تجمیعی از اولین ثبت این هفته؛ در شروع هفته لیگ دوباره از صفر محاسبه می‌شود.</p></div></div><div class="performance-grid"><div class="performance-stat"><span>تغییر مدال کلن</span><strong>${weeklyLabel}</strong></div><div class="performance-stat"><span>افزایش کیل</span><strong>${weeklyKills}</strong></div></div></section><section class="performance-card performance-card--period"><div class="performance-card__head"><div><span class="badge">این دوره</span><h2>جمع تغییرات این دوره</h2><p>جمع تغییرات ثبت‌شده برای تمام اعضای حاضر در همین Snapshot؛ مستقل از تجمیع هفتگی.</p></div></div><div class="performance-grid"><div class="performance-stat"><span>جمع تغییر مدال کلن</span><strong>${periodLabel}</strong></div><div class="performance-stat"><span>جمع افزایش کیل</span><strong>${periodKills}</strong></div></div></section><section class="toolbar"><input id="search" class="search" type="search" placeholder="جست‌وجوی نام کاربری، سمت یا مقدار..."><div class="switch"><button data-mode="simple">نمایش ساده</button><button data-mode="graphic">نمایش گرافیکی</button></div></section><div id="results"></div>${nav}`;
 
-      const results = root.querySelector('#results');
-      const input = root.querySelector('#search');
-      const simpleButton = root.querySelector('[data-mode="simple"]');
-      const graphicButton = root.querySelector('[data-mode="graphic"]');
-      let currentMode = requestedModeValue;
-      let sortIndex = null;
-      let sortDirection = 1;
-      const num = value => { const match = String(value ?? '').replace(/[٬,]/g, '').match(/-?\d+(?:\.\d+)?/); return match ? Number(match[0]) : null; };
-      const sortValue = (member, index) => index === 0 ? num(member.rank) : index === 1 ? member.name.toLocaleLowerCase('fa') : index === 2 ? member.role.toLocaleLowerCase('fa') : num(member.stats[keys[index - 3]]);
-      const table = list => `<div class="table-wrap"><table><thead><tr>${['رتبه','نام کاربری','سمت',...keys].map((key, i) => `<th><button type="button" data-sort="${i}">${key} ↕</button></th>`).join('')}</tr></thead><tbody>${list.map(member => `<tr><td>${esc(member.rank)}</td><td>${playerName(member.name)}</td><td>${esc(member.role)}</td>${keys.map(key => `<td>${esc(member.stats[key] || '—')}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
-      const graphic = list => `<div class="members">${list.map(member => `<article class="member"><header><div><span class="rank">${esc(member.rank)}</span><h3>${playerName(member.name)}</h3><small>${esc(member.role)}</small></div><b>${esc(member.movement || '')}</b></header><div class="stats">${keys.map(key => `<div class="stat"><span>${esc(key)}</span><strong>${esc(member.stats[key] || '—')}</strong></div>`).join('')}</div></article>`).join('')}</div>`;
-      function renderResults() {
-        const oldTable = results.querySelector('.table-wrap'); const scroll = oldTable ? oldTable.scrollLeft : 0;
-        const query = input.value.trim().toLocaleLowerCase('fa');
-        let list = members.filter(member => [member.rank, member.name, member.role, member.movement, ...Object.values(member.stats)].join(' ').toLocaleLowerCase('fa').includes(query));
-        if (sortIndex !== null) list = [...list].sort((a, b) => { const x = sortValue(a, sortIndex); const y = sortValue(b, sortIndex); if (x === y) return 0; if (x === null) return 1; if (y === null) return -1; return (x < y ? -1 : 1) * sortDirection; });
-        results.innerHTML = `<div class="count">${list.length} نتیجه</div>${currentMode === 'simple' ? table(list) : graphic(list)}`;
-        const newTable = results.querySelector('.table-wrap'); if (newTable) requestAnimationFrame(() => { newTable.scrollLeft = scroll; });
-        results.querySelectorAll('[data-sort]').forEach(button => button.onclick = () => { const sort = Number(button.dataset.sort); if (sortIndex === sort) sortDirection *= -1; else { sortIndex = sort; sortDirection = 1; } renderResults(); });
-        simpleButton.classList.toggle('active', currentMode === 'simple');
-        graphicButton.classList.toggle('active', currentMode === 'graphic');
-      }
-      input.oninput = renderResults;
-      simpleButton.onclick = () => { currentMode = 'simple'; renderResults(); };
-      graphicButton.onclick = () => { currentMode = 'graphic'; renderResults(); };
-      renderResults();
-    });
+    const results = root.querySelector('#results');
+    const input = root.querySelector('#search');
+    const simpleButton = root.querySelector('[data-mode="simple"]');
+    const graphicButton = root.querySelector('[data-mode="graphic"]');
+    let currentMode = mode;
+    let sortIndex = null;
+    let sortDirection = 1;
+    const num = value => { const match = String(value ?? '').replace(/[٬,]/g, '').match(/-?\d+(?:\.\d+)?/); return match ? Number(match[0]) : null; };
+    const sortValue = (member, indexValue) => indexValue === 0 ? num(member.rank) : indexValue === 1 ? member.name.toLocaleLowerCase('fa') : indexValue === 2 ? member.role.toLocaleLowerCase('fa') : num(member.stats[keys[indexValue - 3]]);
+    const table = list => `<div class="table-wrap"><table><thead><tr>${['رتبه','نام کاربری','سمت',...keys].map((key, i) => `<th><button type="button" data-sort="${i}">${key} ↕</button></th>`).join('')}</tr></thead><tbody>${list.map(member => `<tr><td>${esc(member.rank)}</td><td>${playerName(member.name)}</td><td>${esc(member.role)}</td>${keys.map(key => `<td>${esc(member.stats[key] || '—')}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+    const graphic = list => `<div class="members">${list.map(member => `<article class="member"><header><div><span class="rank">${esc(member.rank)}</span><h3>${playerName(member.name)}</h3><small>${esc(member.role)}</small></div><b>${esc(member.movement || '')}</b></header><div class="stats">${keys.map(key => `<div class="stat"><span>${esc(key)}</span><strong>${esc(member.stats[key] || '—')}</strong></div>`).join('')}</div></article>`).join('')}</div>`;
+    function renderResults() {
+      const oldTable = results.querySelector('.table-wrap'); const scroll = oldTable ? oldTable.scrollLeft : 0;
+      const query = input.value.trim().toLocaleLowerCase('fa');
+      let list = members.filter(member => [member.rank, member.name, member.role, member.movement, ...Object.values(member.stats)].join(' ').toLocaleLowerCase('fa').includes(query));
+      if (sortIndex !== null) list = [...list].sort((a, b) => { const x = sortValue(a, sortIndex); const y = sortValue(b, sortIndex); if (x === y) return 0; if (x === null) return 1; if (y === null) return -1; return (x < y ? -1 : 1) * sortDirection; });
+      results.innerHTML = `<div class="count">${list.length} نتیجه</div>${currentMode === 'simple' ? table(list) : graphic(list)}`;
+      const newTable = results.querySelector('.table-wrap'); if (newTable) requestAnimationFrame(() => { newTable.scrollLeft = scroll; });
+      results.querySelectorAll('[data-sort]').forEach(button => button.onclick = () => { const sort = Number(button.dataset.sort); if (sortIndex === sort) sortDirection *= -1; else { sortIndex = sort; sortDirection = 1; } renderResults(); });
+      simpleButton.classList.toggle('active', currentMode === 'simple');
+      graphicButton.classList.toggle('active', currentMode === 'graphic');
+    }
+    input.oninput = renderResults;
+    simpleButton.onclick = () => { currentMode = 'simple'; renderResults(); };
+    graphicButton.onclick = () => { currentMode = 'graphic'; renderResults(); };
+    renderResults();
   }
 })();
