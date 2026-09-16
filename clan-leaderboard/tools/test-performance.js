@@ -15,12 +15,12 @@ const results = performance.computeAll(snapshots, sets, leagues);
 function fail(message) { throw new Error(`PERFORMANCE TEST FAILED: ${message}`); }
 function rows(id) { const merged = sets.reduce((all, source) => ({ ...all, ...(source.snapshots || {}) }), {}); return merged[id] || []; }
 function aggregatePeriod(id, field) { return rows(id).reduce((sum, row) => sum + Number(results[id].period_players?.[row.player_id]?.[field] || 0), 0); }
-for (const id of ['S01', 'S02', 'S03', 'S04', 'S05']) if (!results[id]) fail(`missing ${id}`);
+for (const id of ['S01', 'S02', 'S03', 'S04', 'S05', 'S06']) if (!results[id]) fail(`missing ${id}`);
 if (results.S01.weekly_clan_medals_earned !== 0 || results.S01.weekly_kills_earned !== 0) fail('baseline internal aggregate must start at zero');
 if (results.S01.baseline_snapshot_id !== 'S01') fail('S01 must identify itself as baseline');
 if (!rows('S01').every(row => results.S01.period_players?.[row.player_id]?.baseline === true)) fail('S01 players must be marked baseline');
 if (![results.S01, results.S02, results.S03, results.S04, results.S05].every(item => item.league_week === '2026-09-10')) fail('S01-S05 must belong to the 2026-09-10 league week');
-for (const id of ['S02', 'S03', 'S04', 'S05']) {
+for (const id of ['S02', 'S03', 'S04', 'S05', 'S06']) {
   if (results[id].period_clan_medals_change !== aggregatePeriod(id, 'clan_medals')) fail(`${id} clan period aggregate mismatch`);
   if (results[id].period_kills_change !== aggregatePeriod(id, 'kills')) fail(`${id} kill period aggregate mismatch`);
   if (rows(id).some(row => results[id].period_players?.[row.player_id] == null)) fail(`${id} missing player period metric`);
@@ -59,24 +59,24 @@ for (const [previousId, currentId] of [['S01', 'S02'], ['S02', 'S03'], ['S03', '
 if (results.S05.cumulative_players?.[commonPlayer.player_id]?.clan_medals !== expectedCumulativeClan) fail('cumulative clan-medal value mismatch');
 if (results.S05.cumulative_players?.[commonPlayer.player_id]?.kills !== expectedCumulativeKills) fail('cumulative kill value mismatch');
 const syntheticSnapshots = JSON.parse(JSON.stringify(snapshots));
-syntheticSnapshots.snapshots.push({ snapshot_id:'S06', captured_at_utc:'2026-09-17T00:00:00Z', date_persian:'26 شهریور 1405', time_iran:'03:30', type:'delta-report', members:47, capacity:50 });
-syntheticSnapshots.snapshots.push({ snapshot_id:'S07', captured_at_utc:'2026-09-17T01:00:00Z', date_persian:'26 شهریور 1405', time_iran:'04:00', type:'delta-report', members:47, capacity:50 });
-syntheticSnapshots.snapshots.push({ snapshot_id:'S08', captured_at_utc:'2026-09-17T02:00:00Z', date_persian:'26 شهریور 1405', time_iran:'05:30', type:'delta-report', members:46, capacity:50 });
-syntheticSnapshots.snapshots.push({ snapshot_id:'S09', captured_at_utc:'2026-09-17T03:00:00Z', date_persian:'26 شهریور 1405', time_iran:'06:30', type:'delta-report', members:47, capacity:50 });
+syntheticSnapshots.snapshots.push({ snapshot_id:'S07', captured_at_utc:'2026-09-17T00:00:00Z', date_persian:'26 شهریور 1405', time_iran:'03:30', type:'delta-report', members:47, capacity:50 });
+syntheticSnapshots.snapshots.push({ snapshot_id:'S08', captured_at_utc:'2026-09-17T01:00:00Z', date_persian:'26 شهریور 1405', time_iran:'04:00', type:'delta-report', members:47, capacity:50 });
+syntheticSnapshots.snapshots.push({ snapshot_id:'S09', captured_at_utc:'2026-09-17T02:00:00Z', date_persian:'26 شهریور 1405', time_iran:'05:30', type:'delta-report', members:46, capacity:50 });
+syntheticSnapshots.snapshots.push({ snapshot_id:'S10', captured_at_utc:'2026-09-17T03:00:00Z', date_persian:'26 شهریور 1405', time_iran:'06:30', type:'delta-report', members:47, capacity:50 });
 const s05Rows = rows('S05');
-const s06Rows = s05Rows.map(row => ({ ...row }));
-const s07Rows = s05Rows.map((row, index) => index === 0 ? ({ ...row, clan_medals: row.clan_medals + 100, total_kills: row.total_kills + 7 }) : ({ ...row }));
+const s07Rows = s05Rows.map(row => ({ ...row }));
+const s08Rows = s05Rows.map((row, index) => index === 0 ? ({ ...row, clan_medals: row.clan_medals + 100, total_kills: row.total_kills + 7 }) : ({ ...row }));
 const gapPlayerId = s05Rows[0].player_id;
-const s08Rows = s07Rows.filter(row => row.player_id !== gapPlayerId);
-const s09Rows = s08Rows.concat([{ ...s07Rows[0], clan_medals: s07Rows[0].clan_medals + 500, total_kills: s07Rows[0].total_kills + 50 }]);
-const syntheticCurrent = { snapshots: { S06: s06Rows, S07: s07Rows, S08: s08Rows, S09: s09Rows } };
+const s09Rows = s08Rows.filter(row => row.player_id !== gapPlayerId);
+const s10Rows = s09Rows.concat([{ ...s08Rows[0], clan_medals: s08Rows[0].clan_medals + 500, total_kills: s08Rows[0].total_kills + 50 }]);
+const syntheticCurrent = { snapshots: { S07: s07Rows, S08: s08Rows, S09: s09Rows, S10: s10Rows } };
 const synthetic = performance.computeAll(syntheticSnapshots, [...sets, syntheticCurrent], leagues);
-if (synthetic.S06.league_week !== '2026-09-17') fail('league reset date was not recognized');
-if (synthetic.S06.weekly_clan_medals_earned !== 0 || synthetic.S06.weekly_kills_earned !== 0) fail('weekly metrics did not reset at league boundary');
-if (synthetic.S07.weekly_clan_medals_earned !== 100 || synthetic.S07.weekly_kills_earned !== 7) fail('new-week accumulation did not restart from zero');
-if (synthetic.S07.period_players?.[s05Rows[0].player_id]?.clan_medals !== 100) fail('new-week period clan delta mismatch');
-if (synthetic.S07.period_players?.[s05Rows[0].player_id]?.kills !== 7) fail('new-week period kill delta mismatch');
-if (synthetic.S09.period_players?.[gapPlayerId]?.clan_medals !== 0 || synthetic.S09.period_players?.[gapPlayerId]?.kills !== 0 || synthetic.S09.period_players?.[gapPlayerId]?.baseline !== true) fail('re-added player must restart as a baseline after an observation gap');
-if (synthetic.S09.cumulative_players?.[gapPlayerId]?.clan_medals !== synthetic.S07.cumulative_players?.[gapPlayerId]?.clan_medals) fail('cumulative clan value must not bridge a membership gap');
-if (synthetic.S09.cumulative_players?.[gapPlayerId]?.kills !== synthetic.S07.cumulative_players?.[gapPlayerId]?.kills) fail('cumulative kill value must not bridge a membership gap');
+if (synthetic.S07.league_week !== '2026-09-17') fail('league reset date was not recognized');
+if (synthetic.S07.weekly_clan_medals_earned !== 0 || synthetic.S07.weekly_kills_earned !== 0) fail('weekly metrics did not reset at league boundary');
+if (synthetic.S08.weekly_clan_medals_earned !== 100 || synthetic.S08.weekly_kills_earned !== 7) fail('new-week accumulation did not restart from zero');
+if (synthetic.S08.period_players?.[s05Rows[0].player_id]?.clan_medals !== 100) fail('new-week period clan delta mismatch');
+if (synthetic.S08.period_players?.[s05Rows[0].player_id]?.kills !== 7) fail('new-week period kill delta mismatch');
+if (synthetic.S10.period_players?.[gapPlayerId]?.clan_medals !== 0 || synthetic.S10.period_players?.[gapPlayerId]?.kills !== 0 || synthetic.S10.period_players?.[gapPlayerId]?.baseline !== true) fail('re-added player must restart as a baseline after an observation gap');
+if (synthetic.S10.cumulative_players?.[gapPlayerId]?.clan_medals !== synthetic.S08.cumulative_players?.[gapPlayerId]?.clan_medals) fail('cumulative clan value must not bridge a membership gap');
+if (synthetic.S10.cumulative_players?.[gapPlayerId]?.kills !== synthetic.S08.cumulative_players?.[gapPlayerId]?.kills) fail('cumulative kill value must not bridge a membership gap');
 console.log('PERFORMANCE TEST PASS: period deltas, S01 baseline semantics, membership-aware weekly accumulation, league reset, cumulative player metrics, and membership-gap resets are valid.');
