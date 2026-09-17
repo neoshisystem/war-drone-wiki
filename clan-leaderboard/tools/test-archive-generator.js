@@ -8,7 +8,7 @@ try{
  if(cards!==7)throw new Error(`expected 7 archive entries, found ${cards}`);
  for(const id of ['2026-09-16-2400','2026-09-15-2400','2026-09-14-2300','2026-09-13-2300','2026-09-13-1130','2026-09-12-1900'])if(!html.includes(`reports/${id}.html`))throw new Error(`missing archive link for ${id}`);
  if(!html.includes('clan-leaderboard.html'))throw new Error('missing S02 archive link');
- if(!html.includes('دوره ۰۷'))throw new Error('missing newest period label');
+ if(!html.includes('دوره 7'))throw new Error('missing newest period label');
  if(!html.includes('پایان لیگ جاری'))throw new Error('missing S07 league-end marker');
  const aggregateCount=(html.match(/class="report-aggregate"/g)||[]).length;if(aggregateCount!==7)throw new Error(`expected session aggregate card on all 7 archive entries, found ${aggregateCount}`);
  if(!html.includes('— / baseline'))throw new Error('missing S01 baseline presentation');
