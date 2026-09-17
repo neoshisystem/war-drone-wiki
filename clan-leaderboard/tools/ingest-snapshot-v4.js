@@ -31,6 +31,8 @@ const membershipsFile=readJson(path.join(DATA,'memberships.json'));
 if(!input.snapshot||!Array.isArray(input.players))fail('input must contain snapshot and players[]');
 const snapshot=input.snapshot;
 ['captured_at_utc','date_persian','time_iran','type','members','capacity'].forEach((field)=>required(snapshot[field],`snapshot.${field}`));
+if(snapshot.league_boundary!==undefined&&snapshot.league_boundary!==null&&typeof snapshot.league_boundary!=='string')fail('snapshot.league_boundary must be a string when provided');
+if(snapshot.boundary_label!==undefined&&snapshot.boundary_label!==null&&typeof snapshot.boundary_label!=='string')fail('snapshot.boundary_label must be a string when provided');
 isoUtc(snapshot.captured_at_utc);nonNegativeInteger(snapshot.members,'snapshot.members');nonNegativeInteger(snapshot.capacity,'snapshot.capacity');
 if(snapshot.members!==input.players.length)fail('snapshot.members does not equal players.length');
 if(snapshot.members>snapshot.capacity)fail('snapshot.members exceeds snapshot.capacity');
@@ -74,7 +76,7 @@ for(const membership of membershipRows)if(membership.status==='active'&&currentI
 for(const id of added)membershipRows.push({player_id:id,from_snapshot:snapshotId,through_snapshot:snapshotId,status:'active',start_event:previous?`joined_between_${previous.snapshot_id}_and_${snapshotId}`:'joined_with_initial_snapshot'});
 for(const id of removed){const membership=membershipRows.find((item)=>item.status==='active'&&item.player_id===id);if(membership){membership.through_snapshot=previous?.snapshot_id||membership.through_snapshot;membership.status='ended';membership.end_precision='between_snapshots';membership.end_event='left_or_kicked';}}
 nextMemberships.memberships=membershipRows;
-const nextSnapshots=clone(snapshotsFile);nextSnapshots.current_snapshot_id=snapshotId;nextSnapshots.snapshots=[...snapshots,{snapshot_id:snapshotId,captured_at_utc:snapshot.captured_at_utc,date_persian:snapshot.date_persian,time_iran:snapshot.time_iran,type:snapshot.type,members:snapshot.members,capacity:snapshot.capacity,source_report:snapshot.source_report||null,normalized_observations:true,observation_source:'player-observations.json'}];
+const nextSnapshots=clone(snapshotsFile);nextSnapshots.current_snapshot_id=snapshotId;nextSnapshots.snapshots=[...snapshots,{snapshot_id:snapshotId,captured_at_utc:snapshot.captured_at_utc,date_persian:snapshot.date_persian,time_iran:snapshot.time_iran,type:snapshot.type,members:snapshot.members,capacity:snapshot.capacity,source_report:snapshot.source_report||null,league_boundary:snapshot.league_boundary||null,boundary_label:snapshot.boundary_label||null,normalized_observations:true,observation_source:'player-observations.json'}];
 const nextHistory=clone(historyFile);
 if(previous&&!nextHistory.snapshots?.[previous.snapshot_id])nextHistory.snapshots={...(nextHistory.snapshots||{}),[previous.snapshot_id]:previousRows};
 const nextCurrent=clone(currentFile);nextCurrent.snapshots={[snapshotId]:rows};

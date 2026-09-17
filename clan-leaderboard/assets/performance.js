@@ -21,11 +21,15 @@
   }
 
   function getRows(snapshotId, observationSets) {
+    // Multiple history shards may contain the same snapshot. Later sources are
+    // authoritative because ingestion promotes the newest canonical observation
+    // into the current source while preserving older shards for audit/history.
+    let resolved = null;
     for (const source of observationSets || []) {
       const rows = source?.snapshots?.[snapshotId];
-      if (Array.isArray(rows)) return rows;
+      if (Array.isArray(rows)) resolved = rows;
     }
-    return [];
+    return resolved || [];
   }
 
   function clonePlayerTotals(players) {
@@ -50,72 +54,100 @@
   function computeAll(snapshotsFile, observationSets, leaguesFile) {
     const snapshots = [...(snapshotsFile?.snapshots || [])].sort((a, b) => a.captured_at_utc.localeCompare(b.captured_at_utc));
     const reset = leaguesFile?.reset || { weekday: 'Thursday', time_utc: '00:00' };
+    const performanceStartSnapshotId = leaguesFile?.performance_tracking_start_snapshot_id || null;
     const results = {};
     const weeklyState = new Map();
     const cumulativeState = {};
     const cumulativePrevious = new Map();
     let previousSnapshot = null;
+    let previousRows = [];
+    let performanceTrackingStarted = !performanceStartSnapshotId;
 
     for (const snapshot of snapshots) {
       const weekId = leagueWeekId(snapshot.captured_at_utc, reset);
+      const startsPerformanceTracking = snapshot.snapshot_id === performanceStartSnapshotId;
+      if (startsPerformanceTracking) performanceTrackingStarted = true;
+
       let state = weeklyState.get(weekId);
-      if (!state) {
+      if (!state || startsPerformanceTracking) {
         state = { clan_medals: 0, kills: 0, players: {} };
         weeklyState.set(weekId, state);
       }
 
       const currentRows = getRows(snapshot.snapshot_id, observationSets);
-      const currentIds = new Set(currentRows.map(row => row.player_id));
-      for (const playerId of cumulativePrevious.keys()) if (!currentIds.has(playerId)) cumulativePrevious.delete(playerId);
-
-      const previousRows = previousSnapshot && leagueWeekId(previousSnapshot.captured_at_utc, reset) === weekId
-        ? getRows(previousSnapshot.snapshot_id, observationSets)
-        : [];
-      const previousById = new Map(previousRows.map(row => [row.player_id, row]));
+      const previousWeekId = previousSnapshot ? leagueWeekId(previousSnapshot.captured_at_utc, reset) : null;
+      const sameWeek = Boolean(previousSnapshot && previousWeekId === weekId);
+      const hasPreviousSnapshot = Boolean(previousSnapshot);
+      const isLeagueStart = snapshot.league_boundary === 'start';
+      const isLeagueEnd = snapshot.league_boundary === 'end';
+      const previousById = new Map(sameWeek ? previousRows.map(row => [row.player_id, row]) : []);
+      const previousKillById = new Map(hasPreviousSnapshot ? previousRows.map(row => [row.player_id, row]) : []);
       let periodClan = 0;
       let periodKills = 0;
       const periodPlayers = {};
 
       for (const row of currentRows) {
         const previous = previousById.get(row.player_id);
-        if (!previous) {
-          state.players[row.player_id] = { clan_medals: 0, kills: 0 };
-          periodPlayers[row.player_id] = { clan_medals: 0, kills: 0, baseline: true };
-        } else {
-          const clanDelta = Number(row.clan_medals || 0) - Number(previous.clan_medals || 0);
-          const killDelta = Number(row.total_kills || 0) - Number(previous.total_kills || 0);
-          periodClan += clanDelta;
-          periodKills += killDelta;
-          const currentPlayer = state.players[row.player_id] || { clan_medals: 0, kills: 0 };
-          currentPlayer.clan_medals += clanDelta;
-          currentPlayer.kills += killDelta;
-          state.players[row.player_id] = currentPlayer;
-          periodPlayers[row.player_id] = { clan_medals: clanDelta, kills: killDelta, baseline: false };
-        }
+        const previousKill = previousKillById.get(row.player_id);
+        const clanValue = Number(row.clan_medals || 0);
+        const killValue = Number(row.total_kills || 0);
 
-        const previousCumulative = cumulativePrevious.get(row.player_id);
+        let clanDelta = 0;
+        if (!hasPreviousSnapshot) clanDelta = 0;
+        else if (!sameWeek) clanDelta = clanValue;
+        else if (previous) clanDelta = clanValue - Number(previous.clan_medals || 0);
+        else if (isLeagueEnd) clanDelta = clanValue;
+
+        let killDelta = 0;
+        if (previousKill) killDelta = killValue - Number(previousKill.total_kills || 0);
+        else if (isLeagueEnd) killDelta = hasPreviousSnapshot ? killValue : 0;
+
+        const baseline = !hasPreviousSnapshot || (!previous && !isLeagueEnd);
+        periodClan += clanDelta;
+        periodKills += killDelta;
+        const currentPlayer = state.players[row.player_id] || { clan_medals: 0, kills: 0 };
+        currentPlayer.clan_medals += clanDelta;
+        currentPlayer.kills += killDelta;
+        state.players[row.player_id] = currentPlayer;
+        periodPlayers[row.player_id] = { clan_medals: clanDelta, kills: killDelta, baseline };
+
         if (!cumulativeState[row.player_id]) cumulativeState[row.player_id] = { clan_medals: 0, kills: 0 };
-        if (previousCumulative) {
-          cumulativeState[row.player_id].clan_medals += Number(row.clan_medals || 0) - Number(previousCumulative.clan_medals || 0);
-          cumulativeState[row.player_id].kills += Number(row.total_kills || 0) - Number(previousCumulative.total_kills || 0);
+        const previousCumulative = cumulativePrevious.get(row.player_id);
+        if (!previousCumulative) {
+          if (!hasPreviousSnapshot) {
+            cumulativeState[row.player_id].clan_medals += 0;
+            cumulativeState[row.player_id].kills += 0;
+          } else if (!sameWeek && isLeagueStart) {
+            cumulativeState[row.player_id].clan_medals += clanValue;
+            cumulativeState[row.player_id].kills += 0;
+          }
+        } else {
+          const previousCumulativeWeek = leagueWeekId(previousCumulative.captured_at_utc || snapshot.captured_at_utc, reset);
+          const clanContribution = previousCumulativeWeek === weekId
+            ? clanValue - Number(previousCumulative.clan_medals || 0)
+            : clanValue;
+          cumulativeState[row.player_id].clan_medals += clanContribution;
+          cumulativeState[row.player_id].kills += killValue - Number(previousCumulative.total_kills || 0);
         }
-        cumulativePrevious.set(row.player_id, row);
+        cumulativePrevious.set(row.player_id, { ...row, captured_at_utc: snapshot.captured_at_utc });
       }
 
-      const sameWeek = previousRows.length > 0;
+      const weeklyClan = performanceTrackingStarted ? (state.clan_medals += periodClan) : 0;
+      const weeklyKills = performanceTrackingStarted ? (state.kills += periodKills) : 0;
       results[snapshot.snapshot_id] = {
         snapshot_id: snapshot.snapshot_id,
         league_week: weekId,
-        baseline_snapshot_id: sameWeek ? previousSnapshot.snapshot_id : snapshot.snapshot_id,
-        period_clan_medals_change: sameWeek ? periodClan : 0,
-        period_kills_change: sameWeek ? periodKills : 0,
-        weekly_clan_medals_earned: state.clan_medals += (sameWeek ? periodClan : 0),
-        weekly_kills_earned: state.kills += (sameWeek ? periodKills : 0),
+        baseline_snapshot_id: previousSnapshot ? previousSnapshot.snapshot_id : snapshot.snapshot_id,
+        period_clan_medals_change: periodClan,
+        period_kills_change: periodKills,
+        weekly_clan_medals_earned: weeklyClan,
+        weekly_kills_earned: weeklyKills,
         period_players: clonePeriodPlayers(periodPlayers),
         players: clonePlayerTotals(state.players),
         cumulative_players: cloneCumulativePlayers(cumulativeState)
       };
       previousSnapshot = snapshot;
+      previousRows = currentRows;
     }
     return results;
   }

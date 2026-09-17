@@ -43,10 +43,11 @@
     fetchJson('data/player-observations.json'),
     fetchJson('data/player-observations-history.json'),
     fetchJson('data/player-observations-history-s05.json').catch(() => ({ snapshots: {} })),
+    fetchJson('data/player-observations-history-s06.json').catch(() => ({ snapshots: {} })),
     fetchJson('data/players.json'),
     fetchJson('data/snapshots.json'),
     fetchJson('data/leagues.json')
-  ]).then(([currentData, historyData, historyS05, playersData, snapshotsData, leaguesData]) => {
+  ]).then(([currentData, historyData, historyS05, historyS06, playersData, snapshotsData, leaguesData]) => {
     const snapshots = [...(snapshotsData.snapshots || [])].sort((a, b) => a.captured_at_utc.localeCompare(b.captured_at_utc));
     const basename = value => String(value || '').split('/').pop();
     const sourceMatch = requestedSource ? snapshots.find(snapshot => snapshot.source_report && basename(snapshot.source_report) === basename(requestedSource)) : null;
@@ -54,7 +55,7 @@
     const target = snapshots.find(snapshot => snapshot.snapshot_id === snapshotKey) || snapshots[snapshots.length - 1];
     if (!target) throw new Error('snapshot');
 
-    const observationSets = [historyData, historyS05, currentData];
+    const observationSets = [historyData, historyS05, historyS06, currentData];
     const metrics = performance.computeAll(snapshotsData, observationSets, leaguesData)[target.snapshot_id] || {
       league_week: performance.leagueWeekId(target.captured_at_utc, leaguesData.reset),
       baseline_snapshot_id: target.snapshot_id,
@@ -110,9 +111,9 @@
     const weeklyKills = metrics.baseline_snapshot_id === target.snapshot_id ? '— / baseline' : signed(metrics.weekly_kills_earned);
     const periodLabel = metrics.baseline_snapshot_id === target.snapshot_id ? '— / baseline' : signed(metrics.period_clan_medals_change);
     const periodKills = metrics.baseline_snapshot_id === target.snapshot_id ? '— / baseline' : signed(metrics.period_kills_change);
-    const modeNote = dataMode === 'canonical' ? 'Grid از دادهٔ canonical Snapshot ساخته شده است.' : 'Grid از مسیر fallback بارگذاری شده است.';
+    const modeNote = dataMode === 'canonical' ? 'Grid از دادهٔ رسمی دوره ساخته شده است.' : 'Grid از مسیر fallback بارگذاری شده است.';
 
-    root.innerHTML = `<section class="hero"><span class="badge">PERSIA · دوره ${esc(String(target.snapshot_id).replace(/^S/, ''))}</span><h1>${esc(title)}</h1><p>${esc(target.date_persian)} · ساعت ${esc(target.time_iran)}</p><div class="meta"><span>${target.members} عضو</span><span>هفته لیگ: ${esc(metrics.league_week)}</span></div><p class="data-note">${esc(modeNote)}</p></section><section class="performance-card"><div class="performance-card__head"><div><span class="badge">عملکرد</span><h2>عملکرد این هفته</h2><p>تجمیعی از اولین ثبت این هفته؛ در شروع هفته لیگ دوباره از صفر محاسبه می‌شود.</p></div></div><div class="performance-grid"><div class="performance-stat"><span>تغییر مدال کلن</span><strong>${weeklyLabel}</strong></div><div class="performance-stat"><span>افزایش کیل</span><strong>${weeklyKills}</strong></div></div></section><section class="performance-card performance-card--period"><div class="performance-card__head"><div><span class="badge">این دوره</span><h2>جمع تغییرات این دوره</h2><p>جمع تغییرات ثبت‌شده برای تمام اعضای حاضر در همین Snapshot؛ مستقل از تجمیع هفتگی.</p></div></div><div class="performance-grid"><div class="performance-stat"><span>جمع تغییر مدال کلن</span><strong>${periodLabel}</strong></div><div class="performance-stat"><span>جمع افزایش کیل</span><strong>${periodKills}</strong></div></div></section><section class="toolbar"><input id="search" class="search" type="search" placeholder="جست‌وجوی نام کاربری، سمت یا مقدار..."><div class="switch"><button data-mode="simple">نمایش ساده</button><button data-mode="graphic">نمایش گرافیکی</button></div></section><div id="results"></div>${nav}`;
+    root.innerHTML = `<section class="hero"><span class="badge">PERSIA · دوره ${esc(String(target.snapshot_id).replace(/^S/, ''))}</span><h1>${esc(title)}</h1><p>${esc(target.date_persian)} · ساعت ${esc(target.time_iran)}</p><div class="meta"><span>${target.members} عضو</span><span>هفته لیگ: ${esc(metrics.league_week)}</span></div><p class="data-note">${esc(modeNote)}</p></section><section class="performance-card"><div class="performance-card__head"><div><span class="badge">عملکرد</span><h2>عملکرد این هفته</h2><p>تجمیعی از اولین ثبت این هفته؛ در شروع هفته لیگ دوباره از صفر محاسبه می‌شود.</p></div></div><div class="performance-grid"><div class="performance-stat"><span>تغییر مدال کلن</span><strong>${weeklyLabel}</strong></div><div class="performance-stat"><span>افزایش کیل</span><strong>${weeklyKills}</strong></div></div></section><section class="performance-card performance-card--period"><div class="performance-card__head"><div><span class="badge">این دوره</span><h2>جمع تغییرات این دوره</h2><p>جمع تغییرات ثبت‌شده برای تمام اعضای حاضر در همین دوره؛ مستقل از تجمیع هفتگی.</p></div></div><div class="performance-grid"><div class="performance-stat"><span>جمع تغییر مدال کلن</span><strong>${periodLabel}</strong></div><div class="performance-stat"><span>جمع افزایش کیل</span><strong>${periodKills}</strong></div></div></section><section class="toolbar"><input id="search" class="search" type="search" placeholder="جست‌وجوی نام کاربری، سمت یا مقدار..."><div class="switch"><button data-mode="simple">نمایش ساده</button><button data-mode="graphic">نمایش گرافیکی</button></div></section><div id="results"></div>${nav}`;
 
     const results = root.querySelector('#results');
     const input = root.querySelector('#search');
