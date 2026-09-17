@@ -68,8 +68,9 @@
       const currentRows = getRows(snapshot.snapshot_id, observationSets);
       const previousWeekId = previousSnapshot ? leagueWeekId(previousSnapshot.captured_at_utc, reset) : null;
       const sameWeek = Boolean(previousSnapshot && previousWeekId === weekId);
+      const hasPreviousSnapshot = Boolean(previousSnapshot);
       const previousById = new Map(sameWeek ? previousRows.map(row => [row.player_id, row]) : []);
-      const previousKillById = new Map(previousSnapshot ? previousRows.map(row => [row.player_id, row]) : []);
+      const previousKillById = new Map(hasPreviousSnapshot ? previousRows.map(row => [row.player_id, row]) : []);
       let periodClan = 0;
       let periodKills = 0;
       const periodPlayers = {};
@@ -80,19 +81,19 @@
         const clanValue = Number(row.clan_medals || 0);
         const killValue = Number(row.total_kills || 0);
 
-        // Clan Medals reset only at the start of a new league. The first
-        // observation of that league is therefore measured from an explicit 0 baseline.
-        // Within the league, normal period deltas remain current minus previous.
+        // S01 is the historical baseline. Every later league starts Clan Medals
+        // from an explicit zero, while snapshots inside the same league use a delta.
         let clanDelta = 0;
-        if (!sameWeek) clanDelta = clanValue;
+        if (!hasPreviousSnapshot) clanDelta = 0;
+        else if (!sameWeek) clanDelta = clanValue;
         else if (previous) clanDelta = clanValue - Number(previous.clan_medals || 0);
 
-        // Kills are continuous across league boundaries and are always compared
-        // with the latest immediately preceding snapshot when the player exists there.
+        // Kills are continuous across league boundaries and compare with the
+        // immediately preceding observation when the player exists there.
         const hasKillBaseline = Boolean(previousKill);
         const killDelta = hasKillBaseline ? killValue - Number(previousKill.total_kills || 0) : 0;
 
-        const baseline = !sameWeek && !previousKill;
+        const baseline = !hasPreviousSnapshot || (!sameWeek && !previousKill);
         periodClan += clanDelta;
         periodKills += killDelta;
         const currentPlayer = state.players[row.player_id] || { clan_medals: 0, kills: 0 };
@@ -107,7 +108,9 @@
         if (!cumulativeState[row.player_id]) cumulativeState[row.player_id] = { clan_medals: 0, kills: 0 };
         const previousCumulative = cumulativePrevious.get(row.player_id);
         if (!previousCumulative) {
-          cumulativeState[row.player_id].clan_medals += clanValue;
+          // S01 is a baseline, but a first-ever observation in a later league
+          // is already progress from that league's known zero Clan Medal start.
+          cumulativeState[row.player_id].clan_medals += hasPreviousSnapshot ? clanValue : 0;
           cumulativeState[row.player_id].kills += 0;
         } else {
           const previousCumulativeWeek = leagueWeekId(previousCumulative.captured_at_utc || snapshot.captured_at_utc, reset);
