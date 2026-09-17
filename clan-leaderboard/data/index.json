@@ -1,1 +1,13 @@
-{"clan":"PERSIA","game":"War Drone","reports":[{"id":"2026-09-16-2400","period":7,"date_persian":"25 شهریور 1405","time":"24:00","type":"delta-report","members":42,"capacity":"42/50","page":"../reports/2026-09-16-2400.html"},{"id":"2026-09-15-2400","period":6,"date_persian":"24 شهریور 1405","time":"24:00","type":"delta-report","members":45,"capacity":"45/50","page":"../reports/2026-09-15-2400.html"},{"id":"2026-09-14-2300","period":5,"date_persian":"23 شهریور 1405","time":"23:00","type":"delta-report","members":47,"capacity":"47/50","page":"../reports/2026-09-14-2300.html"},{"id":"2026-09-13-2300","period":4,"date_persian":"22 شهریور 1405","time":"23:00","type":"delta-report","members":47,"capacity":"47/50","page":"../reports/2026-09-13-2300.html"},{"id":"2026-09-13-1130","period":3,"date_persian":"22 شهریور 1405","time":"11:30","type":"delta-report","members":47,"capacity":"47/50","page":"../reports/2026-09-13-1130.html"},{"id":"2026-09-12-2330","period":2,"date_persian":"21 شهریور 1405","time":"23:30","type":"delta-report","members":46,"capacity":"46/50","page":"../clan-leaderboard.html"},{"id":"2026-09-12-1900","period":1,"date_persian":"21 شهریور 1405","time":"19:00","type":"baseline","members":47,"capacity":"47/50","page":"../reports/2026-09-12-1900.html"}]}
+{
+  "clan":"PERSIA",
+  "game":"War Drone",
+  "reports":[
+    {"id":"2026-09-16-2400","period":7,"date_persian":"25 شهریور 1405","time":"24:00","type":"delta-report","league_boundary":"end","boundary_label":"پایان لیگ جاری","members":42,"capacity":"42/50","page":"../reports/2026-09-16-2400.html"},
+    {"id":"2026-09-15-2400","period":6,"date_persian":"24 شهریور 1405","time":"24:00","type":"delta-report","members":45,"capacity":"45/50","page":"../reports/2026-09-15-2400.html"},
+    {"id":"2026-09-14-2300","period":5,"date_persian":"23 شهریور 1405","time":"23:00","type":"delta-report","members":47,"capacity":"47/50","page":"../reports/2026-09-14-2300.html"},
+    {"id":"2026-09-13-2300","period":4,"date_persian":"22 شهریور 1405","time":"23:00","type":"delta-report","members":47,"capacity":"47/50","page":"../reports/2026-09-13-2300.html"},
+    {"id":"2026-09-13-1130","period":3,"date_persian":"22 شهریور 1405","time":"11:30","type":"delta-report","members":47,"capacity":"47/50","page":"../reports/2026-09-13-1130.html"},
+    {"id":"2026-09-12-2330","period":2,"date_persian":"21 شهریور 1405","time":"23:30","type":"delta-report","members":46,"capacity":"46/50","page":"../clan-leaderboard.html"},
+    {"id":"2026-09-12-1900","period":1,"date_persian":"21 شهریور 1405","time":"19:00","type":"baseline","members":47,"capacity":"47/50","page":"../reports/2026-09-12-1900.html"}
+  ]
+}
