@@ -8,9 +8,10 @@ const read = name => JSON.parse(fs.readFileSync(path.join(ROOT, 'data', name), '
 const snapshots = read('snapshots.json');
 const history = read('player-observations-history.json');
 const historyS05 = read('player-observations-history-s05.json');
+const historyS06 = read('player-observations-history-s06.json');
 const current = read('player-observations.json');
 const leagues = read('leagues.json');
-const sets = [history, historyS05, current];
+const sets = [history, historyS05, historyS06, current];
 const results = performance.computeAll(snapshots, sets, leagues);
 function fail(message) { throw new Error(`PERFORMANCE TEST FAILED: ${message}`); }
 function rows(id) { const merged = sets.reduce((all, source) => ({ ...all, ...(source.snapshots || {}) }), {}); return merged[id] || []; }
@@ -56,7 +57,7 @@ const expectedS05Clan = transition('S04', 'S05', 'clan_medals') + results.S04.we
 if (results.S05.weekly_clan_medals_earned !== expectedS05Clan) fail('S05 weekly clan-medal accumulation mismatch');
 const expectedS05Kills = transition('S04', 'S05', 'total_kills') + results.S04.weekly_kills_earned;
 if (results.S05.weekly_kills_earned !== expectedS05Kills) fail('S05 weekly-kill accumulation mismatch');
-const commonPlayer = rows('S05').find(row => ['S01', 'S02', 'S03', 'S04'].every(id => rows(id).some(item => item.player_id === row.player_id)));
+const commonPlayer = rows('S05').find(row => ['S01', 'S02', 'S03', 'S04'].every(id => rows(id).some(item => item.player_id === commonPlayer?.player_id)));
 if (!commonPlayer) fail('could not find a player continuously observed from S01 through S05');
 let expectedCumulativeClan = 0;
 let expectedCumulativeKills = 0;
@@ -75,9 +76,9 @@ if (results.S05.cumulative_players?.[commonPlayer.player_id]?.kills !== expected
 // while Kills continue from S07. S09 then continues both within the same league.
 const syntheticSnapshots = JSON.parse(JSON.stringify(snapshots));
 syntheticSnapshots.snapshots.push({ snapshot_id:'S08', captured_at_utc:'2026-09-17T00:00:00Z', date_persian:'26 شهریور 1405', time_iran:'03:30', type:'delta-report', league_boundary:'start', boundary_label:'شروع لیگ جدید', members:42, capacity:50 });
-syntheticSnapshots.snapshots.push({ snapshot_id:'S09', captured_at_utc:'2026-09-17T01:00:00Z', date_persian:'26 شهریور 1405', time_iran:'04:00', type:'delta-report', members:42, capacity:50 });
-syntheticSnapshots.snapshots.push({ snapshot_id:'S10', captured_at_utc:'2026-09-17T02:00:00Z', date_persian:'26 شهریور 1405', time_iran:'05:30', type:'delta-report', members:41, capacity:50 });
-syntheticSnapshots.snapshots.push({ snapshot_id:'S11', captured_at_utc:'2026-09-17T03:00:00Z', date_persian:'26 شهریور 1405', time_iran:'06:30', type:'delta-report', members:42, capacity:50 });
+syntheticSnapshots.snapshots.push({ snapshot_id:'S09', captured_at_utc:'2026-09-17T01:00:00Z', date_persian:'26 شهریور 1405', time_iran:'04:00', members:42, capacity:50 });
+syntheticSnapshots.snapshots.push({ snapshot_id:'S10', captured_at_utc:'2026-09-17T02:00:00Z', date_persian:'26 شهریور 1405', time_iran:'05:30', members:41, capacity:50 });
+syntheticSnapshots.snapshots.push({ snapshot_id:'S11', captured_at_utc:'2026-09-17T03:00:00Z', date_persian:'26 شهریور 1405', time_iran:'06:30', members:42, capacity:50 });
 const s07Rows = rows('S07');
 const s08Rows = s07Rows.map(row => ({ ...row, clan_medals: 100, total_kills: Number(row.total_kills || 0) + 10 }));
 const s09Rows = s08Rows.map((row, index) => index === 0 ? ({ ...row, clan_medals: row.clan_medals + 100, total_kills: row.total_kills + 7 }) : ({ ...row }));
