@@ -7,7 +7,8 @@ const { spawnSync } = require('child_process');
 const ROOT = path.resolve(__dirname, '..');
 const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'war-drone-ingest-test-'));
 const tempData = path.join(tempRoot, 'data');
-const tempRunner = path.join(tempRoot, 'ingest-snapshot-v4.js');
+const tempTools = path.join(tempRoot, 'tools');
+const tempRunner = path.join(tempTools, 'ingest-snapshot-v4.js');
 const fixture = path.join(tempRoot, 'SNAPSHOT_INGESTION_TEST.json');
 function copy(name) { fs.copyFileSync(path.join(ROOT, 'data', name), path.join(tempData, name)); }
 const input = {
@@ -16,6 +17,7 @@ const input = {
 };
 try {
   fs.mkdirSync(tempData, { recursive: true });
+  fs.mkdirSync(tempTools, { recursive: true });
   for (const file of ['players.json', 'snapshots.json', 'player-observations.json', 'player-observations-history.json', 'memberships.json']) copy(file);
   fs.copyFileSync(path.join(ROOT, 'tools', 'ingest-snapshot-v4.js'), tempRunner);
   fs.writeFileSync(fixture, `${JSON.stringify(input, null, 2)}\n`, 'utf8');
