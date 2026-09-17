@@ -13,7 +13,7 @@ const tempTools = path.join(tempRoot, 'tools');
 const tempAssets = path.join(tempRoot, 'assets');
 const tempData = path.join(tempRoot, 'data');
 const tempReports = path.join(tempRoot, 'reports');
-const fixture = path.join(tempRoot, 'S08.json');
+const fixture = path.join(tempRoot, 'S98.json');
 function copy(name, from, to) { fs.mkdirSync(path.dirname(to), { recursive: true }); fs.copyFileSync(from, to); }
 function runNode(script, args) { const result = spawnSync(process.execPath, [script, ...args], { cwd: tempRoot, encoding: 'utf8' }); if (result.status !== 0) { process.stderr.write(result.stderr || result.stdout || `${script} failed`); process.exit(result.status || 1); } return result.stdout; }
 function sha256(file) { return require('crypto').createHash('sha256').update(fs.readFileSync(file)).digest('hex'); }
@@ -24,10 +24,10 @@ try {
   for (const file of ['ingest-snapshot-v4.js','generate-report.js','validate-ingestion.js']) copy(file, path.join(repoTools, file), path.join(tempTools, file));
   const productionFiles=[path.join(repoData,'players.json'),path.join(repoData,'snapshots.json'),path.join(repoData,'player-observations.json'),path.join(repoData,'player-observations-history.json'),path.join(repoData,'player-observations-history-s05.json'),path.join(repoData,'player-observations-history-s06.json'),path.join(repoData,'memberships.json'),path.join(repoData,'index.json')];
   const before=new Map(productionFiles.map(file=>[file,sha256(file)]));
-  const input={snapshot:{snapshot_id:'S08',captured_at_utc:'2026-09-17T00:00:00Z',date_persian:'26 شهریور 1405',time_iran:'03:30',type:'delta-report',league_boundary:'start',boundary_label:'شروع لیگ جدید',members:1,capacity:50,season_label:'TEST'},players:[{player_id:'PERSIA-P-0001',display_name:'Commander E2E',role:'Member',rank:1,rank_movement:null,stage:58,league_medals:300000,league_medals_delta:null,clan_medals:100,honor_medals:{gold:1,silver:3,bronze:3},total_kills:220010,kills_delta:null,weapons:{'25mm':910,hydra:249,hellfire:66,upgrade_deltas:{}},last_online_display:'1m ago'}]};
+  const input={snapshot:{snapshot_id:'S98',captured_at_utc:'2026-09-18T00:00:00Z',date_persian:'27 شهریور 1405',time_iran:'03:30',type:'delta-report',league_boundary:'start',boundary_label:'شروع لیگ جدید',members:1,capacity:50,season_label:'TEST'},players:[{player_id:'PERSIA-P-0001',display_name:'Commander E2E',role:'Member',rank:1,rank_movement:null,stage:58,league_medals:300000,league_medals_delta:null,clan_medals:100,honor_medals:{gold:1,silver:3,bronze:3},total_kills:220010,kills_delta:null,weapons:{'25mm':910,hydra:249,hellfire:66,upgrade_deltas:{}},last_online_display:'1m ago'}]};
   fs.writeFileSync(fixture,`${JSON.stringify(input,null,2)}\n`,'utf8');
   const ingestOutput=runNode(path.join(tempTools,'ingest-snapshot-v4.js'),[fixture,'--write']);const jsonPart=ingestOutput.replace(/\nWRITE COMPLETE:\s*S08\s*$/u,'').trim();const ingest=JSON.parse(jsonPart);if(!ingest.ok||ingest.snapshot_id!=='S08')throw new Error('E2E: S08 ingestion failed');
-  const reportPath=path.join(tempReports,'2026-09-17-0330.html');runNode(path.join(tempTools,'generate-report.js'),['S08',reportPath]);const html=fs.readFileSync(reportPath,'utf8');if(!html.includes('Commander E2E'))throw new Error('E2E: generated report missing renamed player');if((html.match(/<tbody>\s*<tr(?: |>)/gu)||[]).length!==1)throw new Error('E2E: generated report data row count mismatch');
+  const reportPath=path.join(tempReports,'2026-09-18-0330.html');runNode(path.join(tempTools,'generate-report.js'),['S98',reportPath]);const html=fs.readFileSync(reportPath,'utf8');if(!html.includes('Commander E2E'))throw new Error('E2E: generated report missing renamed player');if((html.match(/<tbody>\s*<tr(?: |>)/gu)||[]).length!==1)throw new Error('E2E: generated report data row count mismatch');
   runNode(path.join(tempTools,'validate-ingestion.js'),[]);for(const file of productionFiles)if(sha256(file)!==before.get(file))throw new Error(`E2E: production file changed: ${path.basename(file)}`);
   console.log('END-TO-END TEST PASS: staged synthetic S08 JSON -> canonical -> generated report, league-start metadata accepted, performance dependency present, production data and S06 history shard unchanged.');
 } finally { fs.rmSync(tempRoot,{recursive:true,force:true}); }
