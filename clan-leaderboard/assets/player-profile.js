@@ -14,23 +14,24 @@
     json('data/player-observations.json'),
     json('data/player-observations-history.json'),
     json('data/player-observations-history-s05.json').catch(() => ({ snapshots: {} })),
+    json('data/player-observations-history-s06.json').catch(() => ({ snapshots: {} })),
     json('data/snapshots.json'),
     json('data/leagues.json')
-  ]).then(([players, current, history, historyS05, snapshotsData, leaguesData]) => {
+  ]).then(([players, current, history, historyS05, historyS06, snapshotsData, leaguesData]) => {
     const player = players.players.find(item => item.player_id === id);
     if (!player) {
       root.innerHTML = '<div class="shell profile-shell"><div class="panel empty">بازیکن پیدا نشد.</div></div>';
       return;
     }
 
-    const snapshotSets = { ...(history.snapshots || {}), ...(historyS05.snapshots || {}), ...(current.snapshots || {}) };
+    const snapshotSets = { ...(history.snapshots || {}), ...(historyS05.snapshots || {}), ...(historyS06.snapshots || {}), ...(current.snapshots || {}) };
     const snapshots = [...(snapshotsData.snapshots || [])].sort((a, b) => b.captured_at_utc.localeCompare(a.captured_at_utc));
     const order = snapshots.map(item => item.snapshot_id).filter(key => snapshotSets[key]);
     const rows = order.map(key => ({ key, obs: (snapshotSets[key] || []).find(item => item.player_id === id) || null }));
     const activeRow = [...rows].find(row => row.obs) || rows[0] || { obs: null, key: snapshotsData.current_snapshot_id };
     const active = activeRow.obs;
     const performance = window.WDPerformance;
-    const performanceBySnapshot = performance.computeAll(snapshotsData, [history, historyS05, current], leaguesData);
+    const performanceBySnapshot = performance.computeAll(snapshotsData, [history, historyS05, historyS06, current], leaguesData);
     const activeMetrics = performanceBySnapshot[activeRow.key] || { baseline_snapshot_id: activeRow.key, period_players: {}, players: {}, cumulative_players: {} };
     const weeklyPlayer = activeMetrics.players?.[id] || { clan_medals: 0, kills: 0 };
     const cumulativePlayer = activeMetrics.cumulative_players?.[id] || { clan_medals: 0, kills: 0 };
