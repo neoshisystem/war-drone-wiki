@@ -21,11 +21,15 @@
   }
 
   function getRows(snapshotId, observationSets) {
+    // Multiple history shards may contain the same snapshot. Later sources are
+    // authoritative because ingestion promotes the newest canonical observation
+    // into the current source while preserving older shards for audit/history.
+    let resolved = null;
     for (const source of observationSets || []) {
       const rows = source?.snapshots?.[snapshotId];
-      if (Array.isArray(rows)) return rows;
+      if (Array.isArray(rows)) resolved = rows;
     }
-    return [];
+    return resolved || [];
   }
 
   function clonePlayerTotals(players) {
@@ -81,18 +85,13 @@
         const clanValue = Number(row.clan_medals || 0);
         const killValue = Number(row.total_kills || 0);
 
-        // S01 is the historical baseline. Every later league starts Clan Medals
-        // from an explicit zero, while snapshots inside the same league use a delta.
         let clanDelta = 0;
         if (!hasPreviousSnapshot) clanDelta = 0;
         else if (!sameWeek) clanDelta = clanValue;
         else if (previous) clanDelta = clanValue - Number(previous.clan_medals || 0);
 
-        // Kills are continuous across league boundaries and compare with the
-        // immediately preceding observation when the player exists there.
         const hasKillBaseline = Boolean(previousKill);
         const killDelta = hasKillBaseline ? killValue - Number(previousKill.total_kills || 0) : 0;
-
         const baseline = !hasPreviousSnapshot || (!sameWeek && !previousKill);
         periodClan += clanDelta;
         periodKills += killDelta;
@@ -102,14 +101,9 @@
         state.players[row.player_id] = currentPlayer;
         periodPlayers[row.player_id] = { clan_medals: clanDelta, kills: killDelta, baseline };
 
-        // Lifetime totals preserve player identity across league resets and
-        // membership gaps. Clan Medals use the league-start zero baseline;
-        // Kills use the previous observation, even across a league boundary.
         if (!cumulativeState[row.player_id]) cumulativeState[row.player_id] = { clan_medals: 0, kills: 0 };
         const previousCumulative = cumulativePrevious.get(row.player_id);
         if (!previousCumulative) {
-          // S01 is a baseline, but a first-ever observation in a later league
-          // is already progress from that league's known zero Clan Medal start.
           cumulativeState[row.player_id].clan_medals += hasPreviousSnapshot ? clanValue : 0;
           cumulativeState[row.player_id].kills += 0;
         } else {
