@@ -54,17 +54,22 @@
   function computeAll(snapshotsFile, observationSets, leaguesFile) {
     const snapshots = [...(snapshotsFile?.snapshots || [])].sort((a, b) => a.captured_at_utc.localeCompare(b.captured_at_utc));
     const reset = leaguesFile?.reset || { weekday: 'Thursday', time_utc: '00:00' };
+    const performanceStartSnapshotId = leaguesFile?.performance_tracking_start_snapshot_id || null;
     const results = {};
     const weeklyState = new Map();
     const cumulativeState = {};
     const cumulativePrevious = new Map();
     let previousSnapshot = null;
     let previousRows = [];
+    let performanceTrackingStarted = !performanceStartSnapshotId;
 
     for (const snapshot of snapshots) {
       const weekId = leagueWeekId(snapshot.captured_at_utc, reset);
+      const startsPerformanceTracking = snapshot.snapshot_id === performanceStartSnapshotId;
+      if (startsPerformanceTracking) performanceTrackingStarted = true;
+
       let state = weeklyState.get(weekId);
-      if (!state) {
+      if (!state || startsPerformanceTracking) {
         state = { clan_medals: 0, kills: 0, players: {} };
         weeklyState.set(weekId, state);
       }
@@ -127,14 +132,16 @@
         cumulativePrevious.set(row.player_id, { ...row, captured_at_utc: snapshot.captured_at_utc });
       }
 
+      const weeklyClan = performanceTrackingStarted ? (state.clan_medals += periodClan) : 0;
+      const weeklyKills = performanceTrackingStarted ? (state.kills += periodKills) : 0;
       results[snapshot.snapshot_id] = {
         snapshot_id: snapshot.snapshot_id,
         league_week: weekId,
         baseline_snapshot_id: previousSnapshot ? previousSnapshot.snapshot_id : snapshot.snapshot_id,
         period_clan_medals_change: periodClan,
         period_kills_change: periodKills,
-        weekly_clan_medals_earned: state.clan_medals += periodClan,
-        weekly_kills_earned: state.kills += periodKills,
+        weekly_clan_medals_earned: weeklyClan,
+        weekly_kills_earned: weeklyKills,
         period_players: clonePeriodPlayers(periodPlayers),
         players: clonePlayerTotals(state.players),
         cumulative_players: cloneCumulativePlayers(cumulativeState)
