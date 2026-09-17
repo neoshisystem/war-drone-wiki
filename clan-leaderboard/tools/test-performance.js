@@ -57,7 +57,7 @@ const expectedS05Clan = transition('S04', 'S05', 'clan_medals') + results.S04.we
 if (results.S05.weekly_clan_medals_earned !== expectedS05Clan) fail('S05 weekly clan-medal accumulation mismatch');
 const expectedS05Kills = transition('S04', 'S05', 'total_kills') + results.S04.weekly_kills_earned;
 if (results.S05.weekly_kills_earned !== expectedS05Kills) fail('S05 weekly-kill accumulation mismatch');
-const commonPlayer = rows('S05').find(row => ['S01', 'S02', 'S03', 'S04'].every(id => rows(id).some(item => item.player_id === commonPlayer?.player_id)));
+const commonPlayer = rows('S05').find(row => ['S01', 'S02', 'S03', 'S04'].every(id => rows(id).some(item => item.player_id === row.player_id)));
 if (!commonPlayer) fail('could not find a player continuously observed from S01 through S05');
 let expectedCumulativeClan = 0;
 let expectedCumulativeKills = 0;
