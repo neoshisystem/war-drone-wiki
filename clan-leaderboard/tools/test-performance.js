@@ -17,6 +17,7 @@ function fail(message) { throw new Error(`PERFORMANCE TEST FAILED: ${message}`);
 function rows(id) { const merged = sets.reduce((all, source) => ({ ...all, ...(source.snapshots || {}) }), {}); return merged[id] || []; }
 function aggregatePeriod(id, field) { return rows(id).reduce((sum, row) => sum + Number(results[id].period_players?.[row.player_id]?.[field] || 0), 0); }
 for (const id of ['S01', 'S02', 'S03', 'S04', 'S05', 'S06', 'S07']) if (!results[id]) fail(`missing ${id}`);
+console.log(`S07 COMPUTED: clan=${results.S07.period_clan_medals_change}, kills=${results.S07.period_kills_change}, weeklyClan=${results.S07.weekly_clan_medals_earned}, weeklyKills=${results.S07.weekly_kills_earned}`);
 if (results.S01.weekly_clan_medals_earned !== 0 || results.S01.weekly_kills_earned !== 0) fail('baseline internal aggregate must start at zero');
 if (results.S01.baseline_snapshot_id !== 'S01') fail('S01 must identify itself as baseline');
 if (!rows('S01').every(row => results.S01.period_players?.[row.player_id]?.baseline === true)) fail('S01 players must be marked baseline');
