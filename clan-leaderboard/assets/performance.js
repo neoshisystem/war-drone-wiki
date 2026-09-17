@@ -123,7 +123,7 @@
       results[snapshot.snapshot_id] = {
         snapshot_id: snapshot.snapshot_id,
         league_week: weekId,
-        baseline_snapshot_id: sameWeek ? previousSnapshot.snapshot_id : snapshot.snapshot_id,
+        baseline_snapshot_id: previousSnapshot ? previousSnapshot.snapshot_id : snapshot.snapshot_id,
         period_clan_medals_change: periodClan,
         period_kills_change: periodKills,
         weekly_clan_medals_earned: state.clan_medals += periodClan,
