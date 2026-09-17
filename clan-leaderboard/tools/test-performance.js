@@ -24,11 +24,17 @@ if (!rows('S01').every(row => results.S01.period_players?.[row.player_id]?.basel
 if (![results.S01, results.S02, results.S03, results.S04, results.S05, results.S06, results.S07].every(item => item.league_week === '2026-09-10')) fail('S01-S07 must belong to the 2026-09-10 league week');
 if (snapshots.snapshots.find(item => item.snapshot_id === 'S07')?.league_boundary !== 'end') fail('S07 must be explicitly marked as league end');
 if (snapshots.snapshots.find(item => item.snapshot_id === 'S07')?.boundary_label !== 'پایان لیگ جاری') fail('S07 boundary label must identify league end');
+if (leagues.performance_tracking_start_snapshot_id !== 'S06') fail('weekly performance tracking must explicitly start at S06');
 for (const id of ['S02', 'S03', 'S04', 'S05', 'S06', 'S07']) {
   if (results[id].period_clan_medals_change !== aggregatePeriod(id, 'clan_medals')) fail(`${id} clan period aggregate mismatch`);
   if (results[id].period_kills_change !== aggregatePeriod(id, 'kills')) fail(`${id} kill period aggregate mismatch`);
   if (rows(id).some(row => results[id].period_players?.[row.player_id] == null)) fail(`${id} missing player period metric`);
 }
+for (const id of ['S02', 'S03', 'S04', 'S05']) {
+  if (results[id].weekly_clan_medals_earned !== 0 || results[id].weekly_kills_earned !== 0) fail(`${id} weekly performance must remain untracked before S06`);
+}
+if (results.S06.weekly_clan_medals_earned !== 595338) fail('S06 weekly clan-medal tracking must start from its period delta');
+if (results.S06.weekly_kills_earned !== 95733) fail('S06 weekly-kill tracking must start from its period delta');
 if (results.S07.period_clan_medals_change !== 374282) fail('S07 period clan-medal delta must be +374,282');
 if (results.S07.period_kills_change !== 58932) fail('S07 period kill delta must be +58,932');
 if (results.S07.weekly_clan_medals_earned !== 969620) fail('S07 weekly clan-medal accumulation mismatch');
@@ -55,10 +61,6 @@ function transition(prevId, currentId, field) {
     return sum + (before ? Number(row[field] || 0) - Number(before[field] || 0) : 0);
   }, 0);
 }
-const expectedS05Clan = transition('S04', 'S05', 'clan_medals') + results.S04.weekly_clan_medals_earned;
-if (results.S05.weekly_clan_medals_earned !== expectedS05Clan) fail('S05 weekly clan-medal accumulation mismatch');
-const expectedS05Kills = transition('S04', 'S05', 'total_kills') + results.S04.weekly_kills_earned;
-if (results.S05.weekly_kills_earned !== expectedS05Kills) fail('S05 weekly-kill accumulation mismatch');
 const commonPlayer = rows('S05').find(row => ['S01', 'S02', 'S03', 'S04'].every(id => rows(id).some(item => item.player_id === row.player_id)));
 if (!commonPlayer) fail('could not find a player continuously observed from S01 through S05');
 let expectedCumulativeClan = 0;
@@ -104,4 +106,4 @@ if (synthetic.S09.period_players?.[s07Rows[0].player_id]?.kills !== 7) fail('S09
 if (synthetic.S11.period_players?.[gapPlayerId]?.clan_medals !== 0 || synthetic.S11.period_players?.[gapPlayerId]?.kills !== 0 || synthetic.S11.period_players?.[gapPlayerId]?.baseline !== true) fail('re-added player must restart as a period baseline after an observation gap');
 if (synthetic.S11.cumulative_players?.[gapPlayerId]?.clan_medals !== synthetic.S09.cumulative_players?.[gapPlayerId]?.clan_medals + 500) fail('cumulative Clan Medals must preserve history and add post-return activity');
 if (synthetic.S11.cumulative_players?.[gapPlayerId]?.kills !== synthetic.S09.cumulative_players?.[gapPlayerId]?.kills + 50) fail('cumulative Kills must preserve history and add post-return activity');
-console.log('PERFORMANCE TEST PASS: S01 baseline, S07 league-end semantics, S08 Clan Medal reset, continuous Kills, cumulative history, and membership-gap handling are valid.');
+console.log('PERFORMANCE TEST PASS: S01 baseline, S06 performance-tracking start, S07 league-end semantics, S08 Clan Medal reset, continuous Kills, cumulative history, and membership-gap handling are valid.');
