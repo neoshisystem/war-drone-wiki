@@ -44,7 +44,8 @@ if (s03Added.length > 0) {
 const s06Ids = new Set(rows('S06').map(row => row.player_id));
 const s07Added = rows('S07').filter(row => !s06Ids.has(row.player_id));
 if (s07Added.length !== 1 || s07Added[0].player_id !== 'PERSIA-P-0051') fail('S07 must contain exactly one new player: hisystemX');
-if (results.S07.period_players?.['PERSIA-P-0051']?.clan_medals !== 0 || results.S07.period_players?.['PERSIA-P-0051']?.kills !== 0 || results.S07.period_players?.['PERSIA-P-0051']?.baseline !== true) fail('hisystemX must be S07 baseline');
+if (results.S07.period_players?.['PERSIA-P-0051']?.clan_medals !== 103 || results.S07.period_players?.['PERSIA-P-0051']?.kills !== 3530 || results.S07.period_players?.['PERSIA-P-0051']?.baseline !== false) fail('hisystemX must contribute its observed S07 league-end values');
+if (results.S07.cumulative_players?.['PERSIA-P-0051']?.clan_medals !== 0 || results.S07.cumulative_players?.['PERSIA-P-0051']?.kills !== 0) fail('hisystemX cumulative earned metrics must remain baseline until a prior valid observation exists');
 for (const id of ['PERSIA-P-0049','PERSIA-P-0050','PERSIA-P-0045','PERSIA-P-0046']) if (results.S07.period_players?.[id] != null) fail(`${id} must not appear in S07 current period players`);
 if (rows('S07').find(row => row.player_id === 'PERSIA-P-0019') == null) fail('active saeid identity PERSIA-P-0019 must remain in S07');
 function transition(prevId, currentId, field) {
