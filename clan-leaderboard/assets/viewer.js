@@ -43,10 +43,11 @@
     fetchJson('data/player-observations.json'),
     fetchJson('data/player-observations-history.json'),
     fetchJson('data/player-observations-history-s05.json').catch(() => ({ snapshots: {} })),
+    fetchJson('data/player-observations-history-s06.json').catch(() => ({ snapshots: {} })),
     fetchJson('data/players.json'),
     fetchJson('data/snapshots.json'),
     fetchJson('data/leagues.json')
-  ]).then(([currentData, historyData, historyS05, playersData, snapshotsData, leaguesData]) => {
+  ]).then(([currentData, historyData, historyS05, historyS06, playersData, snapshotsData, leaguesData]) => {
     const snapshots = [...(snapshotsData.snapshots || [])].sort((a, b) => a.captured_at_utc.localeCompare(b.captured_at_utc));
     const basename = value => String(value || '').split('/').pop();
     const sourceMatch = requestedSource ? snapshots.find(snapshot => snapshot.source_report && basename(snapshot.source_report) === basename(requestedSource)) : null;
@@ -54,7 +55,7 @@
     const target = snapshots.find(snapshot => snapshot.snapshot_id === snapshotKey) || snapshots[snapshots.length - 1];
     if (!target) throw new Error('snapshot');
 
-    const observationSets = [historyData, historyS05, currentData];
+    const observationSets = [historyData, historyS05, historyS06, currentData];
     const metrics = performance.computeAll(snapshotsData, observationSets, leaguesData)[target.snapshot_id] || {
       league_week: performance.leagueWeekId(target.captured_at_utc, leaguesData.reset),
       baseline_snapshot_id: target.snapshot_id,
