@@ -73,6 +73,8 @@
       const previousWeekId = previousSnapshot ? leagueWeekId(previousSnapshot.captured_at_utc, reset) : null;
       const sameWeek = Boolean(previousSnapshot && previousWeekId === weekId);
       const hasPreviousSnapshot = Boolean(previousSnapshot);
+      const isLeagueStart = snapshot.league_boundary === 'start';
+      const isLeagueEnd = snapshot.league_boundary === 'end';
       const previousById = new Map(sameWeek ? previousRows.map(row => [row.player_id, row]) : []);
       const previousKillById = new Map(hasPreviousSnapshot ? previousRows.map(row => [row.player_id, row]) : []);
       let periodClan = 0;
@@ -89,10 +91,13 @@
         if (!hasPreviousSnapshot) clanDelta = 0;
         else if (!sameWeek) clanDelta = clanValue;
         else if (previous) clanDelta = clanValue - Number(previous.clan_medals || 0);
+        else if (isLeagueEnd) clanDelta = clanValue;
 
-        const hasKillBaseline = Boolean(previousKill);
-        const killDelta = hasKillBaseline ? killValue - Number(previousKill.total_kills || 0) : 0;
-        const baseline = !hasPreviousSnapshot || (!sameWeek && !previousKill);
+        let killDelta = 0;
+        if (previousKill) killDelta = killValue - Number(previousKill.total_kills || 0);
+        else if (isLeagueEnd) killDelta = hasPreviousSnapshot ? killValue : 0;
+
+        const baseline = !hasPreviousSnapshot || (!previous && !isLeagueEnd);
         periodClan += clanDelta;
         periodKills += killDelta;
         const currentPlayer = state.players[row.player_id] || { clan_medals: 0, kills: 0 };
@@ -104,8 +109,13 @@
         if (!cumulativeState[row.player_id]) cumulativeState[row.player_id] = { clan_medals: 0, kills: 0 };
         const previousCumulative = cumulativePrevious.get(row.player_id);
         if (!previousCumulative) {
-          cumulativeState[row.player_id].clan_medals += hasPreviousSnapshot ? clanValue : 0;
-          cumulativeState[row.player_id].kills += 0;
+          if (!hasPreviousSnapshot) {
+            cumulativeState[row.player_id].clan_medals += 0;
+            cumulativeState[row.player_id].kills += 0;
+          } else if (!sameWeek && isLeagueStart) {
+            cumulativeState[row.player_id].clan_medals += clanValue;
+            cumulativeState[row.player_id].kills += 0;
+          }
         } else {
           const previousCumulativeWeek = leagueWeekId(previousCumulative.captured_at_utc || snapshot.captured_at_utc, reset);
           const clanContribution = previousCumulativeWeek === weekId
