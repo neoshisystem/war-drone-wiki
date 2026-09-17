@@ -43,4 +43,14 @@ assert.strictEqual(s06[33].player_id, 'PERSIA-P-0037', 'S06 nouk identity must r
 assert.strictEqual(s06[37].player_id, 'PERSIA-P-0040', 'S06 جهانبانی identity must remain stable');
 assert.strictEqual(s06[19].stats['تغییر مدال کلن'], '—', 'Members without period metrics must not fabricate a delta');
 
-console.log(`VIEWER DATA TEST PASS: ${snapshots.snapshots.length} snapshots, current=${snapshots.current_snapshot_id}, S06=${s06.length} members, fallback path preserved, S05 hard-code removed.`);
+const s07Rows = viewerData.getRows('S07', observationSets);
+const s07 = viewerData.buildMembers('S07', observationSets, players, { baseline_snapshot_id: 'S06', period_players: {} }).members;
+assert.strictEqual(s07Rows.length, 42, 'S07 must contain 42 canonical observations');
+assert.strictEqual(s07.length, 42, 'Viewer model must contain 42 S07 members');
+assert.strictEqual(s07[22].player_id, 'PERSIA-P-0013', 'S07 rank 23 must resolve to the stable Uk/Vk identity');
+assert.strictEqual(s07[27].player_id, 'PERSIA-P-0019', 'S07 rank 28 must resolve to active saeid identity');
+assert.strictEqual(s07[41].player_id, 'PERSIA-P-0051', 'S07 rank 42 must resolve to new hisystemX identity');
+assert.strictEqual(s07.some(member => member.player_id === 'PERSIA-P-0049'), false, 'Kicked saied must not appear in S07 grid');
+assert.strictEqual(s07.some(member => member.player_id === 'PERSIA-P-0050'), false, 'Kicked Behnam must not appear in S07 grid');
+
+console.log(`VIEWER DATA TEST PASS: ${snapshots.snapshots.length} snapshots, current=${snapshots.current_snapshot_id}, S06=${s06.length} members, S07=${s07.length} members, stable saeid/saied identities preserved, fallback path preserved.`);
