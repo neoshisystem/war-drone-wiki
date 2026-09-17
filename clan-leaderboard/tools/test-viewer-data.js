@@ -11,8 +11,9 @@ const snapshots = read('snapshots.json');
 const current = read('player-observations.json');
 const history = read('player-observations-history.json');
 const historyS05 = (() => { try { return read('player-observations-history-s05.json'); } catch { return { snapshots: {} }; } })();
+const historyS06 = (() => { try { return read('player-observations-history-s06.json'); } catch { return { snapshots: {} }; } })();
 const players = read('players.json');
-const observationSets = [history, historyS05, current];
+const observationSets = [history, historyS05, historyS06, current];
 
 const viewerSource = fs.readFileSync(path.join(ROOT, 'assets', 'viewer.js'), 'utf8');
 const indexSource = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
@@ -20,6 +21,7 @@ assert(!viewerSource.includes("reports/2026-09-14-2300.html"), 'Viewer must not 
 assert(viewerSource.includes("snapshotsData.current_snapshot_id"), 'Viewer must resolve the direct entry from current_snapshot_id');
 assert(viewerSource.includes("'../clan-leaderboard.html'"), 'Viewer fallback source must remain available');
 assert(indexSource.indexOf('assets/viewer-data.js') < indexSource.indexOf('assets/viewer.js'), 'viewer-data.js must load before viewer.js');
+assert(viewerSource.includes("player-observations-history-s06.json"), 'Viewer must load the S06 history shard');
 
 for (const snapshot of snapshots.snapshots) {
   const rows = viewerData.getRows(snapshot.snapshot_id, observationSets);
@@ -53,4 +55,4 @@ assert.strictEqual(s07[41].player_id, 'PERSIA-P-0051', 'S07 rank 42 must resolve
 assert.strictEqual(s07.some(member => member.player_id === 'PERSIA-P-0049'), false, 'Kicked saied must not appear in S07 grid');
 assert.strictEqual(s07.some(member => member.player_id === 'PERSIA-P-0050'), false, 'Kicked Behnam must not appear in S07 grid');
 
-console.log(`VIEWER DATA TEST PASS: ${snapshots.snapshots.length} snapshots, current=${snapshots.current_snapshot_id}, S06=${s06.length} members, S07=${s07.length} members, stable saeid/saied identities preserved, fallback path preserved.`);
+console.log(`VIEWER DATA TEST PASS: ${snapshots.snapshots.length} snapshots, current=${snapshots.current_snapshot_id}, S06=${s06.length} members, S07=${s07.length} members, stable saeid/saied identities preserved, S06 history shard loaded, fallback path preserved.`);
