@@ -18,9 +18,13 @@ function rows(id) { const merged = sets.reduce((all, source) => ({ ...all, ...(s
 function aggregatePeriod(id, field) { return rows(id).reduce((sum, row) => sum + Number(results[id].period_players?.[row.player_id]?.[field] || 0), 0); }
 for (const id of ['S01', 'S02', 'S03', 'S04', 'S05', 'S06', 'S07']) if (!results[id]) fail(`missing ${id}`);
 console.log(`S07 COMPUTED: clan=${results.S07.period_clan_medals_change}, kills=${results.S07.period_kills_change}, weeklyClan=${results.S07.weekly_clan_medals_earned}, weeklyKills=${results.S07.weekly_kills_earned}`);
-if (results.S08?.period_clan_medals_change !== 24652874) fail('real S08 Clan Medal period delta must equal the observed league-start total 24,652,874');
-if (results.S08?.period_kills_change !== 88364) fail('real S08 Kill period delta must be membership-aware and equal 88,364 for players observed in S07');
-if (results.S08?.weekly_clan_medals_earned !== 24652874) fail('real S08 weekly Clan Medal total must equal the explicit zero-baseline observed total');
+if (results.S08?.period_clan_medals_change !== 1009626) fail('real S08 Clan Medal period delta must compare existing players to S07 and use zero baseline only for new S08 players: +1,009,626');
+if (results.S08?.period_kills_change !== 88364) fail('real S08 Kill period delta must be 88,364 for players with a valid S07 observation');
+if (results.S08?.weekly_clan_medals_earned !== 1009626) fail('real S08 weekly Clan Medal total must equal the S07->S08 delta plus new-player zero baselines: +1,009,626');
+for (const id of ['PERSIA-P-0052','PERSIA-P-0053']) {
+  const metric = results.S08?.period_players?.[id];
+  if (!metric || metric.clan_medals <= 0 || metric.clan_baseline || metric.kills !== 0 || !metric.kills_baseline) fail(`new S08 player ${id} must count Clan Medals from zero but keep Kills at baseline`);
+}
 if (results.S01.weekly_clan_medals_earned !== 0 || results.S01.weekly_kills_earned !== 0) fail('baseline internal aggregate must start at zero');
 if (results.S01.baseline_snapshot_id !== 'S01') fail('S01 must identify itself as baseline');
 if (!rows('S01').every(row => results.S01.period_players?.[row.player_id]?.baseline === true)) fail('S01 players must be marked baseline');
