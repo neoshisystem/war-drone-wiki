@@ -140,11 +140,12 @@
             cumulativeState[row.player_id].kills += 0;
           }
         } else {
-          const previousCumulativeWeek = leagueWeekId(previousCumulative.captured_at_utc || snapshot.captured_at_utc, reset);
-          const clanContribution = previousCumulativeWeek === weekId
-            ? clanValue - Number(previousCumulative.clan_medals || 0)
-            : clanValue;
-          cumulativeState[row.player_id].clan_medals += clanContribution;
+          // Lifetime earned Clan Medals follow the same period delta semantics:
+          // existing identity -> current minus previous observation; a new
+          // league-start identity -> current value from explicit zero baseline.
+          // Do not substitute the current cumulative Clan Medal total merely
+          // because the league_week changed.
+          cumulativeState[row.player_id].clan_medals += clanDelta;
           cumulativeState[row.player_id].kills += killValue - Number(previousCumulative.total_kills || 0);
         }
         cumulativePrevious.set(row.player_id, { ...row, captured_at_utc: snapshot.captured_at_utc });
