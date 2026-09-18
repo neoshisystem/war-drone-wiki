@@ -93,7 +93,7 @@ syntheticSnapshots.snapshots.push({ snapshot_id:'S09', captured_at_utc:'2026-09-
 syntheticSnapshots.snapshots.push({ snapshot_id:'S10', captured_at_utc:'2026-09-17T02:00:00Z', date_persian:'26 شهریور 1405', time_iran:'05:30', members:41, capacity:50 });
 syntheticSnapshots.snapshots.push({ snapshot_id:'S11', captured_at_utc:'2026-09-17T03:00:00Z', date_persian:'26 شهریور 1405', time_iran:'06:30', members:42, capacity:50 });
 const s07Rows = rows('S07');
-const s08Rows = s07Rows.map(row => ({ ...row, clan_medals: 100, total_kills: Number(row.total_kills || 0) + 10 }));
+const s08Rows = s07Rows.map(row => ({ ...row, clan_medals: Number(row.clan_medals || 0) + 100, total_kills: Number(row.total_kills || 0) + 10 }));
 const s09Rows = s08Rows.map((row, index) => index === 0 ? ({ ...row, clan_medals: row.clan_medals + 100, total_kills: row.total_kills + 7 }) : ({ ...row }));
 const gapPlayerId = s07Rows[0].player_id;
 const s10Rows = s09Rows.filter(row => row.player_id !== gapPlayerId);
@@ -101,11 +101,11 @@ const s11Rows = s10Rows.concat([{ ...s09Rows[0], clan_medals: s09Rows[0].clan_me
 const syntheticCurrent = { snapshots: { S08: s08Rows, S09: s09Rows, S10: s10Rows, S11: s11Rows } };
 const synthetic = performance.computeAll(syntheticSnapshots, [...sets, syntheticCurrent], leagues);
 if (synthetic.S08.league_week !== '2026-09-17') fail('league reset date was not recognized');
-const expectedS08Clan = s08Rows.reduce((sum, row) => sum + Number(row.clan_medals || 0), 0);
+const expectedS08Clan = s08Rows.reduce((sum, row, index) => sum + (Number(row.clan_medals || 0) - Number(s07Rows[index].clan_medals || 0)), 0);
 const expectedS08Kills = s08Rows.reduce((sum, row, index) => sum + (Number(row.total_kills || 0) - Number(s07Rows[index].total_kills || 0)), 0);
-if (synthetic.S08.weekly_clan_medals_earned !== expectedS08Clan) fail('S08 Clan Medal total must start from zero and equal observed league progress');
+if (synthetic.S08.weekly_clan_medals_earned !== expectedS08Clan) fail('S08 Clan Medal total must compare existing players with S07 across the league boundary');
 if (synthetic.S08.weekly_kills_earned !== expectedS08Kills) fail('S08 Kill total must continue from S07');
-if (synthetic.S08.period_clan_medals_change !== expectedS08Clan) fail('S08 period Clan Medal delta must equal observed values from zero baseline');
+if (synthetic.S08.period_clan_medals_change !== expectedS08Clan) fail('S08 period Clan Medal delta must compare existing players with S07 across the league boundary');
 if (synthetic.S08.period_kills_change !== expectedS08Kills) fail('S08 period Kill delta must equal S08 minus S07');
 if (synthetic.S08.baseline_snapshot_id !== 'S07') fail('S08 period baseline reference must remain S07 for continuous comparison');
 if (synthetic.S09.weekly_clan_medals_earned !== expectedS08Clan + 100) fail('S09 Clan Medal accumulation did not continue from S08');
