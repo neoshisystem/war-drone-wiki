@@ -40,7 +40,9 @@
     return Object.fromEntries(Object.entries(players).map(([id, value]) => [id, {
       clan_medals: value.clan_medals,
       kills: value.kills,
-      baseline: Boolean(value.baseline)
+      baseline: Boolean(value.baseline),
+      clan_baseline: Boolean(value.clan_baseline),
+      kills_baseline: Boolean(value.kills_baseline)
     }]));
   }
 
@@ -117,7 +119,13 @@
         currentPlayer.clan_medals += clanDelta;
         currentPlayer.kills += killDelta;
         state.players[row.player_id] = currentPlayer;
-        periodPlayers[row.player_id] = { clan_medals: clanDelta, kills: killDelta, baseline };
+        periodPlayers[row.player_id] = {
+          clan_medals: clanDelta,
+          kills: killDelta,
+          baseline,
+          clan_baseline: !hasPreviousSnapshot || (!previous && !isLeagueStart && !isLeagueEnd),
+          kills_baseline: !previousKill && !isLeagueEnd
+        };
 
         if (!cumulativeState[row.player_id]) cumulativeState[row.player_id] = { clan_medals: 0, kills: 0 };
         const previousCumulative = cumulativePrevious.get(row.player_id);
