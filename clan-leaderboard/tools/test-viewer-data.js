@@ -15,7 +15,6 @@ const historyS05 = (() => { try { return read('player-observations-history-s05.j
 const historyS06 = (() => { try { return read('player-observations-history-s06.json'); } catch { return { snapshots: {} }; } })();
 const players = read('players.json');
 const leagues = read('leagues.json');
-const metrics = performance.computeAll(snapshots, observationSets, leagues);
 const observationSets = [history, historyS05, historyS06, current];
 const metrics = performance.computeAll(snapshots, observationSets, leagues);
 
