@@ -92,17 +92,25 @@
         const clanValue = Number(row.clan_medals || 0);
         const killValue = Number(row.total_kills || 0);
 
+        // Clan Medals are cumulative totals. A league boundary resets the
+        // *earned* weekly counter, but it does not erase the previous observed
+        // total for an existing player. Therefore an existing player is always
+        // compared with their previous valid observation, including S07 -> S08.
+        // A player first observed at league start has an explicit Clan Medal
+        // baseline of zero, so their observed S08 value is their league delta.
         let clanDelta = 0;
-        if (!hasPreviousSnapshot) clanDelta = 0;
-        else if (!sameWeek) clanDelta = clanValue;
-        else if (previous) clanDelta = clanValue - Number(previous.clan_medals || 0);
+        if (previous) clanDelta = clanValue - Number(previous.clan_medals || 0);
+        else if (isLeagueStart) clanDelta = clanValue;
         else if (isLeagueEnd) clanDelta = clanValue;
 
+        // Kills never reset at league boundaries. A player without a previous
+        // observation is a baseline for Kill Delta; their current total is not
+        // retroactively counted as earned during this period.
         let killDelta = 0;
         if (previousKill) killDelta = killValue - Number(previousKill.total_kills || 0);
         else if (isLeagueEnd) killDelta = hasPreviousSnapshot ? killValue : 0;
 
-        const baseline = !hasPreviousSnapshot || (!previous && !isLeagueEnd);
+        const baseline = !hasPreviousSnapshot || (!previous && !isLeagueStart && !isLeagueEnd);
         periodClan += clanDelta;
         periodKills += killDelta;
         const currentPlayer = state.players[row.player_id] || { clan_medals: 0, kills: 0 };
