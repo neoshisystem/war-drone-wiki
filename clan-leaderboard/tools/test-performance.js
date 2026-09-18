@@ -18,6 +18,9 @@ function rows(id) { const merged = sets.reduce((all, source) => ({ ...all, ...(s
 function aggregatePeriod(id, field) { return rows(id).reduce((sum, row) => sum + Number(results[id].period_players?.[row.player_id]?.[field] || 0), 0); }
 for (const id of ['S01', 'S02', 'S03', 'S04', 'S05', 'S06', 'S07']) if (!results[id]) fail(`missing ${id}`);
 console.log(`S07 COMPUTED: clan=${results.S07.period_clan_medals_change}, kills=${results.S07.period_kills_change}, weeklyClan=${results.S07.weekly_clan_medals_earned}, weeklyKills=${results.S07.weekly_kills_earned}`);
+if (results.S08?.period_clan_medals_change !== 24652874) fail('real S08 Clan Medal period delta must equal the observed league-start total 24,652,874');
+if (results.S08?.period_kills_change !== 88364) fail('real S08 Kill period delta must be membership-aware and equal 88,364 for players observed in S07');
+if (results.S08?.weekly_clan_medals_earned !== 24652874) fail('real S08 weekly Clan Medal total must equal the explicit zero-baseline observed total');
 if (results.S01.weekly_clan_medals_earned !== 0 || results.S01.weekly_kills_earned !== 0) fail('baseline internal aggregate must start at zero');
 if (results.S01.baseline_snapshot_id !== 'S01') fail('S01 must identify itself as baseline');
 if (!rows('S01').every(row => results.S01.period_players?.[row.player_id]?.baseline === true)) fail('S01 players must be marked baseline');
@@ -79,6 +82,8 @@ if (results.S05.cumulative_players?.[commonPlayer.player_id]?.kills !== expected
 // Synthetic league transition: S08 starts a new league. Clan Medals are reset to 0,
 // while Kills continue from S07. S09 then continues both within the same league.
 const syntheticSnapshots = JSON.parse(JSON.stringify(snapshots));
+// S08 now exists in canonical data; remove the real S08 from this isolated synthetic scenario.
+syntheticSnapshots.snapshots = syntheticSnapshots.snapshots.filter(item => item.snapshot_id !== 'S08');
 syntheticSnapshots.snapshots.push({ snapshot_id:'S08', captured_at_utc:'2026-09-17T00:00:00Z', date_persian:'26 شهریور 1405', time_iran:'03:30', type:'delta-report', league_boundary:'start', boundary_label:'شروع لیگ جدید', members:42, capacity:50 });
 syntheticSnapshots.snapshots.push({ snapshot_id:'S09', captured_at_utc:'2026-09-17T01:00:00Z', date_persian:'26 شهریور 1405', time_iran:'04:00', members:42, capacity:50 });
 syntheticSnapshots.snapshots.push({ snapshot_id:'S10', captured_at_utc:'2026-09-17T02:00:00Z', date_persian:'26 شهریور 1405', time_iran:'05:30', members:41, capacity:50 });
