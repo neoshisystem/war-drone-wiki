@@ -17,6 +17,7 @@ const players = read('players.json');
 const leagues = read('leagues.json');
 const metrics = performance.computeAll(snapshots, observationSets, leagues);
 const observationSets = [history, historyS05, historyS06, current];
+const metrics = performance.computeAll(snapshots, observationSets, leagues);
 
 const viewerSource = fs.readFileSync(path.join(ROOT, 'assets', 'viewer.js'), 'utf8');
 const indexSource = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
