@@ -40,7 +40,9 @@
     return Object.fromEntries(Object.entries(players).map(([id, value]) => [id, {
       clan_medals: value.clan_medals,
       kills: value.kills,
-      baseline: Boolean(value.baseline)
+      baseline: Boolean(value.baseline),
+      clan_baseline: Boolean(value.clan_baseline),
+      kills_baseline: Boolean(value.kills_baseline)
     }]));
   }
 
@@ -81,6 +83,7 @@
       const isLeagueStart = snapshot.league_boundary === 'start';
       const isLeagueEnd = snapshot.league_boundary === 'end';
       const previousById = new Map(sameWeek ? previousRows.map(row => [row.player_id, row]) : []);
+      const previousClanById = new Map(hasPreviousSnapshot ? previousRows.map(row => [row.player_id, row]) : []);
       const previousKillById = new Map(hasPreviousSnapshot ? previousRows.map(row => [row.player_id, row]) : []);
       let periodClan = 0;
       let periodKills = 0;
@@ -88,28 +91,43 @@
 
       for (const row of currentRows) {
         const previous = previousById.get(row.player_id);
+        const previousClan = previousClanById.get(row.player_id);
         const previousKill = previousKillById.get(row.player_id);
         const clanValue = Number(row.clan_medals || 0);
         const killValue = Number(row.total_kills || 0);
 
+        // Clan Medals are cumulative totals. A league boundary resets the
+        // *earned* weekly counter, but it does not erase the previous observed
+        // total for an existing player. Therefore an existing player is always
+        // compared with their previous valid observation, including S07 -> S08.
+        // A player first observed at league start has an explicit Clan Medal
+        // baseline of zero, so their observed S08 value is their league delta.
         let clanDelta = 0;
-        if (!hasPreviousSnapshot) clanDelta = 0;
-        else if (!sameWeek) clanDelta = clanValue;
-        else if (previous) clanDelta = clanValue - Number(previous.clan_medals || 0);
+        if (previousClan) clanDelta = clanValue - Number(previousClan.clan_medals || 0);
+        else if (isLeagueStart) clanDelta = clanValue;
         else if (isLeagueEnd) clanDelta = clanValue;
 
+        // Kills never reset at league boundaries. A player without a previous
+        // observation is a baseline for Kill Delta; their current total is not
+        // retroactively counted as earned during this period.
         let killDelta = 0;
         if (previousKill) killDelta = killValue - Number(previousKill.total_kills || 0);
         else if (isLeagueEnd) killDelta = hasPreviousSnapshot ? killValue : 0;
 
-        const baseline = !hasPreviousSnapshot || (!previous && !isLeagueEnd);
+        const baseline = !hasPreviousSnapshot || (!previous && !isLeagueStart && !isLeagueEnd);
         periodClan += clanDelta;
         periodKills += killDelta;
         const currentPlayer = state.players[row.player_id] || { clan_medals: 0, kills: 0 };
         currentPlayer.clan_medals += clanDelta;
         currentPlayer.kills += killDelta;
         state.players[row.player_id] = currentPlayer;
-        periodPlayers[row.player_id] = { clan_medals: clanDelta, kills: killDelta, baseline };
+        periodPlayers[row.player_id] = {
+          clan_medals: clanDelta,
+          kills: killDelta,
+          baseline,
+          clan_baseline: !hasPreviousSnapshot || (!previousClan && !isLeagueStart && !isLeagueEnd),
+          kills_baseline: !previousKill && !isLeagueEnd
+        };
 
         if (!cumulativeState[row.player_id]) cumulativeState[row.player_id] = { clan_medals: 0, kills: 0 };
         const previousCumulative = cumulativePrevious.get(row.player_id);
@@ -122,12 +140,20 @@
             cumulativeState[row.player_id].kills += 0;
           }
         } else {
-          const previousCumulativeWeek = leagueWeekId(previousCumulative.captured_at_utc || snapshot.captured_at_utc, reset);
-          const clanContribution = previousCumulativeWeek === weekId
-            ? clanValue - Number(previousCumulative.clan_medals || 0)
-            : clanValue;
-          cumulativeState[row.player_id].clan_medals += clanContribution;
-          cumulativeState[row.player_id].kills += killValue - Number(previousCumulative.total_kills || 0);
+          // Lifetime earned Clan Medals compare stable identity observations
+          // across league boundaries and membership gaps. A first observation
+          // at league start uses the explicit zero baseline; a first observation
+          // elsewhere remains baseline until a later observation.
+          if (!previousCumulative) {
+            if (hasPreviousSnapshot && isLeagueStart) {
+              cumulativeState[row.player_id].clan_medals += clanValue;
+            }
+          } else {
+            cumulativeState[row.player_id].clan_medals += clanValue - Number(previousCumulative.clan_medals || 0);
+          }
+          if (previousCumulative) {
+            cumulativeState[row.player_id].kills += killValue - Number(previousCumulative.total_kills || 0);
+          }
         }
         cumulativePrevious.set(row.player_id, { ...row, captured_at_utc: snapshot.captured_at_utc });
       }

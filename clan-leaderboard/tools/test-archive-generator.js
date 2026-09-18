@@ -14,7 +14,7 @@ try{
  const aggregateCount=(html.match(/class="report-aggregate"/g)||[]).length;if(aggregateCount!==8)throw new Error(`expected session aggregate card on all 8 archive entries, found ${aggregateCount}`);
  if(!html.includes('— / baseline'))throw new Error('missing S01 baseline presentation');
  if(!html.includes('+374,282')||!html.includes('+58,932'))throw new Error('missing verified S07 period aggregates');
- if(!html.includes('+24,652,874')||!html.includes('+88,364'))throw new Error('missing verified S08 period aggregates');
+ if(!html.includes('+1,009,626')||!html.includes('+88,364'))throw new Error('missing verified S08 period aggregates');
  const aggregates=[...html.matchAll(/دوره ([0-9۰-۹]+).*?<div class="aggregate-item"><span>تغییر مدال کلن<\/span><b>([^<]+)<\/b><\/div><div class="aggregate-item"><span>افزایش کیل<\/span><b>([^<]+)<\/b>/gs)].map(match=>({period:match[1],clan_medals:match[2],kills:match[3]}));
  if(aggregates.length!==8)throw new Error(`expected 8 aggregate values, found ${aggregates.length}`);
  console.log(`ARCHIVE AGGREGATES: ${JSON.stringify(aggregates)}`);

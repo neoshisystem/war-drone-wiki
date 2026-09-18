@@ -6,6 +6,7 @@ const assert = require('assert');
 const ROOT = path.resolve(__dirname, '..');
 const DATA = path.join(ROOT, 'data');
 const viewerData = require(path.join(ROOT, 'assets', 'viewer-data.js'));
+const performance = require(path.join(ROOT, 'assets', 'performance.js'));
 const read = name => JSON.parse(fs.readFileSync(path.join(DATA, name), 'utf8'));
 const snapshots = read('snapshots.json');
 const current = read('player-observations.json');
@@ -13,7 +14,9 @@ const history = read('player-observations-history.json');
 const historyS05 = (() => { try { return read('player-observations-history-s05.json'); } catch { return { snapshots: {} }; } })();
 const historyS06 = (() => { try { return read('player-observations-history-s06.json'); } catch { return { snapshots: {} }; } })();
 const players = read('players.json');
+const leagues = read('leagues.json');
 const observationSets = [history, historyS05, historyS06, current];
+const metrics = performance.computeAll(snapshots, observationSets, leagues);
 
 const viewerSource = fs.readFileSync(path.join(ROOT, 'assets', 'viewer.js'), 'utf8');
 const indexSource = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
@@ -54,5 +57,18 @@ assert.strictEqual(s07[27].player_id, 'PERSIA-P-0019', 'S07 rank 28 must resolve
 assert.strictEqual(s07[41].player_id, 'PERSIA-P-0051', 'S07 rank 42 must resolve to new hisystemX identity');
 assert.strictEqual(s07.some(member => member.player_id === 'PERSIA-P-0049'), false, 'Kicked saied must not appear in S07 grid');
 assert.strictEqual(s07.some(member => member.player_id === 'PERSIA-P-0050'), false, 'Kicked Behnam must not appear in S07 grid');
+
+const s08 = viewerData.buildMembers('S08', observationSets, players, metrics.S08).members;
+const newSaied = s08.find(member => member.player_id === 'PERSIA-P-0049');
+const newNegar = s08.find(member => member.player_id === 'PERSIA-P-0052');
+const newOmid = s08.find(member => member.player_id === 'PERSIA-P-0053');
+for (const member of [newSaied, newNegar, newOmid]) {
+  assert(member, 'S08 new/returning player must be present');
+  assert.notStrictEqual(member.stats['تغییر مدال کلن'], '— / baseline', 'S08 Clan Medal must use zero baseline for a newly observed player');
+  assert.strictEqual(member.stats['افزایش کیل 💀'], '— / baseline', 'S08 Kill must remain baseline for a player without S07 observation');
+}
+const commander = s08.find(member => member.player_id === 'PERSIA-P-0001');
+assert.strictEqual(commander.stats['تغییر مدال کلن'], '+79,345', 'S08 existing player Clan Medal must be current minus S07');
+assert.strictEqual(commander.stats['افزایش کیل 💀'], '+5,082', 'S08 existing player Kill must be current minus S07');
 
 console.log(`VIEWER DATA TEST PASS: ${snapshots.snapshots.length} snapshots, current=${snapshots.current_snapshot_id}, S06=${s06.length} members, S07=${s07.length} members, stable saeid/saied identities preserved, S06 history shard loaded, fallback path preserved.`);

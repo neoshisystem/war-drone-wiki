@@ -7,6 +7,7 @@ const performance = require('../assets/performance.js');
 const ROOT = path.resolve(__dirname, '..');
 const tmpS04 = path.join(os.tmpdir(), `war-drone-report-s04-${process.pid}.html`);
 const tmpS05 = path.join(os.tmpdir(), `war-drone-report-s05-${process.pid}.html`);
+const tmpS08 = path.join(os.tmpdir(), `war-drone-report-s08-${process.pid}.html`);
 const read = name => JSON.parse(fs.readFileSync(path.join(ROOT, 'data', name), 'utf8'));
 const snapshots = read('snapshots.json');
 const history = read('player-observations-history.json');
@@ -71,9 +72,21 @@ try {
     if (cells[9] !== `<td>${expectedKills}</td>`) throw new Error(`${snapshotId} rank-1 kill delta not derived from performance.js`);
   }
 
-  if (s04.includes('تغییر مدال لیگ') || s05.includes('تغییر مدال لیگ')) throw new Error('legacy public label still generated');
+  const s08 = run('S08', tmpS08);
+  if (!s08.includes('جمع تغییرات این دوره') && !s08.includes('تغییر مدال کلن')) throw new Error('S08 generated report missing performance content');
+  const commanderStart = s08.indexOf('<tr data-player-id="PERSIA-P-0001">');
+  const commanderEnd = s08.indexOf('</tr>', commanderStart);
+  const commanderRow = s08.slice(commanderStart, commanderEnd);
+  if (!commanderRow.includes('<td>+79,345</td>')) throw new Error('S08 Commander Clan Medal delta must be +79,345');
+  const newPlayerStart = s08.indexOf('<tr data-player-id="PERSIA-P-0052">');
+  const newPlayerEnd = s08.indexOf('</tr>', newPlayerStart);
+  const newPlayerRow = s08.slice(newPlayerStart, newPlayerEnd);
+  if (!newPlayerRow.includes('<td>+10,125</td>')) throw new Error('S08 new player Clan Medal delta must use zero baseline');
+  if (!newPlayerRow.includes('<td>— / baseline</td>')) throw new Error('S08 new player Kill must remain baseline');
+  if (s04.includes('تغییر مدال لیگ') || s05.includes('تغییر مدال لیگ') || s08.includes('تغییر مدال لیگ')) throw new Error('legacy public label still generated');
   console.log('REPORT GENERATOR TEST PASS: S04 and S05 use canonical player-level period deltas and stable player ids with public performance labels.');
 } finally {
   fs.rmSync(tmpS04, { force: true });
   fs.rmSync(tmpS05, { force: true });
+  fs.rmSync(tmpS08, { force: true });
 }
