@@ -50,12 +50,12 @@
         'آخرین آنلاین': String(row.last_online_display ?? '—')
       };
       const period = metrics?.period_players?.[row.player_id];
-      if (metrics?.baseline_snapshot_id === snapshotId) {
+      if (period) {
+        stats['تغییر مدال کلن'] = period.clan_baseline ? '— / baseline' : signed(period.clan_medals);
+        stats['افزایش کیل 💀'] = period.kills_baseline ? '— / baseline' : signed(period.kills);
+      } else if (metrics?.baseline_snapshot_id === snapshotId) {
         stats['تغییر مدال کلن'] = '— / baseline';
         stats['افزایش کیل 💀'] = '— / baseline';
-      } else if (period) {
-        stats['تغییر مدال کلن'] = signed(period.clan_medals);
-        stats['افزایش کیل 💀'] = signed(period.kills);
       }
       return {
         player_id: row.player_id,
