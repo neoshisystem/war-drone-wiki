@@ -83,6 +83,7 @@
       const isLeagueStart = snapshot.league_boundary === 'start';
       const isLeagueEnd = snapshot.league_boundary === 'end';
       const previousById = new Map(sameWeek ? previousRows.map(row => [row.player_id, row]) : []);
+      const previousClanById = new Map(hasPreviousSnapshot ? previousRows.map(row => [row.player_id, row]) : []);
       const previousKillById = new Map(hasPreviousSnapshot ? previousRows.map(row => [row.player_id, row]) : []);
       let periodClan = 0;
       let periodKills = 0;
@@ -90,6 +91,7 @@
 
       for (const row of currentRows) {
         const previous = previousById.get(row.player_id);
+        const previousClan = previousClanById.get(row.player_id);
         const previousKill = previousKillById.get(row.player_id);
         const clanValue = Number(row.clan_medals || 0);
         const killValue = Number(row.total_kills || 0);
@@ -101,7 +103,7 @@
         // A player first observed at league start has an explicit Clan Medal
         // baseline of zero, so their observed S08 value is their league delta.
         let clanDelta = 0;
-        if (previous) clanDelta = clanValue - Number(previous.clan_medals || 0);
+        if (previousClan) clanDelta = clanValue - Number(previousClan.clan_medals || 0);
         else if (isLeagueStart) clanDelta = clanValue;
         else if (isLeagueEnd) clanDelta = clanValue;
 
@@ -123,7 +125,7 @@
           clan_medals: clanDelta,
           kills: killDelta,
           baseline,
-          clan_baseline: !hasPreviousSnapshot || (!previous && !isLeagueStart && !isLeagueEnd),
+          clan_baseline: !hasPreviousSnapshot || (!previousClan && !isLeagueStart && !isLeagueEnd),
           kills_baseline: !previousKill && !isLeagueEnd
         };
 
