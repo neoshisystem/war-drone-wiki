@@ -87,7 +87,7 @@ if (results.S05.cumulative_players?.[commonPlayer.player_id]?.kills !== expected
 // while Kills continue from S07. S09 then continues both within the same league.
 const syntheticSnapshots = JSON.parse(JSON.stringify(snapshots));
 // S08 now exists in canonical data; remove the real S08 from this isolated synthetic scenario.
-syntheticSnapshots.snapshots = syntheticSnapshots.snapshots.filter(item => item.snapshot_id !== 'S08');
+syntheticSnapshots.snapshots = syntheticSnapshots.snapshots.filter(item => item.snapshot_id !== 'S08' && item.snapshot_id !== 'S09');
 syntheticSnapshots.snapshots.push({ snapshot_id:'S08', captured_at_utc:'2026-09-17T00:00:00Z', date_persian:'26 شهریور 1405', time_iran:'03:30', type:'delta-report', league_boundary:'start', boundary_label:'شروع لیگ جدید', members:42, capacity:50 });
 syntheticSnapshots.snapshots.push({ snapshot_id:'S09', captured_at_utc:'2026-09-17T01:00:00Z', date_persian:'26 شهریور 1405', time_iran:'04:00', members:42, capacity:50 });
 syntheticSnapshots.snapshots.push({ snapshot_id:'S10', captured_at_utc:'2026-09-17T02:00:00Z', date_persian:'26 شهریور 1405', time_iran:'05:30', members:41, capacity:50 });
