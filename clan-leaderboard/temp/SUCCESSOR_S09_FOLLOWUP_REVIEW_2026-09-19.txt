@@ -1,0 +1,845 @@
+TEMPORARY — FOLLOW-UP FROM CONVERSATION 1 FOR CONVERSATION 2
+
+PERSIA Clan Leaderboard — S09 Continuity / Successor Follow-up Review
+Repository: neoshisystem/war-drone-wiki
+Canonical scope: clan-leaderboard/
+Review date: 2026-09-19
+
+PURPOSE
+-------
+این فایل مکمل مستقیم فایل قبلی زیر است و جایگزین آن نیست:
+
+clan-leaderboard/temp/SUCCESSOR_S09_CONTINUITY_2026-09-19.txt
+
+در این review:
+- فایل قبلی ابتدا از GitHub خوانده و به‌عنوان پاسخ قبلی Conversation 1 در نظر گرفته شد.
+- سپس وضعیت فعلی main و فایل‌های canonical / tools / tests / S09 report بررسی شد.
+- S09.zip ارسالی نیز به‌عنوان evidence ورودی فعلی بررسی شد.
+- هیچ canonical data، historical report، archive، identity mapping، membership، performance semantic یا code مربوط به محصول تغییر داده نشد.
+- تنها mutation این مرحله ایجاد همین فایل continuity review است.
+
+IMPORTANT OVERRIDE
+------------------
+فایل قبلی در انتهای خود دستور «SUCCESSOR MUST DELETE THIS FILE AFTER READING» دارد.
+با توجه به دستور صریح‌تر و جدیدتر Project Authority در Conversation 2، آن دستور در این handoff دیگر قابل اجرا نیست.
+فایل قبلی باید دست‌نخورده باقی بماند.
+این follow-up نیز تا زمانی که Project Authority خلاف آن را اعلام نکرده، باید کنار فایل قبلی باقی بماند.
+
+
+1. CURRENT REPOSITORY ANCHOR
+----------------------------
+
+Current main HEAD:
+bc22f3ad1b6e87699052bc1053d2dc6961e5c13d
+
+PR #11 merge commit:
+e3fbfff28d02e22c09a70e8807a638f308c03031
+
+PR #11 head used for CI:
+df4fa1bafd23cecdd0ce86d76fdae22ade30d836
+
+PR #11:
+Ingest and publish S09 clan leaderboard snapshot
+Merged: true
+
+CI evidence:
+- workflow: Validate PERSIA Clan Intelligence
+- run id: 35408944890
+- run number: 221
+- event: pull_request
+- head SHA: df4fa1bafd23cecdd0ce86d76fdae22ade30d836
+- conclusion: success
+
+Important qualification:
+CI success is evidence for the PR head validation run. It is NOT proof of deployment and it is NOT a post-merge CI run on e3fbfff.
+
+fetch_commit_workflow_runs for merge commit e3fbfff currently returns no workflow runs.
+
+Current main advanced beyond the PR merge by three commits. The compare
+e3fbfff...bc22f3 reports exactly these changed files:
+- CONVERSATION_HANDOFF_2026-09-15.md — removed
+- clan-leaderboard/CONVERSATION_HANDOFF_2026-09-15.md — removed
+- clan-leaderboard/temp/SUCCESSOR_S09_CONTINUITY_2026-09-19.txt — added
+
+Therefore the newer main HEAD changes do not alter the S09 canonical data from PR #11.
+The earlier continuity file's recorded HEAD e3fbfff is now historical, not the current main HEAD.
+
+
+2. CURRENT S09 CANONICAL STATE
+------------------------------
+
+Current snapshot:
+S09
+
+S09 metadata:
+- captured_at_utc: 2026-09-18T19:30:00Z
+- date_persian: 27 شهریور 1405
+- time_iran: 23:00
+- members: 46
+- capacity: 50
+- type: delta-report
+- league_boundary: null
+- boundary_label: null
+- source_report: /clan-leaderboard/reports/2026-09-18-2300.html
+
+Current normalized observation count:
+46
+
+Current player registry count:
+54 identities total
+
+S09 vs S08:
+- 45 identities are common to S08 and S09.
+- PERSIA-P-0054 is the only identity present in S09 but not S08.
+- PERSIA-P-0052 is retained from S08 and is now displayed as «تکاور».
+- PERSIA-P-0049 is not a new S09 identity; it is already present in S08.
+
+Derived S09 Period Delta reconciliation:
+- Clan Medals: +647,679
+- Kills: +70,387
+
+This is independently reproducible from canonical observations:
+- sum of S09 - S08 for the 45 common IDs = +647,679 Clan Medals
+- sum of S09 - S08 for the 45 common IDs = +70,387 Kills
+- PERSIA-P-0054 is a new identity in S09 and therefore contributes baseline for both period metrics in S09.
+- P0054 has 0 Clan Medals and 2,235 Total Kills, so raw clan-total difference equals the period Clan delta, while raw kill-total difference is larger by 2,235.
+
+Raw S09 totals:
+- Clan Medals: 25,300,553
+- Total Kills: 5,609,361
+
+Raw S08 totals:
+- Clan Medals: 24,652,874
+- Total Kills: 5,536,739
+
+Raw total differences:
+- Clan Medals: +647,679
+- Kills: +72,622
+
+Membership-aware Period Kill delta:
+- +70,387
+- the excluded +2,235 is P0054's new-player baseline Kill total.
+
+Weekly/current-league accumulation:
+- S08 Weekly: +1,009,626 Clan Medals / +88,364 Kills
+- S09 added within the same league week: +647,679 / +70,387
+- Current weekly accumulation through S09: +1,657,305 Clan Medals / +158,751 Kills
+
+
+3. FOLLOW-UP ON THE PREVIOUS OPEN AMBIGUITIES
+---------------------------------------------
+
+3.1 players.json.last_seen_snapshot
+STATUS: KNOWN DEFECT
+
+Current evidence:
+- 46 S09 observation rows exist.
+- 44 of those 46 current identities still have players.json.last_seen_snapshot = S08.
+- Only PERSIA-P-0052 and PERSIA-P-0054 have last_seen_snapshot = S09.
+- memberships.json has no corresponding current-membership mismatch for S09.
+- player-observations.json does contain all 46 current S09 IDs.
+- validate-ingestion.js validates that first/last snapshot identifiers exist and that active/former status is consistent, but it does not verify that the last_seen_snapshot equals the latest actual observation for active current players.
+
+What is known:
+- This is a real canonical metadata inconsistency.
+- It is not the intended behavior of the current ingestion implementation.
+- ingest-snapshot-v4.js explicitly sets last_seen_snapshot = snapshotId for every retained player row.
+
+What is newly known:
+- PR #11's actual players.json diff only updates PERSIA-P-0052 from S08 to S09 and adds PERSIA-P-0054 with S09.
+- It does NOT update the other 44 retained identities.
+- PR #11 did not modify ingest-snapshot-v4.js.
+- Therefore the final S09 players.json does not look like the complete output of the current ingest-snapshot-v4 publication path.
+
+What remains UNKNOWN:
+- The exact operational step that produced the incomplete players.json.
+- Whether a manual data assembly step was used from the start, whether tool output was later overwritten, or whether another unpublished intermediate was involved.
+
+Risk:
+A future agent could incorrectly interpret last_seen_snapshot as authoritative current-observation membership and misclassify active players.
+
+Recommended future action:
+- Add a validation invariant that every player present in current normalized observations has last_seen_snapshot == current_snapshot_id.
+- Investigate the S09 publication path before deciding whether a canonical data repair is appropriate.
+- Do not silently repair the 44 rows during unrelated work.
+
+Requires user approval?
+YES — because a canonical identity-registry correction changes canonical data.
+
+Should this become permanent documentation?
+YES — the invariant and validation rule should be permanent.
+
+
+3.2 Root cause of the S09 last_seen inconsistency
+STATUS: PARTIALLY NARROWED; EXACT ROOT CAUSE STILL UNKNOWN
+
+New evidence narrows the root cause substantially.
+
+Evidence:
+- Current ingest-snapshot-v4.js updates every retained player to last_seen_snapshot = snapshotId.
+- The S09 PR changed players.json only for the rename P0052 and creation of P0054.
+- The PR did not modify ingestion code.
+- The S09 report committed in PR #11 is not reproducible from the current generate-report.js:
+  - the committed S09 report title contains "شروع لیگ جدید";
+  - current generate-report.js does not add a boundary label to the report title;
+  - the committed S09 report contains custom reconstruction prose for ali;
+  - that custom prose is not generated by the current generate-report.js.
+- snapshots.json says S09 has league_boundary = null.
+- index.json and archive.html correctly treat S09 as a normal latest report without a league-boundary marker.
+- ingest-and-publish.js is designed to run ingest-snapshot-v4.js, generate-report.js and generate-archive.js as one pipeline, but the committed S09 artifacts do not match that end-to-end output shape.
+
+Conclusion:
+The strongest repository-backed conclusion is:
+S09 appears to have been assembled or manually post-processed outside the exact current ingest-and-publish output path, or its pipeline output was subsequently edited.
+
+Exact intermediate mechanism remains UNKNOWN.
+
+Risk:
+A hand-assembled snapshot can preserve business intent while bypassing machine invariants.
+
+Recommended future action:
+For S10+, require the actual dry-run / --write publication pipeline to be the source of committed canonical artifacts, with any human-reviewed exception represented explicitly and auditable.
+
+Requires user approval?
+YES if the process is changed or a required publication invariant is enforced.
+
+Should this become permanent documentation?
+YES.
+
+
+3.3 Negative Delta policy
+STATUS: UNDEFINED POLICY / REQUIRES USER DECISION
+
+Current evidence:
+- raw Clan Medals and Total Kills are validated as non-negative integers.
+- performance.js computes current - previous directly.
+- there is no canonical clamp-to-zero rule.
+- there is no canonical automatic invalidation rule.
+- S09 itself has no negative Clan Medal or Kill deltas among the 45 matched identities.
+
+What is known:
+- The undefined policy did not alter the S09 result.
+
+What is UNKNOWN:
+- What the project should do if a source reports a lower cumulative Clan Medal or Kill total than the previous observation.
+
+Risk:
+A source correction, data corruption, game-side reset, or manual reconstruction could produce negative derived values.
+
+Recommended future action:
+Project Authority should define whether negative deltas mean:
+- valid negative correction,
+- source/data error,
+- baseline reset,
+- or hard validation failure.
+
+Do not introduce a clamp or silent correction without approval.
+
+Requires user approval?
+YES.
+
+Should this become permanent documentation?
+YES.
+
+
+3.4 Reconstruction provenance
+STATUS: EVIDENCE GAP + KNOWN S09 EXCEPTION
+
+New evidence:
+The S09 report itself explicitly documents the ali exception:
+- ali has no S09 profile screenshot.
+- Kill = 44,000 was recorded from submitted data.
+- Clan Medals = S08 115,311 + 48,204 leaderboard increase = 163,515.
+- The report explicitly states these are reconstructed values, not direct profile observation.
+
+PR #11 body records the same exception.
+
+What is known:
+- The human-readable provenance exists in the S09 PR and S09 report.
+- Canonical observation JSON has no machine field such as reconstructed=true or provenance.source.
+- incoming/20260918T193000Z.json also does not carry a formal reconstruction marker.
+
+What remains UNKNOWN:
+- Whether every reviewer in a future handoff will discover the PR body and report prose.
+- Whether other snapshots contain similar undocumented reconstructions.
+
+Risk:
+A future successor may treat reconstructed values as direct screenshot observations.
+
+Recommended future action:
+Add a formal provenance policy/schema only after Project Authority approval.
+Until then, every reconstruction should be explicitly described in the PR and report-generation review context.
+
+Requires user approval?
+YES for schema changes; NO for documenting the existing S09 exception.
+
+Should this become permanent documentation?
+YES.
+
+
+3.5 League boundary conflict validation
+STATUS: KNOWN VALIDATION GAP
+
+Current implementation:
+- league week is derived from captured_at_utc and the reset rule.
+- league_boundary=start/end is separate explicit metadata.
+- the code does not fail if those two signals disagree.
+
+S09-specific new evidence:
+- S09 timestamp is 2026-09-18T19:30:00Z.
+- reset is Thursday 00:00 UTC.
+- therefore S09 belongs to the same league week as S08.
+- S09 canonical snapshots.json has league_boundary=null.
+- However the committed S09 report title says "شروع لیگ جدید", and its explanatory text also mentions the league-start boundary.
+
+Important distinction:
+The canonical snapshot metadata and the arithmetic are behaving as a normal same-week S09 observation.
+The published S09 report contains a misleading boundary label.
+
+Risk:
+A successor could use report presentation instead of canonical snapshot metadata and incorrectly classify S09 as a league start.
+
+Recommended future action:
+Future generators must derive boundary wording from canonical target metadata, never from prior report templates or manual carry-over.
+
+Do not rewrite the historical S09 report without explicit Project Authority approval because historical reports are evidence.
+
+Requires user approval?
+YES for historical/public artifact correction.
+The validation rule itself also requires approval if it changes ingestion acceptance behavior.
+
+Should this become permanent documentation?
+YES.
+
+
+3.6 History precedence
+STATUS: KNOWN DEFECT
+
+Current history shards:
+- player-observations-history.json contains: S01, S02, S03, S04, S07, S08
+- player-observations-history-s05.json contains: S05
+- player-observations-history-s06.json contains: S06
+- player-observations.json contains: S09
+
+Current performance/validation source order includes history-s06.
+
+Current generate-report.js sourceSets are only:
+[history, history-s05, current]
+
+Therefore:
+S06 cannot be resolved by the current generate-report.js source resolver from current canonical storage, because S06 exists only in history-s06.
+
+This is stronger than the previous wording "technical fragility":
+it is a concrete historical-regeneration defect.
+
+Risk:
+A successor trying to regenerate or audit the S06 report with generate-report.js can receive "Missing normalized rows for S06".
+
+Recommended future action:
+Unify observation source resolution across report generation, performance and validation.
+
+Requires user approval?
+YES for code mutation.
+
+Should this become permanent documentation?
+YES.
+
+
+3.7 Rename history
+STATUS: CONFIRMED CURRENT IDENTITY + EVIDENCE GAP FOR EVENT HISTORY
+
+Confirmed:
+- PERSIA-P-0052 is the same stable identity across S08 -> S09.
+- S08 display name was «نگار».
+- Current players.json display_name is «تکاور».
+- Membership remains the same active identity interval.
+- S09 deltas are computed for the same player_id; the rename does not reset history.
+
+What is missing:
+- There is no formal rename-event ledger.
+- S09 incoming JSON identifies P0052 but does not store the new display name in that observation row.
+- The rename is therefore visible in players.json and report presentation, but not as a machine-readable historical event record.
+
+Risk:
+A successor can preserve current identity, but reconstructing the exact chronology of names is harder.
+
+Recommended future action:
+Consider a future identity-history/rename record only after approval.
+
+Requires user approval?
+YES for schema/data-model changes.
+
+Should this become permanent documentation?
+YES.
+
+
+3.8 Manual identity matching / auditability
+STATUS: INTENTIONAL PROCESS + EVIDENCE GAP
+
+Current design:
+- manual visual/technical fingerprinting;
+- player_id is authoritative after review;
+- ambiguous identity must not be guessed;
+- no automated fingerprint engine exists.
+
+New S09 evidence:
+PR #11 records three important human decisions:
+- Cpt's eyes = new identity P0054
+- نگار -> تکاور = existing P0052
+- ali = reconstructed values because no current profile screenshot exists
+
+What remains missing:
+There is no structured per-player audit log explaining why every S09 identity was matched to the selected player_id.
+
+Risk:
+A later successor may see the final mapping but not the human evidence used to justify it.
+
+Recommended future action:
+For S10+, create an evidence manifest / mapping review artifact if Project Authority approves it.
+Do not create an automatic identity engine.
+
+Requires user approval?
+YES for new permanent evidence schema; NO for continuing manual review.
+
+Should this become permanent documentation?
+YES.
+
+
+3.9 Screenshot evidence provenance
+STATUS: EVIDENCE GAP
+
+Current S09 evidence checked:
+- S09.zip contains 54 JPG files.
+- PR #11 records 7 leaderboard + 47 profile screenshots.
+- PR #11 records duplicate Ardalan screenshots as deduplicated.
+- PR #11 records ali as lacking a current profile screenshot.
+- Current uploaded S09.zip SHA-256:
+  b1b84c85505eeba80e64f6954d06115d887c315babe179e8ac2ef968c29914e3
+- The hash identifies the exact uploaded archive reviewed in this runtime; it does not itself preserve the archive.
+
+Repository limitation:
+- The screenshot archive is not stored as canonical snapshot evidence.
+- snapshots.json has no screenshot hash/reference field.
+- incoming S09 JSON has no evidence archive hash.
+- there is no formal screenshot manifest in canonical data.
+
+Risk:
+A future dispute may not be reproducible from repository files alone.
+
+Recommended future action:
+Consider a permanent evidence manifest containing:
+- source archive filename
+- SHA-256
+- screenshot count
+- leaderboard/profile counts
+- deduplication decisions
+- identity mapping exceptions
+- reconstruction exceptions
+
+This would be a provenance feature, not a canonical metric field.
+
+Requires user approval?
+YES.
+
+Should this become permanent documentation?
+YES.
+
+
+4. CORRECTIONS / CLARIFICATIONS TO THE PREVIOUS CONTINUITY FILE
+---------------------------------------------------------------
+
+Correction A — main HEAD
+Previous file recorded:
+e3fbfff28d02e22c09a70e8807a638f308c03031
+
+Current main HEAD is:
+bc22f3ad1b6e87699052bc1053d2dc6961e5c13d
+
+The three intervening commits only remove two old handoff files and add the previous S09 continuity file.
+No S09 canonical data changed in those commits.
+
+Therefore the previous file is not wrong about the S09 merge anchor, but its "current main HEAD" statement is now stale.
+
+Correction B — S09 publication was described too strongly as generated/canonical pipeline output
+The committed S09 report is a historical report artifact, but evidence now shows it was not produced by the exact current generate-report.js behavior:
+- current generator does not put boundary text in the title;
+- current generator does not contain the custom ali reconstruction paragraph;
+- PR #11 did not modify generate-report.js.
+
+Therefore future wording should distinguish:
+"committed historical report artifact"
+from
+"verified output of the current publication generator."
+
+Correction C — leagues.json wording
+The previous file described leagues.json as if it fully recorded every weekly league period.
+More precise wording:
+- leagues.json records the reset rule and a catalog of observed league-result metadata;
+- performance.js derives week identity from captured_at_utc + reset;
+- S08 and S09's derived week does not appear as a dedicated entry in leagues.json.
+
+This distinction matters for Fresh-Agent reasoning.
+
+Correction D — reconstruction provenance
+The previous file correctly identified the absence of a machine provenance field, but it understated the available human-readable evidence.
+For S09, reconstruction is explicitly documented in both:
+- PR #11 body
+- S09 report text
+
+So provenance is not completely absent; it is non-machine-readable and not guaranteed as a structured reusable record.
+
+Correction E — history-s06 "fragility"
+The previous file called the generate-report history-s06 omission a compatibility-era fragility.
+It is more precise to classify it as a concrete regeneration defect:
+current generate-report.js cannot resolve S06 from the current shard layout.
+
+Correction F — S09 boundary
+A new, concrete inconsistency was found:
+snapshots.json says S09 has no league_boundary, while the committed S09 report title/text contains "شروع لیگ جدید".
+The canonical calculation path treats S09 as a normal same-week report, so the report wording must not be used as authority for boundary semantics.
+
+
+5. NEW FINDINGS NOT PRESENT IN THE PREVIOUS FILE
+--------------------------------------------------
+
+NEW FINDING 1
+Category: KNOWN DEFECT / PUBLICATION-PROCESS RISK
+
+S09 artifacts are not consistently reproducible from the declared publication pipeline.
+
+Evidence:
+1. ingest-snapshot-v4.js would update every retained player's last_seen_snapshot.
+2. final S09 players.json does not.
+3. current generate-report.js would not add the committed S09 boundary title text.
+4. current generate-report.js does not contain the committed custom ali reconstruction paragraph.
+5. PR #11 changed only data/report/tests, not the publication tools.
+6. S09 snapshots.json observation_source differs from the value ingest-and-publish.js writes after publication.
+
+Conclusion:
+The exact S09 finalization path was not a pure end-to-end run of the current publication toolchain, or its output was manually edited afterward.
+
+Exact human/operator step remains UNKNOWN.
+
+This is a process-control finding, not permission to retroactively rewrite S09.
+
+
+NEW FINDING 2
+Category: KNOWN DEFECT
+
+S09 report presentation contains a false/obsolete league-start label.
+
+Canonical:
+- league_boundary = null
+
+Published report:
+- title contains "شروع لیگ جدید"
+- prose refers to the league-start boundary
+
+Archive/index:
+- S09 is not labeled as a league boundary
+- S08 is correctly labeled "شروع لیگ جدید"
+
+Impact:
+No arithmetic error has been demonstrated in S09 performance calculations.
+The risk is interpretive and continuity-related.
+
+Do not rewrite historical S09 without approval.
+
+
+NEW FINDING 3
+Category: KNOWN DEFECT / VALIDATION GAP
+
+The real-world S09 publication had a canonical metadata inconsistency that CI did not catch.
+
+CI run 221 passed.
+The validator also passed its designed checks.
+Yet 44 current S09 identities retained last_seen_snapshot = S08.
+
+Therefore:
+"CI PASS" currently means the existing validation suite passed;
+it does not mean all identity-registry invariants were checked.
+
+This distinction must be preserved in future handoffs.
+
+
+NEW FINDING 4
+Category: FRESH-AGENT RISK
+
+A Fresh Successor could accidentally treat any of these as authoritative when they are not:
+- report title boundary label
+- current player last_seen_snapshot fields
+- observation_source as exact lineage
+- display_name chronology inferred from current registry
+- screenshot absence as proof of data absence
+
+Authority order for future review should be:
+1. canonical snapshot metadata
+2. normalized player observations
+3. membership intervals
+4. stable player_id identity
+5. deterministic performance code
+6. historical report as immutable evidence
+7. PR/incoming notes as provenance context
+8. screenshot evidence when available
+
+
+NEW FINDING 5
+Category: FRESH-AGENT RISK
+
+S09 is the first concrete example in this phase where:
+- a current identity was renamed,
+- one player had reconstructed values,
+- one genuinely new identity was present,
+- and the publication artifact appears to have been manually assembled.
+
+This combination should be treated as a high-review-risk pattern for S10+.
+
+
+6. CONFIRMED STABLE
+-------------------
+
+The following are currently evidence-backed and should be treated as stable unless Project Authority changes them:
+
+- player_id is the stable identity key.
+- Rename != new identity.
+- Rank is snapshot-local, never identity.
+- Membership is interval-based.
+- Return after a membership gap does not erase identity history.
+- Period Delta and Lifetime/Cumulative are distinct concepts.
+- Current period comparison uses the immediately previous observation when the identity exists there.
+- At S08 league-start, existing players compare against S07; new/no-prior players use Clan Medal zero baseline and Kill baseline as separately defined.
+- At S09, the league has NOT restarted again.
+- S09 is in the same derived league week as S08.
+- S09 P0054 is new and baseline for both Period metrics.
+- P0052 rename from نگار to تکاور preserves identity.
+- S09 Period Delta = +647,679 Clan Medals / +70,387 Kills.
+- S09 current-week accumulation through S09 = +1,657,305 / +158,751.
+- Historical reports are evidence and should not be rewritten silently.
+- CI success is not deployment proof.
+
+
+7. KNOWN DEFECT
+----------------
+
+A. players.last_seen_snapshot stale for 44/46 current S09 identities.
+B. validate-ingestion.js does not verify latest-current last_seen.
+C. S09 historical report has a misleading league-start label.
+D. generate-report.js cannot resolve S06 using the current shard precedence.
+E. S09 publication artifacts are not fully reproducible from the current declared pipeline.
+F. CI does not currently enforce the last_seen invariant.
+
+
+8. DESIGN DEBT
+----------------
+
+A. No formal direct/reconstructed/manual provenance field.
+B. No canonical rename-event ledger.
+C. No permanent screenshot archive/evidence manifest.
+D. Manual identity fingerprinting has no structured audit record.
+E. Source precedence is implemented independently by multiple consumers.
+F. observation_source does not function as a reliable historical lineage audit field.
+G. Report wording is partly historical/static rather than guaranteed generator-derived.
+H. Boundary markers and timestamp-derived league weeks are independently interpreted.
+
+
+9. UNDEFINED POLICY / REQUIRES USER DECISION
+---------------------------------------------
+
+1. Negative derived Delta policy.
+2. Whether reconstructed observations should become a formal schema concept.
+3. Whether screenshot archives/hashes become a permanent evidence layer.
+4. Whether rename history becomes a formal identity-history record.
+5. Whether last_seen_snapshot is formally defined as an enforced invariant.
+6. Whether boundary marker conflicts should hard-fail ingestion.
+7. Whether generated reports must be reproducible byte/semantically from the current generator.
+8. Whether historical S09 wording defects should ever be corrected, given raw-report immutability.
+9. Whether observation_source should be retained, redefined, or removed as provenance metadata.
+
+
+10. EVIDENCE GAP
+----------------
+
+A. S09 screenshot archive is not permanently linked in repository data.
+B. S09 manual identity reasoning is only partially persisted in PR prose.
+C. Reconstruction provenance exists in human-readable report/PR text but not structured JSON.
+D. Deployment status after S09 merge is not established by repository CI evidence.
+E. Current main does not preserve a machine-verifiable link from each canonical observation to its original screenshot.
+F. The exact operational path that produced the final S09 artifacts remains UNKNOWN.
+
+
+11. FRESH-AGENT RISK REGISTER
+-----------------------------
+
+Risk 01:
+Seeing last_seen_snapshot = S08 on a current S09 player and assuming the player was not present.
+Correct source: current observations + memberships.
+
+Risk 02:
+Seeing "شروع لیگ جدید" in S09 report title and assuming S09 is a league reset.
+Correct source: snapshots.json says league_boundary=null; timestamp places S09 in the same week as S08.
+
+Risk 03:
+Assuming S09 report was generated by generate-report.js because the file exists under reports/.
+Correct interpretation: it is a committed historical artifact; its exact provenance is not fully machine-recorded.
+
+Risk 04:
+Assuming observation_source proves ingestion lineage.
+Correct interpretation: current code and S09 metadata do not agree on what the field means operationally.
+
+Risk 05:
+Treating ali's 163,515 Clan Medals and 44,000 Kills as direct screenshot observations.
+Correct interpretation: those are explicitly reconstructed S09 values.
+
+Risk 06:
+Treating P0052 «تکاور» as a new player because the name differs from S08 «نگار».
+Correct interpretation: same PERSIA-P-0052 identity.
+
+Risk 07:
+Treating P0054's 2,235 Kills as S09 Period Delta.
+Correct interpretation: new identity; Kill is baseline in S09.
+
+Risk 08:
+Trying to regenerate S06 without history-s06.
+Correct interpretation: current generate-report.js has a source-set defect.
+
+Risk 09:
+Using a successful CI run as proof that deployed production reflects the merge.
+Correct interpretation: CI and deployment are separate evidence domains.
+
+Risk 10:
+Deleting the previous continuity file because its internal footer says to delete it.
+Correct interpretation: latest Project Authority instruction explicitly requires the previous file to remain untouched.
+
+
+12. RECOMMENDED S10+ REVIEW CHECKLIST
+--------------------------------------
+
+Before accepting an incoming snapshot as canonical:
+
+1. Screenshot inventory
+   - archive count
+   - leaderboard/profile split
+   - duplicate detection
+   - archive hash if retained
+
+2. Snapshot metadata
+   - captured_at_utc
+   - local date/time
+   - member count
+   - boundary marker
+   - timestamp-derived league week
+   - explicit boundary conflict check
+
+3. Identity
+   - player_id for known identities
+   - explicit new identity flag for genuine new IDs
+   - rename review
+   - returning-player review
+   - ambiguity = STOP, never guess
+
+4. Membership
+   - active intervals
+   - removed intervals
+   - return intervals
+   - current-membership count vs observation count
+
+5. Raw observation
+   - every required raw field present
+   - no derived values substituted as raw
+   - reconstruction exceptions explicitly identified
+
+6. Period Delta
+   - current vs immediate previous valid observation
+   - new identity semantics
+   - removed identity semantics
+   - negative-delta policy check once Project Authority defines it
+
+7. Weekly
+   - derive league week from timestamp + reset
+   - do not infer week solely from report title
+   - confirm same-week vs boundary behavior
+
+8. Lifetime/Cumulative
+   - preserve stable identity history across gaps
+   - do not confuse cumulative with weekly
+
+9. Registry metadata
+   - current active identity => last_seen_snapshot must equal current snapshot
+   - current display_name is current registry name
+   - rename history reviewed separately
+
+10. Provenance
+   - source archive/hash
+   - identity exceptions
+   - reconstruction exceptions
+   - reviewer decision notes
+
+11. Publication
+   - dry-run first
+   - controlled --write
+   - generate report from the canonical generator
+   - generate archive from index
+   - verify snapshot/index/report/archive consistency
+
+12. Validation
+   - canonical validator
+   - performance tests
+   - report generation test
+   - archive test
+   - E2E/publish test
+   - add explicit regression for last_seen invariant
+
+13. Post-merge
+   - verify main HEAD
+   - verify current_snapshot_id
+   - verify 1:1 current observations / membership / registry consistency
+   - distinguish CI proof from deployment proof
+
+
+13. APPROVAL BOUNDARY
+---------------------
+
+No decision in this review authorizes:
+- canonical data repair
+- identity reassignment
+- membership repair
+- historical report rewrite
+- performance semantic change
+- provenance schema addition
+- screenshot evidence subsystem
+- boundary validation behavior change
+- report-generator redesign
+- history-shard consolidation
+
+All such actions require explicit Project Authority approval.
+
+
+14. FINAL FOLLOW-UP CONCLUSION
+------------------------------
+
+The previous continuity answer remains substantially correct about the project's core identity, membership, Period/Weekly/Lifetime semantics and the existence of the S09 last_seen defect.
+
+The most important new information is:
+
+1. The S09 last_seen problem can now be narrowed from "unknown origin" to a strong indication that the final S09 artifacts were manually assembled or manually post-processed rather than being a clean untouched output of the current end-to-end publication path. The exact operator step remains UNKNOWN.
+
+2. There is a second concrete S09 publication inconsistency:
+   canonical S09 metadata says NO league boundary,
+   while the committed S09 report contains a "شروع لیگ جدید" label.
+   The canonical performance engine currently treats S09 as same-week with S08.
+
+3. The current generate-report.js has a real S06 regeneration defect because it omits history-s06, even though history-s06 is the only shard containing S06 observations.
+
+4. S09 reconstruction provenance is better than previously stated:
+   ali's reconstruction is explicitly documented in the S09 report and PR #11,
+   but it is still not represented as structured canonical provenance.
+
+5. The previous continuity file's current HEAD is stale by three commits, but those commits only concern temporary handoff continuity and did not change S09 canonical data.
+
+6. CI run 221 / 35408944890 passed on the PR head, but there is no equivalent post-merge workflow evidence on the merge commit, and there is no deployment proof in this review.
+
+Bottom line:
+The core S09 calculations are reproducible and stable.
+The largest continuity risks are now publication-path provenance, registry metadata validation, boundary-label inconsistency, and historical shard/source-resolution consistency.
+
+No corrective mutation has been performed in this follow-up beyond creating this file.
