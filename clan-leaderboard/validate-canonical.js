@@ -24,6 +24,14 @@
     }
     const current = observations.snapshots?.[snapshots.current_snapshot_id] || [];
     current.length === snapshots.snapshots.find(s => s.snapshot_id === snapshots.current_snapshot_id)?.members ? pass('current snapshot member count matches observations') : fail('current snapshot member count mismatch');
+    const currentIds = new Set(current.map(row => row.player_id));
+    for (const player of players.players) {
+      if (currentIds.has(player.player_id)) {
+        player.last_seen_snapshot === snapshots.current_snapshot_id
+          ? pass(`${snapshots.current_snapshot_id}: last_seen_snapshot current for ${player.player_id}`)
+          : fail(`${snapshots.current_snapshot_id}: last_seen_snapshot stale for ${player.player_id} (found ${player.last_seen_snapshot})`);
+      }
+    }
     const membershipIds = new Set((memberships.memberships || []).map(m => m.player_id));
     for (const id of membershipIds) ids.has(id) ? pass(`membership references known player ${id}`) : fail(`membership references unknown player ${id}`);
     Array.isArray(leagues.seasons) ? pass('league dataset loaded') : fail('league dataset missing seasons array');
