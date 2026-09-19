@@ -412,11 +412,11 @@
     },
     {
       "player_id": "PERSIA-P-0052",
-      "display_name": "نگار",
+      "display_name": "تکاور",
       "status": "active",
       "role": "Member",
       "first_seen_snapshot": "S08",
-      "last_seen_snapshot": "S08"
+      "last_seen_snapshot": "S09"
     },
     {
       "player_id": "PERSIA-P-0053",
@@ -425,6 +425,14 @@
       "role": "Member",
       "first_seen_snapshot": "S08",
       "last_seen_snapshot": "S08"
+    },
+    {
+      "player_id": "PERSIA-P-0054",
+      "display_name": "Cpt's eyes",
+      "status": "active",
+      "role": "Leader",
+      "first_seen_snapshot": "S09",
+      "last_seen_snapshot": "S09"
     }
   ]
 }
