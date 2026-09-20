@@ -4,6 +4,10 @@
 
 ## ترتیب مطالعه برای Agent جدید
 
+### Phase 0 — New Conversation entry point
+
+0. `agent/GOLDEN_CONVERSATION_BOOTSTRAP.md`
+
 ### Phase 1 — Identity and current reality
 
 1. `agent/README.md`
