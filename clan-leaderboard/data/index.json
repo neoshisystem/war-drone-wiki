@@ -3,6 +3,16 @@
   "game": "War Drone",
   "reports": [
     {
+      "id": "2026-09-19-2400",
+      "period": 10,
+      "date_persian": "28 شهریور 1405",
+      "time": "24:00",
+      "type": "delta-report",
+      "members": 30,
+      "capacity": "30/50",
+      "page": "../reports/2026-09-19-2400.html"
+    },
+    {
       "id": "2026-09-18-2300",
       "period": 9,
       "date_persian": "27 شهریور 1405",

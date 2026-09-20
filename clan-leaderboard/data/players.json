@@ -5,7 +5,7 @@
     {
       "player_id": "PERSIA-P-0001",
       "display_name": "Commander",
-      "status": "active",
+      "status": "former",
       "role": "Member",
       "first_seen_snapshot": "S01",
       "last_seen_snapshot": "S09"
@@ -13,7 +13,7 @@
     {
       "player_id": "PERSIA-P-0002",
       "display_name": "Cpt. Of Persia",
-      "status": "active",
+      "status": "former",
       "role": "Leader",
       "first_seen_snapshot": "S01",
       "last_seen_snapshot": "S09"
@@ -21,7 +21,7 @@
     {
       "player_id": "PERSIA-P-0003",
       "display_name": "Alini",
-      "status": "active",
+      "status": "former",
       "role": "Member",
       "first_seen_snapshot": "S01",
       "last_seen_snapshot": "S09"
@@ -29,7 +29,7 @@
     {
       "player_id": "PERSIA-P-0004",
       "display_name": "Eren",
-      "status": "active",
+      "status": "former",
       "role": "Member",
       "first_seen_snapshot": "S01",
       "last_seen_snapshot": "S09"
@@ -37,7 +37,7 @@
     {
       "player_id": "PERSIA-P-0005",
       "display_name": "kaveh",
-      "status": "active",
+      "status": "former",
       "role": "Elder",
       "first_seen_snapshot": "S01",
       "last_seen_snapshot": "S09"
@@ -45,7 +45,7 @@
     {
       "player_id": "PERSIA-P-0006",
       "display_name": "حسین",
-      "status": "active",
+      "status": "former",
       "role": "Member",
       "first_seen_snapshot": "S01",
       "last_seen_snapshot": "S09"
@@ -53,7 +53,7 @@
     {
       "player_id": "PERSIA-P-0007",
       "display_name": "Ardalan",
-      "status": "active",
+      "status": "former",
       "role": "Member",
       "first_seen_snapshot": "S01",
       "last_seen_snapshot": "S09"
@@ -61,7 +61,7 @@
     {
       "player_id": "PERSIA-P-0008",
       "display_name": "hisystem",
-      "status": "active",
+      "status": "former",
       "role": "Co-Leader",
       "first_seen_snapshot": "S01",
       "last_seen_snapshot": "S09"
@@ -69,7 +69,7 @@
     {
       "player_id": "PERSIA-P-0009",
       "display_name": "SORENA",
-      "status": "active",
+      "status": "former",
       "role": "Member",
       "first_seen_snapshot": "S01",
       "last_seen_snapshot": "S09"
@@ -77,7 +77,7 @@
     {
       "player_id": "PERSIA-P-0010",
       "display_name": "paradise",
-      "status": "active",
+      "status": "former",
       "role": "Member",
       "first_seen_snapshot": "S01",
       "last_seen_snapshot": "S09"
@@ -88,15 +88,15 @@
       "status": "active",
       "role": "Member",
       "first_seen_snapshot": "S01",
-      "last_seen_snapshot": "S09"
+      "last_seen_snapshot": "S10"
     },
     {
       "player_id": "PERSIA-P-0012",
-      "display_name": "Dadashi",
+      "display_name": "👑Dadashi👑",
       "status": "active",
       "role": "Elder",
       "first_seen_snapshot": "S01",
-      "last_seen_snapshot": "S09"
+      "last_seen_snapshot": "S10"
     },
     {
       "player_id": "PERSIA-P-0013",
@@ -104,7 +104,7 @@
       "status": "active",
       "role": "Member",
       "first_seen_snapshot": "S01",
-      "last_seen_snapshot": "S09"
+      "last_seen_snapshot": "S10"
     },
     {
       "player_id": "PERSIA-P-0014",
@@ -112,12 +112,12 @@
       "status": "active",
       "role": "Member",
       "first_seen_snapshot": "S01",
-      "last_seen_snapshot": "S09"
+      "last_seen_snapshot": "S10"
     },
     {
       "player_id": "PERSIA-P-0015",
       "display_name": "Mehrad_Persion",
-      "status": "active",
+      "status": "former",
       "role": "Member",
       "first_seen_snapshot": "S01",
       "last_seen_snapshot": "S09"
@@ -128,7 +128,7 @@
       "status": "active",
       "role": "Member",
       "first_seen_snapshot": "S01",
-      "last_seen_snapshot": "S09"
+      "last_seen_snapshot": "S10"
     },
     {
       "player_id": "PERSIA-P-0017",
@@ -136,7 +136,7 @@
       "status": "active",
       "role": "Member",
       "first_seen_snapshot": "S01",
-      "last_seen_snapshot": "S09"
+      "last_seen_snapshot": "S10"
     },
     {
       "player_id": "PERSIA-P-0018",
@@ -144,7 +144,7 @@
       "status": "active",
       "role": "Member",
       "first_seen_snapshot": "S01",
-      "last_seen_snapshot": "S09"
+      "last_seen_snapshot": "S10"
     },
     {
       "player_id": "PERSIA-P-0019",
@@ -152,12 +152,12 @@
       "status": "active",
       "role": "Member",
       "first_seen_snapshot": "S01",
-      "last_seen_snapshot": "S09"
+      "last_seen_snapshot": "S10"
     },
     {
       "player_id": "PERSIA-P-0020",
       "display_name": "NaViD",
-      "status": "active",
+      "status": "former",
       "role": "Member",
       "first_seen_snapshot": "S01",
       "last_seen_snapshot": "S09"
@@ -165,7 +165,7 @@
     {
       "player_id": "PERSIA-P-0021",
       "display_name": "mohammad",
-      "status": "active",
+      "status": "former",
       "role": "Member",
       "first_seen_snapshot": "S01",
       "last_seen_snapshot": "S09"
@@ -176,7 +176,7 @@
       "status": "active",
       "role": "Member",
       "first_seen_snapshot": "S01",
-      "last_seen_snapshot": "S09"
+      "last_seen_snapshot": "S10"
     },
     {
       "player_id": "PERSIA-P-0023",
@@ -184,7 +184,7 @@
       "status": "active",
       "role": "Member",
       "first_seen_snapshot": "S01",
-      "last_seen_snapshot": "S09"
+      "last_seen_snapshot": "S10"
     },
     {
       "player_id": "PERSIA-P-0024",
@@ -192,7 +192,7 @@
       "status": "active",
       "role": "Member",
       "first_seen_snapshot": "S01",
-      "last_seen_snapshot": "S09"
+      "last_seen_snapshot": "S10"
     },
     {
       "player_id": "PERSIA-P-0025",
@@ -200,7 +200,7 @@
       "status": "active",
       "role": "Member",
       "first_seen_snapshot": "S01",
-      "last_seen_snapshot": "S09"
+      "last_seen_snapshot": "S10"
     },
     {
       "player_id": "PERSIA-P-0026",
@@ -208,7 +208,7 @@
       "status": "active",
       "role": "Member",
       "first_seen_snapshot": "S01",
-      "last_seen_snapshot": "S09"
+      "last_seen_snapshot": "S10"
     },
     {
       "player_id": "PERSIA-P-0027",
@@ -216,12 +216,12 @@
       "status": "active",
       "role": "Member",
       "first_seen_snapshot": "S01",
-      "last_seen_snapshot": "S09"
+      "last_seen_snapshot": "S10"
     },
     {
       "player_id": "PERSIA-P-0028",
       "display_name": "ali",
-      "status": "active",
+      "status": "former",
       "role": "Member",
       "first_seen_snapshot": "S01",
       "last_seen_snapshot": "S09"
@@ -232,7 +232,7 @@
       "status": "active",
       "role": "Elder",
       "first_seen_snapshot": "S01",
-      "last_seen_snapshot": "S09"
+      "last_seen_snapshot": "S10"
     },
     {
       "player_id": "PERSIA-P-0030",
@@ -240,7 +240,7 @@
       "status": "active",
       "role": "Member",
       "first_seen_snapshot": "S01",
-      "last_seen_snapshot": "S09"
+      "last_seen_snapshot": "S10"
     },
     {
       "player_id": "PERSIA-P-0031",
@@ -248,7 +248,7 @@
       "status": "active",
       "role": "Member",
       "first_seen_snapshot": "S01",
-      "last_seen_snapshot": "S09"
+      "last_seen_snapshot": "S10"
     },
     {
       "player_id": "PERSIA-P-0032",
@@ -256,7 +256,7 @@
       "status": "active",
       "role": "Member",
       "first_seen_snapshot": "S01",
-      "last_seen_snapshot": "S09"
+      "last_seen_snapshot": "S10"
     },
     {
       "player_id": "PERSIA-P-0033",
@@ -264,7 +264,7 @@
       "status": "active",
       "role": "Member",
       "first_seen_snapshot": "S01",
-      "last_seen_snapshot": "S09"
+      "last_seen_snapshot": "S10"
     },
     {
       "player_id": "PERSIA-P-0034",
@@ -272,7 +272,7 @@
       "status": "active",
       "role": "Member",
       "first_seen_snapshot": "S01",
-      "last_seen_snapshot": "S09"
+      "last_seen_snapshot": "S10"
     },
     {
       "player_id": "PERSIA-P-0035",
@@ -280,7 +280,7 @@
       "status": "active",
       "role": "Member",
       "first_seen_snapshot": "S01",
-      "last_seen_snapshot": "S09"
+      "last_seen_snapshot": "S10"
     },
     {
       "player_id": "PERSIA-P-0036",
@@ -296,7 +296,7 @@
       "status": "active",
       "role": "Member",
       "first_seen_snapshot": "S01",
-      "last_seen_snapshot": "S09"
+      "last_seen_snapshot": "S10"
     },
     {
       "player_id": "PERSIA-P-0038",
@@ -304,7 +304,7 @@
       "status": "active",
       "role": "Member",
       "first_seen_snapshot": "S01",
-      "last_seen_snapshot": "S09"
+      "last_seen_snapshot": "S10"
     },
     {
       "player_id": "PERSIA-P-0039",
@@ -316,16 +316,16 @@
     },
     {
       "player_id": "PERSIA-P-0040",
-      "display_name": "جهانبانی 1370",
+      "display_name": "1370 جهانبانی",
       "status": "active",
       "role": "Member",
       "first_seen_snapshot": "S01",
-      "last_seen_snapshot": "S09"
+      "last_seen_snapshot": "S10"
     },
     {
       "player_id": "PERSIA-P-0041",
       "display_name": "Extreme",
-      "status": "active",
+      "status": "former",
       "role": "Member",
       "first_seen_snapshot": "S01",
       "last_seen_snapshot": "S09"
@@ -349,7 +349,7 @@
     {
       "player_id": "PERSIA-P-0044",
       "display_name": "hamedir",
-      "status": "active",
+      "status": "former",
       "role": "Member",
       "first_seen_snapshot": "S01",
       "last_seen_snapshot": "S09"
@@ -381,7 +381,7 @@
     {
       "player_id": "PERSIA-P-0048",
       "display_name": "ایرانی باوقار",
-      "status": "active",
+      "status": "former",
       "role": "Member",
       "first_seen_snapshot": "S03",
       "last_seen_snapshot": "S09"
@@ -392,7 +392,7 @@
       "status": "active",
       "role": "Member",
       "first_seen_snapshot": "S06",
-      "last_seen_snapshot": "S09"
+      "last_seen_snapshot": "S10"
     },
     {
       "player_id": "PERSIA-P-0050",
@@ -406,14 +406,14 @@
       "player_id": "PERSIA-P-0051",
       "display_name": "hisystemX",
       "status": "active",
-      "role": "Member",
+      "role": "Co-Leader",
       "first_seen_snapshot": "S07",
-      "last_seen_snapshot": "S09"
+      "last_seen_snapshot": "S10"
     },
     {
       "player_id": "PERSIA-P-0052",
       "display_name": "تکاور",
-      "status": "active",
+      "status": "former",
       "role": "Member",
       "first_seen_snapshot": "S08",
       "last_seen_snapshot": "S09"
@@ -424,7 +424,7 @@
       "status": "active",
       "role": "Member",
       "first_seen_snapshot": "S08",
-      "last_seen_snapshot": "S09"
+      "last_seen_snapshot": "S10"
     },
     {
       "player_id": "PERSIA-P-0054",
@@ -432,7 +432,23 @@
       "status": "active",
       "role": "Leader",
       "first_seen_snapshot": "S09",
-      "last_seen_snapshot": "S09"
+      "last_seen_snapshot": "S10"
+    },
+    {
+      "player_id": "PERSIA-P-0055",
+      "display_name": "kaveh.2",
+      "status": "active",
+      "role": "Elder & MVP",
+      "first_seen_snapshot": "S10",
+      "last_seen_snapshot": "S10"
+    },
+    {
+      "player_id": "PERSIA-P-0056",
+      "display_name": "ali",
+      "status": "active",
+      "role": "Member",
+      "first_seen_snapshot": "S10",
+      "last_seen_snapshot": "S10"
     }
   ]
 }
