@@ -1,84 +1,132 @@
-# GOLDENCROWN Fresh-Agent Prompt Pack
+# GOLDENCROWN Fresh-Agent Prompt Pack v2
 
-این Promptها برای آغاز یک Conversation جدید طراحی شده‌اند. لازم نیست همه را یک‌جا ارسال کنی. بسته به مرحلهٔ کار، یکی را بفرست.
+این Prompt Pack برای Conversation جدید طراحی شده تا Agent بتواند از GitHub continuity به‌صورت مرحله‌ای وارد پروژه شود و دانش عملیاتی منتقل‌شده از Conversationهای قبلی را دوباره از User مطالبه نکند.
 
----
+## Common preamble
 
-## PROMPT 1 — Bootstrap / Read the Model
+این متن را می‌توان قبل از هر Prompt زیر قرار داد:
 
-نقش تو در این مکالمه: Fresh-Agent پروژهٔ GOLDENCROWN.
-
-پیش از هر اقدام:
-1. از GitHub repository مربوط به Golden یعنی `neoshisystem/WD-C-Golden` وضعیت واقعی main را بررسی کن.
-2. سپس در همین repository این فایل‌ها را در PERSIA repository بخوان:
-   - `agent/README.md`
-   - `agent/GOLDEN_AGENT_MANUAL.md`
-   - `agent/GOLDEN_CURRENT_STATE.md`
-   - `agent/GOLDEN_DATA_MODEL_AND_RULES.md`
-   - `agent/GOLDEN_IDENTITY_FINGERPRINT.md`
-   - `agent/GOLDEN_SNAPSHOT_WORKFLOW.md`
-   - `agent/GOLDEN_GITHUB_AND_UI.md`
-3. هیچ چیزی را بر اساس حافظه یا حدس تکمیل نکن.
-4. بعد از خواندن، فقط یک State Report بده:
-   - current snapshot
-   - repository HEAD
-   - identity state
-   - known boundaries
-   - pending/unknown items
-5. قبل از آن هیچ mutation انجام نده.
+> نقش تو: Fresh-Agent / successor agent پروژهٔ GOLDENCROWN.
+>
+> هیچ دانش inherited یا permission از Conversation قبلی فرض نکن.
+>
+> ابتدا GitHub را Reality-Check کن.
+>
+> Repository مستقل Golden:
+> `neoshisystem/WD-C-Golden`
+>
+> Continuity Pack در:
+> `neoshisystem/war-drone-wiki/agent/`
+>
+> قبل از mutation، اسناد continuity را بخوان.
+>
+> در صورت اختلاف بین Memory و GitHub، ابتدا evidence را verify کن و current GitHub state را مبنای operational truth قرار بده.
+>
+> UNKNOWN را صریح گزارش کن؛ gap را با حدس پر نکن.
 
 ---
 
-## PROMPT 2 — Golden vs PERSIA Boundary
+# PROMPT 1 — BOOTSTRAP / MENTAL MODEL
 
-می‌خواهم روی GOLDENCROWN کار کنیم.
+نقش تو: Fresh-Agent GOLDENCROWN.
 
-این قوانین را رعایت کن:
-- PERSIA فقط reference/template است.
-- Golden history, identity, snapshot data و player_id مستقل است.
-- هیچ PERSIA player_id را به Golden منتقل نکن.
-- هیچ PERSIA period را در Golden archive وارد نکن.
-- UI behavior را تا حد امکان از PERSIA mirror کن.
-- redesign نکن مگر اینکه صریحاً بخواهم.
+قبل از هر اقدام این فایل‌ها را در همین ترتیب بخوان:
 
-ابتدا فایل‌های مرتبط Golden و reference PERSIA را بخوان و بگو دقیقاً چه چیزی shared semantic است و چه چیزی project-specific است.
-هیچ تغییر GitHubی بدون approval انجام نده.
+1. `agent/README.md`
+2. `agent/GOLDEN_AGENT_MANUAL.md`
+3. `agent/GOLDEN_CONVERSATION_KNOWLEDGE.md`
+4. `agent/GOLDEN_EVIDENCE_EXTRACTION_MANUAL.md`
+5. `agent/GOLDEN_CURRENT_STATE.md`
+6. `agent/GOLDEN_DATA_MODEL_AND_RULES.md`
+7. `agent/GOLDEN_IDENTITY_FINGERPRINT.md`
+8. `agent/GOLDEN_SNAPSHOT_WORKFLOW.md`
+9. `agent/GOLDEN_GITHUB_AND_UI.md`
+10. `agent/GOLDEN_PROMPT_PACK.md`
+
+سپس در `neoshisystem/WD-C-Golden` این موارد را verify کن:
+
+- main HEAD
+- `data/manifest.json`
+- current snapshot
+- canonical snapshot
+- source snapshot
+- evidence report
+- archive / viewer / profile references
+
+خروجی فقط یک **State Report** باشد:
+
+- Current Golden snapshot
+- Current HEAD
+- Snapshot totals
+- Identity state
+- PERSIA/Golden boundary
+- Known special rulings
+- Pending / UNKNOWN
+
+هیچ mutation انجام نده.
 
 ---
 
-## PROMPT 3 — Snapshot Intake
+# PROMPT 2 — NEW ZIP / SNAPSHOT INTAKE
 
-Snapshot جدید را دریافت کرده‌ام.
+یک ZIP جدید از Screenshotهای Golden دریافت کرده‌ام.
 
-قبل از publication:
+این ZIP را database آماده انتشار فرض نکن.
+
+چرخه را دقیق اجرا کن:
+
+`ZIP → SHA-256 → Inventory → Evidence Classification → Visual Extraction → Cross-check → Normalization → Validation`
+
+بررسی کن:
+
 1. ZIP SHA-256
-2. image inventory
-3. ranking/profile split
-4. duplicate/near-duplicate evidence
-5. official timestamp
-6. full normalized fields
-7. totals
-8. G-S(previous) continuity
-9. new/departed/returning identities
-10. rename cases
-11. ALI/ali and other ambiguous identities
-12. intra-snapshot duplicate evidence
+2. تعداد فایل‌ها
+3. filename inventory
+4. resolution consistency
+5. ranking/profile split
+6. coverage of ranks
+7. duplicate / near-duplicate evidence
+8. official timestamp provided by Project Authority
+9. filename timestamps as evidence-only
+10. all canonical fields
 
-را بررسی کن.
+Ranking evidence را برای:
 
-هر جا ambiguity هست STOP کن.
-Rank را Identity ندان.
-تا قبل از approval هیچ Canonical Data را تغییر نده.
+- rank
+- name
+- role
+- stage
+- current league medals
+
+و Profile evidence را برای:
+
+- name / role cross-check
+- total kills
+- clan medals total
+- honor medals
+- weapon levels
+- last online
+
+استفاده کن.
+
+هیچ Screenshot اضافی را خودکار به‌عنوان Player جدید حساب نکن.
+
+قبل از publication یک intake report بده.
 
 ---
 
-## PROMPT 4 — Fingerprint / Identity Review
+# PROMPT 3 — IDENTITY / FINGERPRINT RECONCILIATION
 
-می‌خواهم Identity reconciliation یک Snapshot را انجام دهی.
+بین Snapshot جدید و Snapshot قبلی Identity reconciliation انجام بده.
 
-برای هر candidate:
-- نام
-- Stage
+فرآیند:
+
+`Evidence → Technical Review → Fingerprint Comparison → Identity Decision → Canonical Observation`
+
+برای هر candidate این موارد را بررسی کن:
+
+- display_name
+- stage
 - 25mm
 - Hydra
 - Hellfire
@@ -88,102 +136,154 @@ Rank را Identity ندان.
 - Role
 - Last Online
 
-را مقایسه کن.
-
 Rules:
-- Rank = never Identity
-- Rename != New Identity
-- Same name != Same Identity
-- Missing player != Deleted Identity
-- Returning player = same identity only if evidence supports it
-- ambiguous identity = DO NOT GUESS
-- confirmed_new_identity فقط برای واقعاً new identity
 
-برای cases مهم یک fingerprint table بساز و قبل از publication موارد ambiguous را جدا کن.
+- Rank = never Identity
+- Same name != same identity
+- Rename != new identity
+- Missing != deleted
+- Return != automatic match
+- ambiguous = STOP
+- confirmed_new_identity فقط پس از review
+- PERSIA player_id هرگز وارد Golden نشود
+
+موارد خاص را جدا کن:
+
+- `ALI` و `ali` دو Identity مستقل
+- Reza_Gh / multiple evidence داخل یک Snapshot را طبق ruling مستندشده تحلیل کن
+
+برای همهٔ cases ambiguous جدول fingerprint بده و قبل از publication unresolved cases را مشخص کن.
 
 ---
 
-## PROMPT 5 — Delta / Membership Review
+# PROMPT 4 — DELTA / MEMBERSHIP / PERIOD
 
-بین Snapshot قبلی و جدید:
+بین Snapshot قبلی و جدید این مفاهیم را جداگانه تحلیل کن:
 
+- Rank Movement
+- Current League Medals
 - Period Delta
 - Lifetime/Cumulative
-- Current League Medals
 - Membership
-- rank movement
-
-را جداگانه محاسبه کن.
+- New
+- Continuing
+- Departed
+- Returning
 
 Rules:
+
 - Current League Medals مستقل است.
-- Rank movement snapshot-local است.
-- New identity از current total به‌عنوان period earned شروع نمی‌شود مگر semantics صریح اجازه دهد.
-- Return after membership gap = period baseline where immediate previous observation is absent.
-- Cumulative history across gaps preserved.
-- Negative cumulative movement را silently clamp نکن.
+- Rank snapshot-local است.
+- Total Kills و Clan Medals در identity continuity cumulative/lifetime هستند.
+- New identity نباید prior contribution ساختگی بگیرد.
+- Returning بعد از gap، در صورت نبود immediate previous observation برای period baseline می‌شود.
+- Cumulative history across gaps حفظ می‌شود.
+- Negative cumulative movement silently clamp یا invalidate نشود.
 
-بعد یک reconciliation table بده و فقط موارد نیازمند تصمیم Authority را علامت بزن.
+خروجی:
 
----
+1. reconciliation table
+2. aggregate totals
+3. identity transitions
+4. anomalies
+5. cases requiring Authority
 
-## PROMPT 6 — GitHub Publication
-
-با فرض اینکه تحلیل و Identity mapping تایید شده است:
-
-1. current main HEAD را دوباره verify کن.
-2. تغییرات موردنیاز را minimal و scoped نگه دار.
-3. source snapshot را ثبت کن.
-4. canonical snapshot را ثبت کن.
-5. manifest/current snapshot را update کن.
-6. archive/viewer/profile/member-history references را update کن.
-7. evidence report را ثبت کن.
-8. validation/test را اجرا کن.
-9. GitHub SHAهای نهایی را گزارش کن.
-10. CI و Pages deployment را جداگانه report کن.
-
-تاریخچهٔ قبلی را overwrite نکن.
-هیچ PERSIA data را وارد Golden نکن.
+هنوز mutation نکن.
 
 ---
 
-## PROMPT 7 — Recovery / UNKNOWN First
+# PROMPT 5 — PUBLICATION / MUTATION
 
-این مکالمه ممکن است به سقف ظرفیت برسد.
+تحلیل و Identity mapping تأیید شده و Project Authority اجازهٔ انتشار Snapshot را داده است.
 
-اگر بخشی از وضعیت را نمی‌دانی:
-- UNKNOWN را صریح بنویس.
-- از GitHub evidence بازیابی کن.
-- از continuity pack استفاده کن.
-- از حدس برای پر کردن gap استفاده نکن.
+قبل از mutation current main HEAD را دوباره verify کن.
 
-اگر بین conversation memory و GitHub اختلاف بود:
-**GitHub current state را authority قرار بده.**
+سپس فقط تغییرات scoped و minimal انجام بده:
 
-اگر data یا identity ambiguity باقی ماند:
-mutation نکن و سؤال/گزارش لازم را بده.
+1. source snapshot
+2. canonical snapshot
+3. manifest/current pointer
+4. evidence report
+5. archive
+6. leaderboard viewer
+7. player profile behavior
+8. player directory
+9. member history
+10. required validation/tests
+
+Historical snapshots را overwrite نکن.
+
+Golden را به PERSIA data وصل نکن.
+
+بعد از mutation گزارش بده:
+
+- commit SHA
+- file SHAs
+- current_snapshot_id
+- totals
+- identity summary
+- validation result
+- Actions result
+- Pages deployment result
+
+CI PASS، deployment PASS و content correctness را یک مفهوم فرض نکن.
 
 ---
 
-## PROMPT 8 — Final Verification
+# PROMPT 6 — SESSION-CAP / RECOVERY
 
-قبل از اینکه بگویی Snapshot «published/verified» است:
+این Conversation ممکن است به سقف ظرفیت برسد.
 
-- snapshot_id درست؟
-- official timestamp درست؟
-- 1..N ranks unique؟
-- member count درست؟
-- sums درست؟
-- all required fields موجود؟
-- ALI/ali distinct؟
-- new identities intentionally new؟
-- departures plausible و historical preservation برقرار؟
-- no ambiguity unresolved؟
-- source/canonical/manifest aligned؟
-- archive aligned؟
-- viewer aligned؟
-- profile routes aligned؟
-- CI result known؟
-- deployment result known؟
+اگر context ناقص شد:
 
-اگر یکی از این‌ها UNKNOWN است، آن را UNKNOWN گزارش کن؛ PASS را حدس نزن.
+1. از GitHub continuity pack بازیابی کن.
+2. ابتدا `agent/README.md` و `agent/GOLDEN_CURRENT_STATE.md` را بخوان.
+3. سپس `agent/GOLDEN_CONVERSATION_KNOWLEDGE.md` و `agent/GOLDEN_EVIDENCE_EXTRACTION_MANUAL.md` را بخوان.
+4. current Golden main را verify کن.
+5. manifest را verify کن.
+6. current snapshot را verify کن.
+7. UNKNOWNها را explicitly report کن.
+
+هرگز برای پر کردن context gap از حدس استفاده نکن.
+
+Fresh-Agent نباید از User دوباره بخواهد توضیح دهد:
+
+- Golden Snapshot چیست
+- Rank چرا Identity نیست
+- ALI و ali چرا جدا هستند
+- Reza_Gh چرا دو screenshot ولی یک identity دارد
+- Profile extras چرا canonical evidence هستند
+- official timestamp چرا از filename timestamp جداست
+- ZIP چگونه intake می‌شود
+- PERSIA چه نقشی دارد
+- چرا Golden باید UI PERSIA را mirror کند ولی history مستقل بماند
+
+---
+
+# PROMPT 7 — FINAL RELEASE GATE
+
+پیش از اینکه بگویی Snapshot published / verified است، این checklist را اجرا کن:
+
+- snapshot_id correct
+- official timestamp correct
+- member_count correct
+- ranks unique and contiguous
+- all required fields present
+- totals recompute correctly
+- source/canonical aligned
+- manifest aligned
+- ALI/ali distinct
+- duplicate evidence handled
+- no unresolved ambiguity
+- new identities intentional
+- departed history preserved
+- Reza_Gh ruling preserved where applicable
+- archive aligned
+- viewer aligned
+- player routes aligned
+- Actions status known
+- Pages status known
+
+اگر یکی از این‌ها UNKNOWN است:
+
+**UNKNOWN را گزارش کن؛ PASS را حدس نزن.**
