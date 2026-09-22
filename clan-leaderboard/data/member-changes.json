@@ -286,6 +286,47 @@
           "event": "left_or_kicked"
         }
       ]
+    },
+    {
+      "snapshot_id": "S11",
+      "from_snapshot": "S10",
+      "to_snapshot": "S11",
+      "member_count_from": 30,
+      "member_count_to": 30,
+      "new_members": [
+        {
+          "player_id": "PERSIA-P-0057",
+          "display_name": "I.Man",
+          "event": "joined_between_S10_and_S11"
+        },
+        {
+          "player_id": "PERSIA-P-0058",
+          "display_name": "Robots",
+          "event": "joined_between_S10_and_S11"
+        },
+        {
+          "player_id": "PERSIA-P-0059",
+          "display_name": "saeed.ir",
+          "event": "joined_between_S10_and_S11"
+        }
+      ],
+      "departed_members": [
+        {
+          "player_id": "PERSIA-P-0049",
+          "display_name": "saied",
+          "event": "left_or_kicked"
+        },
+        {
+          "player_id": "PERSIA-P-0023",
+          "display_name": "مصطفی",
+          "event": "left_or_kicked"
+        },
+        {
+          "player_id": "PERSIA-P-0056",
+          "display_name": "ali",
+          "event": "left_or_kicked"
+        }
+      ]
     }
   ]
 }
