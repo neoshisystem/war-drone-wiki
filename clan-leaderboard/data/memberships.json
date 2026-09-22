@@ -84,25 +84,25 @@
     {
       "player_id": "PERSIA-P-0011",
       "from_snapshot": "S01",
-      "through_snapshot": "S10",
+      "through_snapshot": "S11",
       "status": "active"
     },
     {
       "player_id": "PERSIA-P-0012",
       "from_snapshot": "S01",
-      "through_snapshot": "S10",
+      "through_snapshot": "S11",
       "status": "active"
     },
     {
       "player_id": "PERSIA-P-0013",
       "from_snapshot": "S01",
-      "through_snapshot": "S10",
+      "through_snapshot": "S11",
       "status": "active"
     },
     {
       "player_id": "PERSIA-P-0014",
       "from_snapshot": "S01",
-      "through_snapshot": "S10",
+      "through_snapshot": "S11",
       "status": "active"
     },
     {
@@ -116,25 +116,25 @@
     {
       "player_id": "PERSIA-P-0016",
       "from_snapshot": "S01",
-      "through_snapshot": "S10",
+      "through_snapshot": "S11",
       "status": "active"
     },
     {
       "player_id": "PERSIA-P-0017",
       "from_snapshot": "S01",
-      "through_snapshot": "S10",
+      "through_snapshot": "S11",
       "status": "active"
     },
     {
       "player_id": "PERSIA-P-0018",
       "from_snapshot": "S01",
-      "through_snapshot": "S10",
+      "through_snapshot": "S11",
       "status": "active"
     },
     {
       "player_id": "PERSIA-P-0019",
       "from_snapshot": "S01",
-      "through_snapshot": "S10",
+      "through_snapshot": "S11",
       "status": "active"
     },
     {
@@ -156,37 +156,39 @@
     {
       "player_id": "PERSIA-P-0022",
       "from_snapshot": "S01",
-      "through_snapshot": "S10",
+      "through_snapshot": "S11",
       "status": "active"
     },
     {
       "player_id": "PERSIA-P-0023",
       "from_snapshot": "S01",
       "through_snapshot": "S10",
-      "status": "active"
+      "status": "ended",
+      "end_precision": "between_snapshots",
+      "end_event": "left_or_kicked"
     },
     {
       "player_id": "PERSIA-P-0024",
       "from_snapshot": "S01",
-      "through_snapshot": "S10",
+      "through_snapshot": "S11",
       "status": "active"
     },
     {
       "player_id": "PERSIA-P-0025",
       "from_snapshot": "S01",
-      "through_snapshot": "S10",
+      "through_snapshot": "S11",
       "status": "active"
     },
     {
       "player_id": "PERSIA-P-0026",
       "from_snapshot": "S01",
-      "through_snapshot": "S10",
+      "through_snapshot": "S11",
       "status": "active"
     },
     {
       "player_id": "PERSIA-P-0027",
       "from_snapshot": "S01",
-      "through_snapshot": "S10",
+      "through_snapshot": "S11",
       "status": "active"
     },
     {
@@ -200,43 +202,43 @@
     {
       "player_id": "PERSIA-P-0029",
       "from_snapshot": "S01",
-      "through_snapshot": "S10",
+      "through_snapshot": "S11",
       "status": "active"
     },
     {
       "player_id": "PERSIA-P-0030",
       "from_snapshot": "S01",
-      "through_snapshot": "S10",
+      "through_snapshot": "S11",
       "status": "active"
     },
     {
       "player_id": "PERSIA-P-0031",
       "from_snapshot": "S01",
-      "through_snapshot": "S10",
+      "through_snapshot": "S11",
       "status": "active"
     },
     {
       "player_id": "PERSIA-P-0032",
       "from_snapshot": "S01",
-      "through_snapshot": "S10",
+      "through_snapshot": "S11",
       "status": "active"
     },
     {
       "player_id": "PERSIA-P-0033",
       "from_snapshot": "S01",
-      "through_snapshot": "S10",
+      "through_snapshot": "S11",
       "status": "active"
     },
     {
       "player_id": "PERSIA-P-0034",
       "from_snapshot": "S01",
-      "through_snapshot": "S10",
+      "through_snapshot": "S11",
       "status": "active"
     },
     {
       "player_id": "PERSIA-P-0035",
       "from_snapshot": "S01",
-      "through_snapshot": "S10",
+      "through_snapshot": "S11",
       "status": "active"
     },
     {
@@ -250,13 +252,13 @@
     {
       "player_id": "PERSIA-P-0037",
       "from_snapshot": "S01",
-      "through_snapshot": "S10",
+      "through_snapshot": "S11",
       "status": "active"
     },
     {
       "player_id": "PERSIA-P-0038",
       "from_snapshot": "S01",
-      "through_snapshot": "S10",
+      "through_snapshot": "S11",
       "status": "active"
     },
     {
@@ -270,7 +272,7 @@
     {
       "player_id": "PERSIA-P-0040",
       "from_snapshot": "S01",
-      "through_snapshot": "S10",
+      "through_snapshot": "S11",
       "status": "active"
     },
     {
@@ -359,7 +361,7 @@
     {
       "player_id": "PERSIA-P-0051",
       "from_snapshot": "S07",
-      "through_snapshot": "S10",
+      "through_snapshot": "S11",
       "status": "active",
       "start_event": "joined_between_S06_and_S07"
     },
@@ -367,8 +369,10 @@
       "player_id": "PERSIA-P-0049",
       "from_snapshot": "S08",
       "through_snapshot": "S10",
-      "status": "active",
-      "start_event": "joined_between_S07_and_S08"
+      "status": "ended",
+      "start_event": "joined_between_S07_and_S08",
+      "end_precision": "between_snapshots",
+      "end_event": "left_or_kicked"
     },
     {
       "player_id": "PERSIA-P-0052",
@@ -382,21 +386,21 @@
     {
       "player_id": "PERSIA-P-0053",
       "from_snapshot": "S08",
-      "through_snapshot": "S10",
+      "through_snapshot": "S11",
       "status": "active",
       "start_event": "joined_between_S07_and_S08"
     },
     {
       "player_id": "PERSIA-P-0054",
       "from_snapshot": "S09",
-      "through_snapshot": "S10",
+      "through_snapshot": "S11",
       "status": "active",
       "start_event": "joined_between_S08_and_S09"
     },
     {
       "player_id": "PERSIA-P-0055",
       "from_snapshot": "S10",
-      "through_snapshot": "S10",
+      "through_snapshot": "S11",
       "status": "active",
       "start_event": "joined_between_S09_and_S10"
     },
@@ -404,8 +408,31 @@
       "player_id": "PERSIA-P-0056",
       "from_snapshot": "S10",
       "through_snapshot": "S10",
+      "status": "ended",
+      "start_event": "joined_between_S09_and_S10",
+      "end_precision": "between_snapshots",
+      "end_event": "left_or_kicked"
+    },
+    {
+      "player_id": "PERSIA-P-0057",
+      "from_snapshot": "S11",
+      "through_snapshot": "S11",
       "status": "active",
-      "start_event": "joined_between_S09_and_S10"
+      "start_event": "joined_between_S10_and_S11"
+    },
+    {
+      "player_id": "PERSIA-P-0058",
+      "from_snapshot": "S11",
+      "through_snapshot": "S11",
+      "status": "active",
+      "start_event": "joined_between_S10_and_S11"
+    },
+    {
+      "player_id": "PERSIA-P-0059",
+      "from_snapshot": "S11",
+      "through_snapshot": "S11",
+      "status": "active",
+      "start_event": "joined_between_S10_and_S11"
     }
   ]
 }
