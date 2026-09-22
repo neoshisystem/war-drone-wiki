@@ -242,6 +242,236 @@
         },
         "last_online_display": "1h ago",
         "clan_medals_delta": 9441
+      },
+      {
+        "player_id": "PERSIA-P-0013",
+        "rank": 11,
+        "rank_movement": null,
+        "stage": 40,
+        "league_medals": 49778,
+        "league_medals_delta": null,
+        "clan_medals": 668803,
+        "honor_medals": {
+          "gold": 3,
+          "silver": 4,
+          "bronze": 2
+        },
+        "total_kills": 125954,
+        "kills_delta": 1160,
+        "weapons": {
+          "25mm": 746,
+          "hydra": 311,
+          "hellfire": 57
+        },
+        "last_online_display": "4h ago",
+        "clan_medals_delta": 13567
+      },
+      {
+        "player_id": "PERSIA-P-0055",
+        "rank": 12,
+        "rank_movement": null,
+        "stage": 28,
+        "league_medals": 48918,
+        "league_medals_delta": null,
+        "clan_medals": 48918,
+        "honor_medals": {
+          "gold": 0,
+          "silver": 0,
+          "bronze": 3
+        },
+        "total_kills": 60555,
+        "kills_delta": 4004,
+        "weapons": {
+          "25mm": 617,
+          "hydra": 163,
+          "hellfire": 51
+        },
+        "last_online_display": "1h ago",
+        "clan_medals_delta": 28602
+      },
+      {
+        "player_id": "PERSIA-P-0027",
+        "rank": 13,
+        "rank_movement": null,
+        "stage": 38,
+        "league_medals": 35622,
+        "league_medals_delta": null,
+        "clan_medals": 719118,
+        "honor_medals": {
+          "gold": 3,
+          "silver": 4,
+          "bronze": 4
+        },
+        "total_kills": 139524,
+        "kills_delta": 1077,
+        "weapons": {
+          "25mm": 998,
+          "hydra": 151,
+          "hellfire": 53
+        },
+        "last_online_display": "3h ago",
+        "clan_medals_delta": 6625
+      },
+      {
+        "player_id": "PERSIA-P-0037",
+        "rank": 14,
+        "rank_movement": null,
+        "stage": 37,
+        "league_medals": 33346,
+        "league_medals_delta": null,
+        "clan_medals": 431214,
+        "honor_medals": {
+          "gold": 3,
+          "silver": 3,
+          "bronze": 2
+        },
+        "total_kills": 104259,
+        "kills_delta": 1037,
+        "weapons": {
+          "25mm": 670,
+          "hydra": 263,
+          "hellfire": 77
+        },
+        "last_online_display": "2h ago",
+        "clan_medals_delta": 6322
+      },
+      {
+        "player_id": "PERSIA-P-0035",
+        "rank": 15,
+        "rank_movement": null,
+        "stage": 40,
+        "league_medals": 29280,
+        "league_medals_delta": null,
+        "clan_medals": 350235,
+        "honor_medals": {
+          "gold": 3,
+          "silver": 4,
+          "bronze": 2
+        },
+        "total_kills": 85944,
+        "kills_delta": 1430,
+        "weapons": {
+          "25mm": 756,
+          "hydra": 304,
+          "hellfire": 58
+        },
+        "last_online_display": "3h ago",
+        "clan_medals_delta": 12826
+      },
+      {
+        "player_id": "PERSIA-P-0026",
+        "rank": 16,
+        "rank_movement": null,
+        "stage": 28,
+        "league_medals": 28019,
+        "league_medals_delta": null,
+        "clan_medals": 486515,
+        "honor_medals": {
+          "gold": 2,
+          "silver": 3,
+          "bronze": 3
+        },
+        "total_kills": 132038,
+        "kills_delta": 2171,
+        "weapons": {
+          "25mm": 674,
+          "hydra": 220,
+          "hellfire": 81
+        },
+        "last_online_display": "3h ago",
+        "clan_medals_delta": 4391
+      },
+      {
+        "player_id": "PERSIA-P-0033",
+        "rank": 17,
+        "rank_movement": null,
+        "stage": 15,
+        "league_medals": 27859,
+        "league_medals_delta": null,
+        "clan_medals": 256577,
+        "honor_medals": {
+          "gold": 2,
+          "silver": 2,
+          "bronze": 1
+        },
+        "total_kills": 43301,
+        "kills_delta": 1113,
+        "weapons": {
+          "25mm": 286,
+          "hydra": 137,
+          "hellfire": 22
+        },
+        "last_online_display": "8h ago",
+        "clan_medals_delta": 3498
+      },
+      {
+        "player_id": "PERSIA-P-0019",
+        "rank": 18,
+        "rank_movement": null,
+        "stage": 23,
+        "league_medals": 24153,
+        "league_medals_delta": null,
+        "clan_medals": 710720,
+        "honor_medals": {
+          "gold": 2,
+          "silver": 3,
+          "bronze": 0
+        },
+        "total_kills": 84465,
+        "kills_delta": 242,
+        "weapons": {
+          "25mm": 452,
+          "hydra": 167,
+          "hellfire": 43
+        },
+        "last_online_display": "5h ago",
+        "clan_medals_delta": 2885
+      },
+      {
+        "player_id": "PERSIA-P-0031",
+        "rank": 19,
+        "rank_movement": null,
+        "stage": 48,
+        "league_medals": 23346,
+        "league_medals_delta": null,
+        "clan_medals": 303844,
+        "honor_medals": {
+          "gold": 6,
+          "silver": 7,
+          "bronze": 5
+        },
+        "total_kills": 167010,
+        "kills_delta": 0,
+        "weapons": {
+          "25mm": 886,
+          "hydra": 320,
+          "hellfire": 68
+        },
+        "last_online_display": "10h ago",
+        "clan_medals_delta": 2003
+      },
+      {
+        "player_id": "PERSIA-P-0040",
+        "rank": 20,
+        "rank_movement": null,
+        "stage": 23,
+        "league_medals": 22215,
+        "league_medals_delta": null,
+        "clan_medals": 58848,
+        "honor_medals": {
+          "gold": 1,
+          "silver": 2,
+          "bronze": 0
+        },
+        "total_kills": 45784,
+        "kills_delta": 354,
+        "weapons": {
+          "25mm": 484,
+          "hydra": 111,
+          "hellfire": 36
+        },
+        "last_online_display": "8h ago",
+        "clan_medals_delta": 5939
       }
     ]
   }
