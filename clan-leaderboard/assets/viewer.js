@@ -46,8 +46,9 @@
     fetchJson('data/player-observations-history-s06.json').catch(() => ({ snapshots: {} })),
     fetchJson('data/players.json'),
     fetchJson('data/snapshots.json'),
-    fetchJson('data/leagues.json')
-  ]).then(([currentData, historyData, historyS05, historyS06, playersData, snapshotsData, leaguesData]) => {
+    fetchJson('data/leagues.json'),
+    fetchJson('data/member-changes.json').catch(() => ({ transitions: [] }))
+  ]).then(([currentData, historyData, historyS05, historyS06, playersData, snapshotsData, leaguesData, memberChangesData]) => {
     const snapshots = [...(snapshotsData.snapshots || [])].sort((a, b) => a.captured_at_utc.localeCompare(b.captured_at_utc));
     const basename = value => String(value || '').split('/').pop();
     const sourceMatch = requestedSource ? snapshots.find(snapshot => snapshot.source_report && basename(snapshot.source_report) === basename(requestedSource)) : null;
@@ -69,21 +70,32 @@
     const expectedMembers = Number(target.members || 0);
     const canonical = viewerData.buildMembers(target.snapshot_id, observationSets, playersData, metrics);
     if (canonical.members.length === expectedMembers) {
-      render(target, metrics, canonical.members, requestedMode, 'canonical', snapshots);
+      render(target, metrics, canonical.members, requestedMode, 'canonical', snapshots, memberChangesData);
       return;
     }
 
     fetchText(fallbackSource).then(sourceHtml => {
       const fallbackMembers = parseSourceMembers(sourceHtml);
       if (!fallbackMembers.length) throw new Error(`${target.snapshot_id}: canonical rows ${canonical.members.length}/${expectedMembers}; fallback source has no grid`);
-      render(target, metrics, fallbackMembers, requestedMode, 'fallback', snapshots);
+      render(target, metrics, fallbackMembers, requestedMode, 'fallback', snapshots, memberChangesData);
     }).catch(error => { throw error; });
   }).catch(error => {
     console.error(error);
     fetchText(fallbackSource).then(sourceHtml => {
       const members = parseSourceMembers(sourceHtml);
       if (!members.length) throw error;
-      root.innerHTML = `<section class="hero"><span class="badge">PERSIA · Leaderboard fallback</span><h1>جدول جامع عملکرد و تغییرات اعضای کلن</h1><p>نمایش پشتیبان فعال است؛ دادهٔ canonical در دسترس نیست.</p></section><div class="count">${members.length} نتیجه</div>${fallbackTable(members)}`;
+      const memberChange = (memberChangesData?.transitions || []).find(item => item.snapshot_id === target.snapshot_id);
+    const changePlayerLink = item => navUrl('player.html', `?id=${encodeURIComponent(item.player_id)}`);
+    const renderChangeGroup = (label, items, className) => {
+      if (!items.length) return '';
+      return `<div class="member-change-group ${className}"><div class="member-change-heading"><strong>${label}</strong><span>${items.length.toLocaleString('en-US')}</span></div><div class="member-change-list">${items.map(item => `<a class="member-change-player" href="${changePlayerLink(item)}" title="${esc(item.event || 'عضویت/خروج در مقایسه Snapshotها')}">${esc(item.display_name)}</a>`).join('')}</div></div>`;
+    };
+    const memberChangesHtml = memberChange
+      ? memberChange.from_snapshot
+        ? `<section class="performance-card member-changes-card"><div class="performance-card__head"><div><span class="badge">تغییر عضویت</span><h2>ورود و خروج اعضا</h2><p>مقایسهٔ ${esc(memberChange.from_snapshot)} → ${esc(memberChange.to_snapshot)}؛ نام‌ها به پروفایل بازیکن لینک شده‌اند.</p></div></div><div class="member-change-grid">${renderChangeGroup('🟢 اعضای جدید', memberChange.new_members, 'member-change-group--new')}${renderChangeGroup('🔴 خروج / حذف', memberChange.departed_members, 'member-change-group--left')}${memberChange.new_members.length === 0 && memberChange.departed_members.length === 0 ? '<div class="member-change-empty">تغییر عضویت در این فاصله ثبت نشده است.</div>' : ''}</div></section>`
+        : `<section class="performance-card member-changes-card"><div class="performance-card__head"><div><span class="badge">تغییر عضویت</span><h2>ورود و خروج اعضا</h2><p>این Snapshot ثبت اولیه است و مبنای مقایسهٔ قبلی ندارد.</p></div></div></section>`
+      : '';
+    root.innerHTML = `<section class="hero"><span class="badge">PERSIA · Leaderboard fallback</span><h1>جدول جامع عملکرد و تغییرات اعضای کلن</h1><p>نمایش پشتیبان فعال است؛ دادهٔ canonical در دسترس نیست.</p></section><div class="count">${members.length} نتیجه</div>${fallbackTable(members)}`;
     }).catch(() => { root.innerHTML = '<p class="error">منبع داده قابل بارگذاری نیست.</p>'; });
   });
 
@@ -92,7 +104,7 @@
     return `<div class="table-wrap"><table><thead><tr>${['رتبه','نام کاربری','سمت',...keys].map(key => `<th>${key}</th>`).join('')}</tr></thead><tbody>${members.map(member => `<tr><td>${esc(member.rank)}</td><td>${esc(member.name)}</td><td>${esc(member.role)}</td>${keys.map(key => `<td>${esc(member.stats[key] || '—')}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
   }
 
-  function render(target, metrics, members, mode, dataMode, snapshots) {
+  function render(target, metrics, members, mode, dataMode, snapshots, memberChangesData) {
     const keys = viewerData.KEYS.slice();
     const playerById = new Map(members.filter(member => member.player_id).map(member => [member.name, member.player_id]));
     const playerName = name => { const id = playerById.get(name); return id ? `<a class="player-name-link" href="${navUrl('player.html', `?id=${encodeURIComponent(id)}`)}">${esc(name)}</a>` : esc(name); };
@@ -113,7 +125,7 @@
     const periodKills = metrics.baseline_snapshot_id === target.snapshot_id ? '— / baseline' : signed(metrics.period_kills_change);
     const modeNote = dataMode === 'canonical' ? 'Grid از دادهٔ رسمی دوره ساخته شده است.' : 'Grid از مسیر fallback بارگذاری شده است.';
 
-    root.innerHTML = `<section class="hero"><span class="badge">PERSIA · دوره ${esc(String(target.snapshot_id).replace(/^S/, ''))}</span><h1>${esc(title)}</h1><p>${esc(target.date_persian)} · ساعت ${esc(target.time_iran)}</p><div class="meta"><span>${target.members} عضو</span><span>هفته لیگ: ${esc(metrics.league_week)}</span></div><p class="data-note">${esc(modeNote)}</p></section><section class="performance-card"><div class="performance-card__head"><div><span class="badge">عملکرد</span><h2>عملکرد این هفته</h2><p>تجمیعی از اولین ثبت این هفته؛ در شروع هفته لیگ دوباره از صفر محاسبه می‌شود.</p></div></div><div class="performance-grid"><div class="performance-stat"><span>تغییر مدال کلن</span><strong>${weeklyLabel}</strong></div><div class="performance-stat"><span>افزایش کیل</span><strong>${weeklyKills}</strong></div></div></section><section class="performance-card performance-card--period"><div class="performance-card__head"><div><span class="badge">این دوره</span><h2>جمع تغییرات این دوره</h2><p>جمع تغییرات ثبت‌شده برای تمام اعضای حاضر در همین دوره؛ مستقل از تجمیع هفتگی.</p></div></div><div class="performance-grid"><div class="performance-stat"><span>جمع تغییر مدال کلن</span><strong>${periodLabel}</strong></div><div class="performance-stat"><span>جمع افزایش کیل</span><strong>${periodKills}</strong></div></div></section><section class="toolbar"><input id="search" class="search" type="search" placeholder="جست‌وجوی نام کاربری، سمت یا مقدار..."><div class="switch"><button data-mode="simple">نمایش ساده</button><button data-mode="summary">نمایش خلاصه</button><button data-mode="graphic">نمایش گرافیکی</button></div></section><div id="results"></div>${nav}`;
+    root.innerHTML = `<section class="hero"><span class="badge">PERSIA · دوره ${esc(String(target.snapshot_id).replace(/^S/, ''))}</span><h1>${esc(title)}</h1><p>${esc(target.date_persian)} · ساعت ${esc(target.time_iran)}</p><div class="meta"><span>${target.members} عضو</span><span>هفته لیگ: ${esc(metrics.league_week)}</span></div><p class="data-note">${esc(modeNote)}</p></section><section class="performance-card"><div class="performance-card__head"><div><span class="badge">عملکرد</span><h2>عملکرد این هفته</h2><p>تجمیعی از اولین ثبت این هفته؛ در شروع هفته لیگ دوباره از صفر محاسبه می‌شود.</p></div></div><div class="performance-grid"><div class="performance-stat"><span>تغییر مدال کلن</span><strong>${weeklyLabel}</strong></div><div class="performance-stat"><span>افزایش کیل</span><strong>${weeklyKills}</strong></div></div></section><section class="performance-card performance-card--period"><div class="performance-card__head"><div><span class="badge">این دوره</span><h2>جمع تغییرات این دوره</h2><p>جمع تغییرات ثبت‌شده برای تمام اعضای حاضر در همین دوره؛ مستقل از تجمیع هفتگی.</p></div></div><div class="performance-grid"><div class="performance-stat"><span>جمع تغییر مدال کلن</span><strong>${periodLabel}</strong></div><div class="performance-stat"><span>جمع افزایش کیل</span><strong>${periodKills}</strong></div></div></section><section class="toolbar"><input id="search" class="search" type="search" placeholder="جست‌وجوی نام کاربری، سمت یا مقدار..."><div class="switch"><button data-mode="simple">نمایش ساده</button><button data-mode="summary">نمایش خلاصه</button><button data-mode="graphic">نمایش گرافیکی</button></div></section><div id="results"></div>${memberChangesHtml}${nav}`;
 
     const results = root.querySelector('#results');
     const input = root.querySelector('#search');
