@@ -84,17 +84,6 @@
     fetchText(fallbackSource).then(sourceHtml => {
       const members = parseSourceMembers(sourceHtml);
       if (!members.length) throw error;
-      const memberChange = (memberChangesData?.transitions || []).find(item => item.snapshot_id === target.snapshot_id);
-    const changePlayerLink = item => navUrl('player.html', `?id=${encodeURIComponent(item.player_id)}`);
-    const renderChangeGroup = (label, items, className) => {
-      if (!items.length) return '';
-      return `<div class="member-change-group ${className}"><div class="member-change-heading"><strong>${label}</strong><span>${items.length.toLocaleString('en-US')}</span></div><div class="member-change-list">${items.map(item => `<a class="member-change-player" href="${changePlayerLink(item)}" title="${esc(item.event || 'عضویت/خروج در مقایسه Snapshotها')}">${esc(item.display_name)}</a>`).join('')}</div></div>`;
-    };
-    const memberChangesHtml = memberChange
-      ? memberChange.from_snapshot
-        ? `<section class="performance-card member-changes-card"><div class="performance-card__head"><div><span class="badge">تغییر عضویت</span><h2>ورود و خروج اعضا</h2><p>مقایسهٔ ${esc(memberChange.from_snapshot)} → ${esc(memberChange.to_snapshot)}؛ نام‌ها به پروفایل بازیکن لینک شده‌اند.</p></div></div><div class="member-change-grid">${renderChangeGroup('🟢 اعضای جدید', memberChange.new_members, 'member-change-group--new')}${renderChangeGroup('🔴 خروج / حذف', memberChange.departed_members, 'member-change-group--left')}${memberChange.new_members.length === 0 && memberChange.departed_members.length === 0 ? '<div class="member-change-empty">تغییر عضویت در این فاصله ثبت نشده است.</div>' : ''}</div></section>`
-        : `<section class="performance-card member-changes-card"><div class="performance-card__head"><div><span class="badge">تغییر عضویت</span><h2>ورود و خروج اعضا</h2><p>این Snapshot ثبت اولیه است و مبنای مقایسهٔ قبلی ندارد.</p></div></div></section>`
-      : '';
     root.innerHTML = `<section class="hero"><span class="badge">PERSIA · Leaderboard fallback</span><h1>جدول جامع عملکرد و تغییرات اعضای کلن</h1><p>نمایش پشتیبان فعال است؛ دادهٔ canonical در دسترس نیست.</p></section><div class="count">${members.length} نتیجه</div>${fallbackTable(members)}`;
     }).catch(() => { root.innerHTML = '<p class="error">منبع داده قابل بارگذاری نیست.</p>'; });
   });
@@ -108,6 +97,18 @@
     const keys = viewerData.KEYS.slice();
     const playerById = new Map(members.filter(member => member.player_id).map(member => [member.name, member.player_id]));
     const playerName = name => { const id = playerById.get(name); return id ? `<a class="player-name-link" href="${navUrl('player.html', `?id=${encodeURIComponent(id)}`)}">${esc(name)}</a>` : esc(name); };
+    const memberChange = (memberChangesData?.transitions || []).find(item => item.snapshot_id === target.snapshot_id);
+    const changePlayerLink = item => navUrl('player.html', `?id=${encodeURIComponent(item.player_id)}`);
+    const renderChangeGroup = (label, items, className) => {
+      if (!items.length) return '';
+      return `<div class="member-change-group ${className}"><div class="member-change-heading"><strong>${label}</strong><span>${items.length.toLocaleString('en-US')}</span></div><div class="member-change-list">${items.map(item => `<a class="member-change-player" href="${changePlayerLink(item)}" title="${esc(item.event || 'عضویت/خروج در مقایسه Snapshotها')}">${esc(item.display_name)}</a>`).join('')}</div></div>`;
+    };
+    const memberChangesHtml = memberChange
+      ? memberChange.from_snapshot
+        ? `<section class="performance-card member-changes-card"><div class="performance-card__head"><div><span class="badge">تغییر عضویت</span><h2>ورود و خروج اعضا</h2><p>مقایسهٔ ${esc(memberChange.from_snapshot)} → ${esc(memberChange.to_snapshot)}؛ نام‌ها به پروفایل بازیکن لینک شده‌اند.</p></div></div><div class="member-change-grid">${renderChangeGroup('🟢 اعضای جدید', memberChange.new_members, 'member-change-group--new')}${renderChangeGroup('🔴 خروج / حذف', memberChange.departed_members, 'member-change-group--left')}${memberChange.new_members.length === 0 && memberChange.departed_members.length === 0 ? '<div class="member-change-empty">تغییر عضویت در این فاصله ثبت نشده است.</div>' : ''}</div></section>`
+        : `<section class="performance-card member-changes-card"><div class="performance-card__head"><div><span class="badge">تغییر عضویت</span><h2>ورود و خروج اعضا</h2><p>این Snapshot ثبت اولیه است و مبنای مقایسهٔ قبلی ندارد.</p></div></div></section>`
+      : '';
+
     const index = snapshots.findIndex(snapshot => snapshot.snapshot_id === target.snapshot_id);
     const previous = index > 0 ? snapshots[index - 1] : null;
     const next = index >= 0 && index < snapshots.length - 1 ? snapshots[index + 1] : null;
