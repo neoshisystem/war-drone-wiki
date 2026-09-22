@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "current_snapshot_id": "S10",
+  "current_snapshot_id": "S11",
   "snapshots": [
     {
       "snapshot_id": "S01",
@@ -125,6 +125,20 @@
       "members": 30,
       "capacity": 50,
       "source_report": "/clan-leaderboard/reports/2026-09-19-2400.html",
+      "league_boundary": null,
+      "boundary_label": null,
+      "normalized_observations": true,
+      "observation_source": "player-observations.json"
+    },
+    {
+      "snapshot_id": "S11",
+      "captured_at_utc": "2026-09-22T20:30:00Z",
+      "date_persian": "31 شهریور 1405",
+      "time_iran": "24:00",
+      "type": "delta-report",
+      "members": 30,
+      "capacity": 50,
+      "source_report": "/clan-leaderboard/reports/2026-09-22-2400.html",
       "league_boundary": null,
       "boundary_label": null,
       "normalized_observations": true,
