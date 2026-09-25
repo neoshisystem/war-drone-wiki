@@ -327,6 +327,247 @@
           "event": "left_or_kicked"
         }
       ]
+    },
+    {
+      "snapshot_id": "S12",
+      "from_snapshot": "S11",
+      "to_snapshot": "S12",
+      "member_count_from": 30,
+      "member_count_to": 50,
+      "new_members": [
+        {
+          "player_id": "PERSIA-P-0060",
+          "display_name": "ehsan",
+          "event": "joined_between_S11_and_S12"
+        },
+        {
+          "player_id": "PERSIA-P-0002",
+          "display_name": "Cpt. Of Persia",
+          "event": "returned_between_S11_and_S12"
+        },
+        {
+          "player_id": "PERSIA-P-0003",
+          "display_name": "Alini",
+          "event": "returned_between_S11_and_S12"
+        },
+        {
+          "player_id": "PERSIA-P-0005",
+          "display_name": "kaveh",
+          "event": "returned_between_S11_and_S12"
+        },
+        {
+          "player_id": "PERSIA-P-0061",
+          "display_name": "RADMAN",
+          "event": "joined_between_S11_and_S12"
+        },
+        {
+          "player_id": "PERSIA-P-0001",
+          "display_name": "Commander",
+          "event": "returned_between_S11_and_S12"
+        },
+        {
+          "player_id": "PERSIA-P-0062",
+          "display_name": "ALI",
+          "event": "joined_between_S11_and_S12"
+        },
+        {
+          "player_id": "PERSIA-P-0010",
+          "display_name": "paradise",
+          "event": "returned_between_S11_and_S12"
+        },
+        {
+          "player_id": "PERSIA-P-0048",
+          "display_name": "ایرانی باوقار",
+          "event": "returned_between_S11_and_S12"
+        },
+        {
+          "player_id": "PERSIA-P-0063",
+          "display_name": "Worker Ant",
+          "event": "joined_between_S11_and_S12"
+        },
+        {
+          "player_id": "PERSIA-P-0064",
+          "display_name": "behrang",
+          "event": "joined_between_S11_and_S12"
+        },
+        {
+          "player_id": "PERSIA-P-0008",
+          "display_name": "hisystem",
+          "event": "returned_between_S11_and_S12"
+        },
+        {
+          "player_id": "PERSIA-P-0065",
+          "display_name": "PERSIAN TIGER",
+          "event": "joined_between_S11_and_S12"
+        },
+        {
+          "player_id": "PERSIA-P-0066",
+          "display_name": "F 35",
+          "event": "joined_between_S11_and_S12"
+        },
+        {
+          "player_id": "PERSIA-P-0009",
+          "display_name": "SORENA",
+          "event": "returned_between_S11_and_S12"
+        },
+        {
+          "player_id": "PERSIA-P-0004",
+          "display_name": "Eren",
+          "event": "returned_between_S11_and_S12"
+        },
+        {
+          "player_id": "PERSIA-P-0067",
+          "display_name": "Dariush",
+          "event": "joined_between_S11_and_S12"
+        },
+        {
+          "player_id": "PERSIA-P-0068",
+          "display_name": "Elvin",
+          "event": "joined_between_S11_and_S12"
+        },
+        {
+          "player_id": "PERSIA-P-0069",
+          "display_name": "ایران",
+          "event": "joined_between_S11_and_S12"
+        },
+        {
+          "player_id": "PERSIA-P-0070",
+          "display_name": "Tjk001",
+          "event": "joined_between_S11_and_S12"
+        },
+        {
+          "player_id": "PERSIA-P-0071",
+          "display_name": "reza1009",
+          "event": "joined_between_S11_and_S12"
+        },
+        {
+          "player_id": "PERSIA-P-0072",
+          "display_name": "ADA",
+          "event": "joined_between_S11_and_S12"
+        },
+        {
+          "player_id": "PERSIA-P-0044",
+          "display_name": "hamedir",
+          "event": "returned_between_S11_and_S12"
+        },
+        {
+          "player_id": "PERSIA-P-0073",
+          "display_name": "boz gurd",
+          "event": "joined_between_S11_and_S12"
+        },
+        {
+          "player_id": "PERSIA-P-0028",
+          "display_name": "ali",
+          "event": "returned_between_S11_and_S12"
+        },
+        {
+          "player_id": "PERSIA-P-0007",
+          "display_name": "Ardalan",
+          "event": "returned_between_S11_and_S12"
+        },
+        {
+          "player_id": "PERSIA-P-0020",
+          "display_name": "NaViD",
+          "event": "returned_between_S11_and_S12"
+        },
+        {
+          "player_id": "PERSIA-P-0074",
+          "display_name": "سید حسن ۳۳",
+          "event": "joined_between_S11_and_S12"
+        },
+        {
+          "player_id": "PERSIA-P-0075",
+          "display_name": "Armin Lukas",
+          "event": "joined_between_S11_and_S12"
+        },
+        {
+          "player_id": "PERSIA-P-0076",
+          "display_name": "hamid.iran",
+          "event": "joined_between_S11_and_S12"
+        },
+        {
+          "player_id": "PERSIA-P-0077",
+          "display_name": "Masoudpas_4612",
+          "event": "joined_between_S11_and_S12"
+        },
+        {
+          "player_id": "PERSIA-P-0021",
+          "display_name": "mohammad",
+          "event": "returned_between_S11_and_S12"
+        },
+        {
+          "player_id": "PERSIA-P-0078",
+          "display_name": "ErFaN.mZ79",
+          "event": "joined_between_S11_and_S12"
+        }
+      ],
+      "departed_members": [
+        {
+          "player_id": "PERSIA-P-0018",
+          "display_name": "maximus",
+          "event": "left_or_kicked"
+        },
+        {
+          "player_id": "PERSIA-P-0055",
+          "display_name": "kaveh.2",
+          "event": "left_or_kicked"
+        },
+        {
+          "player_id": "PERSIA-P-0033",
+          "display_name": "007",
+          "event": "left_or_kicked"
+        },
+        {
+          "player_id": "PERSIA-P-0019",
+          "display_name": "saeid",
+          "event": "left_or_kicked"
+        },
+        {
+          "player_id": "PERSIA-P-0040",
+          "display_name": "1370 جهانبانی",
+          "event": "left_or_kicked"
+        },
+        {
+          "player_id": "PERSIA-P-0038",
+          "display_name": "kakajan",
+          "event": "left_or_kicked"
+        },
+        {
+          "player_id": "PERSIA-P-0053",
+          "display_name": "omid",
+          "event": "left_or_kicked"
+        },
+        {
+          "player_id": "PERSIA-P-0024",
+          "display_name": "shadow",
+          "event": "left_or_kicked"
+        },
+        {
+          "player_id": "PERSIA-P-0034",
+          "display_name": "stupid",
+          "event": "left_or_kicked"
+        },
+        {
+          "player_id": "PERSIA-P-0051",
+          "display_name": "hisystemX",
+          "event": "left_or_kicked"
+        },
+        {
+          "player_id": "PERSIA-P-0030",
+          "display_name": "kian bahari",
+          "event": "left_or_kicked"
+        },
+        {
+          "player_id": "PERSIA-P-0058",
+          "display_name": "Robots",
+          "event": "left_or_kicked"
+        },
+        {
+          "player_id": "PERSIA-P-0059",
+          "display_name": "saeed.ir",
+          "event": "left_or_kicked"
+        }
+      ]
     }
   ]
 }
