@@ -17,9 +17,10 @@
   ];
 
   const faNumber = value => Number(value).toLocaleString('en-US');
+  const displayNumber = value => value == null ? '—' : faNumber(value);
   const signed = value => value == null ? '—' : Number(value) === 0 ? '0' : Number(value) > 0 ? `+${faNumber(value)}` : `-${faNumber(Math.abs(value))}`;
   const movement = value => value == null || value === 0 ? '-' : value > 0 ? `↑ ${value}` : `↓ ${Math.abs(value)}`;
-  const weapon = (level, delta) => delta == null || delta === 0 ? faNumber(level) : `${faNumber(level)} (${signed(delta)})`;
+  const weapon = (level, delta) => level == null ? '—' : delta == null || delta === 0 ? faNumber(level) : `${faNumber(level)} (${signed(delta)})`;
 
   function getRows(snapshotId, observationSets) {
     for (const source of observationSets || []) {
@@ -36,17 +37,17 @@
       const player = registry.get(row.player_id) || {};
       const name = row.display_name || player.display_name || row.player_id;
       const role = row.role || player.role || 'Member';
-      const honors = row.honor_medals || { gold: 0, silver: 0, bronze: 0 };
+      const honors = row.honor_medals || null;
       const upgrades = row.weapons?.upgrade_deltas || {};
       const stats = {
-        'استیج': faNumber(row.stage ?? 0),
-        'مدال لیگ جاری': faNumber(row.league_medals ?? 0),
+        'استیج': displayNumber(row.stage),
+        'مدال لیگ جاری': displayNumber(row.league_medals),
         'تغییر مدال کلن': '—',
-        'مدال کل کلن': faNumber(row.clan_medals ?? 0),
-        'مدال افتخار (طلا / نقره / برنز)': `${honors.gold ?? 0} / ${honors.silver ?? 0} / ${honors.bronze ?? 0}`,
-        'مجموع کیل 💀': faNumber(row.total_kills ?? 0),
+        'مدال کل کلن': displayNumber(row.clan_medals),
+        'مدال افتخار (طلا / نقره / برنز)': honors ? `${honors.gold ?? 0} / ${honors.silver ?? 0} / ${honors.bronze ?? 0}` : '—',
+        'مجموع کیل 💀': displayNumber(row.total_kills),
         'افزایش کیل 💀': '—',
-        'لول سلاح‌ها (توپ / هیدرا / هل‌فایر)': `${weapon(row.weapons?.['25mm'] ?? 0, upgrades['25mm'])} / ${weapon(row.weapons?.hydra ?? 0, upgrades.hydra)} / ${weapon(row.weapons?.hellfire ?? 0, upgrades.hellfire)}`,
+        'لول سلاح‌ها (توپ / هیدرا / هل‌فایر)': `${weapon(row.weapons?.['25mm'], upgrades['25mm'])} / ${weapon(row.weapons?.hydra, upgrades.hydra)} / ${weapon(row.weapons?.hellfire, upgrades.hellfire)}`,
         'آخرین آنلاین': String(row.last_online_display ?? '—')
       };
       const period = metrics?.period_players?.[row.player_id];
