@@ -71,7 +71,7 @@
       if (startsPerformanceTracking) performanceTrackingStarted = true;
 
       let state = weeklyState.get(weekId);
-      if (!state || startsPerformanceTracking) {
+      if (!state || startsPerformanceTracking || isExplicitBaseline) {
         state = { clan_medals: 0, kills: 0, players: {} };
         weeklyState.set(weekId, state);
       }
@@ -81,6 +81,7 @@
       const sameWeek = Boolean(previousSnapshot && previousWeekId === weekId);
       const hasPreviousSnapshot = Boolean(previousSnapshot);
       const isLeagueStart = snapshot.league_boundary === 'start';
+      const isExplicitBaseline = snapshot.type === 'baseline' || snapshot.baseline === true;
       const isLeagueEnd = snapshot.league_boundary === 'end';
       const previousById = new Map(sameWeek ? previousRows.map(row => [row.player_id, row]) : []);
       const previousClanById = new Map(hasPreviousSnapshot ? previousRows.map(row => [row.player_id, row]) : []);
@@ -103,18 +104,22 @@
         // A player first observed at league start has an explicit Clan Medal
         // baseline of zero, so their observed S08 value is their league delta.
         let clanDelta = 0;
-        if (previousClan) clanDelta = clanValue - Number(previousClan.clan_medals || 0);
-        else if (isLeagueStart) clanDelta = clanValue;
-        else if (isLeagueEnd) clanDelta = clanValue;
+        if (!isExplicitBaseline) {
+          if (previousClan) clanDelta = clanValue - Number(previousClan.clan_medals || 0);
+          else if (isLeagueStart) clanDelta = clanValue;
+          else if (isLeagueEnd) clanDelta = clanValue;
+        }
 
         // Kills never reset at league boundaries. A player without a previous
         // observation is a baseline for Kill Delta; their current total is not
         // retroactively counted as earned during this period.
         let killDelta = 0;
-        if (previousKill) killDelta = killValue - Number(previousKill.total_kills || 0);
-        else if (isLeagueEnd) killDelta = hasPreviousSnapshot ? killValue : 0;
+        if (!isExplicitBaseline) {
+          if (previousKill) killDelta = killValue - Number(previousKill.total_kills || 0);
+          else if (isLeagueEnd) killDelta = hasPreviousSnapshot ? killValue : 0;
+        }
 
-        const baseline = !hasPreviousSnapshot || (!previous && !isLeagueStart && !isLeagueEnd);
+        const baseline = isExplicitBaseline || !hasPreviousSnapshot || (!previous && !isLeagueStart && !isLeagueEnd);
         periodClan += clanDelta;
         periodKills += killDelta;
         const currentPlayer = state.players[row.player_id] || { clan_medals: 0, kills: 0 };
@@ -125,9 +130,14 @@
           clan_medals: clanDelta,
           kills: killDelta,
           baseline,
-          clan_baseline: !hasPreviousSnapshot || (!previousClan && !isLeagueStart && !isLeagueEnd),
-          kills_baseline: !previousKill && !isLeagueEnd
+          clan_baseline: isExplicitBaseline || !hasPreviousSnapshot || (!previousClan && !isLeagueStart && !isLeagueEnd),
+          kills_baseline: isExplicitBaseline || (!previousKill && !isLeagueEnd)
         };
+
+        if (isExplicitBaseline) {
+          cumulativePrevious.set(row.player_id, { ...row, captured_at_utc: snapshot.captured_at_utc });
+          continue;
+        }
 
         if (!cumulativeState[row.player_id]) cumulativeState[row.player_id] = { clan_medals: 0, kills: 0 };
         const previousCumulative = cumulativePrevious.get(row.player_id);
@@ -163,7 +173,7 @@
       results[snapshot.snapshot_id] = {
         snapshot_id: snapshot.snapshot_id,
         league_week: weekId,
-        baseline_snapshot_id: previousSnapshot ? previousSnapshot.snapshot_id : snapshot.snapshot_id,
+        baseline_snapshot_id: isExplicitBaseline ? snapshot.snapshot_id : (previousSnapshot ? previousSnapshot.snapshot_id : snapshot.snapshot_id),
         period_clan_medals_change: periodClan,
         period_kills_change: periodKills,
         weekly_clan_medals_earned: weeklyClan,
