@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "current_snapshot_id": "S11",
+  "current_snapshot_id": "S12",
   "snapshots": [
     {
       "snapshot_id": "S01",
@@ -143,6 +143,22 @@
       "boundary_label": null,
       "normalized_observations": true,
       "observation_source": "player-observations.json"
+    },
+    {
+      "snapshot_id": "S12",
+      "captured_at_utc": "2026-09-25T12:30:00Z",
+      "date_persian": "3 مهر 1405",
+      "time_iran": "16:00",
+      "type": "baseline",
+      "members": 50,
+      "capacity": 50,
+      "source_report": "/clan-leaderboard/reports/2026-09-25-1600.html",
+      "normalized_observations": true,
+      "observation_source": "player-observations.json",
+      "league_boundary": "start",
+      "boundary_label": "شروع لیگ جدید",
+      "league_week": "2026-09-24",
+      "baseline_note": "اولین Baseline ثبت‌شده از لیگ جاری؛ Snapshot نهایی لیگ قبلی در پروژه ثبت نشده است و زمان واقعی شروع لیگ طبق قانون ثابت بازی 2026-09-24T00:00:00Z است."
     }
   ],
   "observation_policy": {
