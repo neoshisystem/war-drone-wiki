@@ -568,6 +568,37 @@
           "event": "left_or_kicked"
         }
       ]
+    },
+    {
+      "snapshot_id": "S13",
+      "from_snapshot": "S12",
+      "to_snapshot": "S13",
+      "member_count_from": 50,
+      "member_count_to": 48,
+      "new_members": [
+        {
+          "player_id": "PERSIA-P-0079",
+          "display_name": "Harpy",
+          "event": "joined_between_S12_and_S13"
+        }
+      ],
+      "departed_members": [
+        {
+          "player_id": "PERSIA-P-0072",
+          "display_name": "ADA",
+          "event": "left_or_kicked"
+        },
+        {
+          "player_id": "PERSIA-P-0077",
+          "display_name": "Masoudpas_4612",
+          "event": "left_or_kicked"
+        },
+        {
+          "player_id": "PERSIA-P-0054",
+          "display_name": "Cpt's eyes 😐",
+          "event": "left_or_kicked"
+        }
+      ]
     }
   ]
 }
